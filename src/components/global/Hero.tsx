@@ -8,7 +8,7 @@ interface HeroProps {
 
 const Hero: React.FC<HeroProps> = ({ title, subtitle}) => {
     return (
-        <div className="flex flex-col justify-center items-center pt-[60px] 
+        <div className="flex w-full flex-col justify-center items-center pt-[60px] 
         gap-4
         
         ">
@@ -18,7 +18,7 @@ const Hero: React.FC<HeroProps> = ({ title, subtitle}) => {
         ">
 
         <h1 className="text-3xl font-bold text-center">{title}</h1>
-        <h3 className="text-xl text-center">
+        <h3 className="text-xl text-center max-w-[600px]">
           {subtitle}
         </h3>
         </div>
