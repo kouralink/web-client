@@ -1,5 +1,6 @@
 import Header from "./components/global/Header";
 import Navbar from "./components/global/Navbar";
+import Privileges from "./components/global/Privileges";
 
 export default function App() {
   return (
@@ -8,6 +9,9 @@ export default function App() {
         <Navbar />
       </div>
       <Header title="Welcome to Kouralink" src="/src/assets/bg.png" />
+      <div className="mb-8">
+      <Privileges />
+      </div>
     </div>
   );
 }
