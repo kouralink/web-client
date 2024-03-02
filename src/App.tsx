@@ -4,6 +4,7 @@ import { LiveEvenets } from "./components/global/LiveEvenets";
 import Navbar from "./components/global/Navbar";
 import Privileges from "./components/global/Privileges";
 import SectionHead from "./components/global/SectionHead";
+import { Testimonials } from "./components/global/Testimonials";
 
 export default function App() {
   return (
@@ -24,8 +25,13 @@ export default function App() {
         title="Feature Contents"
         description="Dive into exclusive features, stories, and highlights that showcase the best of the football world."
       />
-      {/* <FeatureContentCard backgroundImageSrc="/src/assets/feautreContent/im5.png" title="Goal Machine"  description="Meet the top scorer of the season, known for precision and goal-scoring prowess."/> */}
       <FeatureContents />
+      <SectionHead
+        title="Testimonials"
+        description="Discover what our community says about their unforgettable experiences and triumphs on our football platform."
+      />
+      {/* <TestimonialsCard accountType="tournament manager" name="khlifa" rate={4.5} src="/src/assets/logo.png" testimonial="Being part of this platform has been a game-changer for me. The opportunity to connect with fellow football enthusiasts, join exciting tournaments, and experience top-notch gameplay has truly elevated my love for the sport."/> */}
+      <Testimonials />
     </div>
   );
 }
