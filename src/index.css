@@ -25,6 +25,8 @@
     --input: 240 5.9% 90%;
     --ring: 142.1 76.2% 36.3%;
     --radius: 0.3rem;
+    --footer:150 9% 18%;
+    --footer-foreground:0 0% 100%;
   }
 
   .dark {
@@ -47,6 +49,8 @@
     --border: 240 3.7% 15.9%;
     --input: 240 3.7% 15.9%;
     --ring: 142.4 71.8% 29.2%;
+    --footer:150 9% 18%;
+    --footer-foreground:0 0% 100%;
   }
 }
 
