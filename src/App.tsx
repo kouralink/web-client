@@ -1,4 +1,5 @@
 import FeatureContents from "./components/global/FeatureContents";
+import Footer from "./components/global/Footer";
 import Header from "./components/global/Header";
 import { LiveEvenets } from "./components/global/LiveEvenets";
 import Navbar from "./components/global/Navbar";
@@ -37,6 +38,7 @@ export default function App() {
         description="Catch the latest announcements and upcoming events to stay ahead in the football action."
       />
       <SiteAnnouncements/>
+      <Footer />
     </div>
   );
 }
