@@ -3,6 +3,7 @@ import Footer from "./components/global/Footer";
 import Header from "./components/global/Header";
 import { LiveEvenets } from "./components/global/LiveEvenets";
 import Navbar from "./components/global/Navbar";
+import NewsLetter from "./components/global/NewsLetter";
 import Privileges from "./components/global/Privileges";
 import SectionHead from "./components/global/SectionHead";
 import SiteAnnouncements from "./components/global/SiteAnnouncements";
@@ -38,6 +39,7 @@ export default function App() {
         description="Catch the latest announcements and upcoming events to stay ahead in the football action."
       />
       <SiteAnnouncements/>
+      <NewsLetter />
       <Footer />
     </div>
   );

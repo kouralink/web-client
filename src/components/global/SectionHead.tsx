@@ -9,7 +9,7 @@ interface SectionHeadProps {
 const SectionHead: React.FC<SectionHeadProps> = ({ title, description }) => {
   return (
     <div className="flex w-fit h-[150px] items-center">
-      <div className="relative z-[-10] h-[400px] w-[100px]  ">
+      <div className="relative z-[-10] h-[340px] w-[150px]  ">
         <img
           src="/src/assets/SectionTitelFlish.svg"
           alt="flish"
