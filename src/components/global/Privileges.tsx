@@ -1,5 +1,5 @@
 import React from "react";
-import PrivilegeCard from "./PrivilegeCard";
+import PrivilegeCard from "./cards/PrivilegeCard";
 
 interface PrivilegesProps {
   // Define your props here

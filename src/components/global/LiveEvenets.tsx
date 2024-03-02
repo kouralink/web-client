@@ -5,7 +5,7 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from "@/components/ui/carousel";
-import { LiveEvenetCard } from "./LiveEvenetCard";
+import { LiveEvenetCard } from "./cards/LiveEvenetCard";
 
 export function LiveEvenets() {
   return (
