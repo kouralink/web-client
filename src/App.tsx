@@ -4,6 +4,7 @@ import { LiveEvenets } from "./components/global/LiveEvenets";
 import Navbar from "./components/global/Navbar";
 import Privileges from "./components/global/Privileges";
 import SectionHead from "./components/global/SectionHead";
+import SiteAnnouncements from "./components/global/SiteAnnouncements";
 import { Testimonials } from "./components/global/Testimonials";
 
 export default function App() {
@@ -30,8 +31,12 @@ export default function App() {
         title="Testimonials"
         description="Discover what our community says about their unforgettable experiences and triumphs on our football platform."
       />
-      {/* <TestimonialsCard accountType="tournament manager" name="khlifa" rate={4.5} src="/src/assets/logo.png" testimonial="Being part of this platform has been a game-changer for me. The opportunity to connect with fellow football enthusiasts, join exciting tournaments, and experience top-notch gameplay has truly elevated my love for the sport."/> */}
       <Testimonials />
+      <SectionHead
+        title="Site Announcements"
+        description="Catch the latest announcements and upcoming events to stay ahead in the football action."
+      />
+      <SiteAnnouncements/>
     </div>
   );
 }
