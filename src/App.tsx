@@ -1,3 +1,4 @@
+import FeatureContents from "./components/global/FeatureContents";
 import Header from "./components/global/Header";
 import { LiveEvenets } from "./components/global/LiveEvenets";
 import Navbar from "./components/global/Navbar";
@@ -15,10 +16,16 @@ export default function App() {
         <Privileges />
       </div>
       <SectionHead
-        title="Section Title"
-        description="description Lorem ipsum dolor sit amet consectetur adipisicing elit. Iure provident eum voluptates neque autem commodi cumque quod laudantium earum rem? Ab numquam asperiores sequi cumque expedita qui architecto maxime dolores."
+        title="Live Events"
+        description="Immerse yourself in the excitement of live scores and unforgettable highlights, bringing you closer to the heart of the game."
       />
       <LiveEvenets/>
+      <SectionHead
+        title="Feature Contents"
+        description="Dive into exclusive features, stories, and highlights that showcase the best of the football world."
+      />
+      {/* <FeatureContentCard backgroundImageSrc="/src/assets/feautreContent/im5.png" title="Goal Machine"  description="Meet the top scorer of the season, known for precision and goal-scoring prowess."/> */}
+      <FeatureContents />
     </div>
   );
 }
