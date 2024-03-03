@@ -30,7 +30,7 @@ const Privileges: React.FC<PrivilegesProps> = () => {
   ];
 
   return (
-    <div className="flex justify-center items-center w-full h-fit flex-wrap md:flex-nowrap  bg-[#2B332F]">
+    <div className="flex justify-center items-center w-full h-fit flex-wrap md:flex-nowrap  bg-footer text-footer-foreground">
       {privileges.map((privilege, index) => (
         <div key={index} className="flex justify-center items-center w-full h-full">
           <PrivilegeCard
