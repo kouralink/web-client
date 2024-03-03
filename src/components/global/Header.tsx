@@ -15,16 +15,20 @@ const Header: React.FC<HeaderProps> = ({ title, src }) => {
       className="h-[75vh] relative bg-cover bg-center p-0 m-0 text-card"
     >
       <div className="w-full h-full flex   justify-center items-center backdrop-brightness-50">
-        <Hero subtitle="Lorem ipsum dolor sit amet consectetur adipisicing elit. Ipsa impedi
-          necessitatibus earum officia minus!" title={title}/>
-        <div className=" max-w-[400px] 
+        <Hero
+          subtitle="Welcome to our football haven, where every goal, tackle, and victory finds its home. Get ready to dive into the thrilling world of football with us!"
+          title={title}
+        />
+        <div
+          className=" max-w-[400px] 
         ml-10 h-full 
-        bg-[url('/src/assets/flish.svg')] 
+        bg-[url('/src/assets/flish2.svg')] 
+        
         bg-cover bg-center overflow-visible
-        w-[950px] hidden sm:flex
-        ">
-
-        </div>
+        w-[950px] 
+        hidden sm:flex items-center justify-center
+        "
+        ><img src="/src/assets/ofppt1.svg" alt="ofppt logo" className="" /></div>
       </div>
     </header>
   );
