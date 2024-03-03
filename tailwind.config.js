@@ -6,6 +6,7 @@ module.exports = {
     './components/**/*.{ts,tsx}',
     './app/**/*.{ts,tsx}',
     './src/**/*.{ts,tsx}',
+    'node_modules/flowbite-react/lib/esm/**/*.js',
   ],
   prefix: "",
   theme: {
@@ -26,6 +27,12 @@ module.exports = {
         primary: {
           DEFAULT: "hsl(var(--primary))",
           foreground: "hsl(var(--primary-foreground))",
+          500:'hsl(var(--primary-500))',
+          600:'hsl(var(--primary-600))',
+          700:'hsl(var(--primary-700))',
+          800:'hsl(var(--primary-800))',
+          900:'hsl(var(--primary-900))',
+          950:'hsl(var(--primary-950))',
         },
         secondary: {
           DEFAULT: "hsl(var(--secondary))",
@@ -38,6 +45,11 @@ module.exports = {
         muted: {
           DEFAULT: "hsl(var(--muted))",
           foreground: "hsl(var(--muted-foreground))",
+        },
+        
+        footer: {
+          DEFAULT: "hsl(var(--footer))",
+          foreground: "hsl(var(--footer-foreground))",
         },
         accent: {
           DEFAULT: "hsl(var(--accent))",
@@ -73,5 +85,8 @@ module.exports = {
       },
     },
   },
-  plugins: [require("tailwindcss-animate")],
+  plugins: [
+    require('flowbite/plugin'),
+    require("tailwindcss-animate")
+  ],
 }
