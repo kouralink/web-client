@@ -45,7 +45,7 @@ export default function App() {
 
 
   return (
-    <div className="min-h-[200vh]">
+    <div className="min-h-[200vh]  overflow-hidden">
       <div className={["fixed z-10 w-full mt-2  px-2 rounded-lg duration-300 transition-all", navStyle].join(" ")}>
         <Navbar />
       </div>
