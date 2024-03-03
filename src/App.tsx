@@ -13,7 +13,7 @@ import { Testimonials } from "./components/global/Testimonials";
 export default function App() {
  
   // navbar on scroll effect  
-  const [navStyle, setNavStyle] = useState("");
+  const [navStyle, setNavStyle] = useState("mt-2");
   const [prevScrollPos, setPrevScrollPos] = useState(0);
 
   useEffect(() => {
@@ -29,7 +29,7 @@ export default function App() {
         if (!isScrolledDown) {
           setNavStyle("mt-0 px-0 bg-white rounded-none");
         } else {
-          setNavStyle("display-none hidden");
+          setNavStyle("display-none  hidden");
         }
       } else {
         setNavStyle("bg-none mt-2");
@@ -45,8 +45,8 @@ export default function App() {
 
 
   return (
-    <div className="min-h-[200vh]">
-      <div className={["fixed z-10 w-full mt-2  px-2 rounded-lg duration-300 transition-all", navStyle].join(" ")}>
+    <div className="min-h-[200vh]  overflow-hidden">
+      <div className={["fixed z-10 w-full   px-2 rounded-lg duration-300 transition-all", navStyle].join(" ")}>
         <Navbar />
       </div>
       <Header title="Welcome to Kouralink" src="/src/assets/bg.png" />
