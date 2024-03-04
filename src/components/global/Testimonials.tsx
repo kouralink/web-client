@@ -11,7 +11,7 @@ import TestimonialsCard from "./cards/TestimonialsCard";
 export function Testimonials() {
   return (
     <div className="w-full flex items-center justify-center gap-28">
-      <Carousel className="w-full max-w-md">
+      <Carousel className="w-full max-w-xs xs:bg-red-200 sm:max-w-sm md:max-w-md">
         <CarouselContent >
           {Array.from({ length: 5 }).map((_, index) => (
             <CarouselItem key={index}>
