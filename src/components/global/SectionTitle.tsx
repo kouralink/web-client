@@ -12,7 +12,7 @@ const SectionTitle: React.FC<SectionTitleProps> = ({ title, color }) => {
         ;
 
     return (
-        <h1 className="text-5xl">
+        <h1 className="text-3xl  sm:text-4xl md:text-5xl lg:text-6xl">
             {uppercasedTitle.map((word, index) => (
                 <span key={index} className='' >
                 <span className={color}>{word.charAt(0)}</span>
