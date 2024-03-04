@@ -24,12 +24,11 @@ const Header: React.FC<HeaderProps> = ({ title, src }) => {
         ml-10 h-full 
         bg-[url('/src/assets/flishOfppt.svg')] 
         
-        bg-cover bg-center overflow-visible
-        w-[950px] 
+        bg-cover bg-left  overflow-visible
+        w-full 
         hidden sm:flex items-center justify-center
         "
         >
-        {/* <img src="/src/assets/ofppt1.svg" alt="ofppt logo" className="" /> */}
         </div>
       </div>
     </header>
