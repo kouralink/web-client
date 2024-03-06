@@ -3,6 +3,12 @@ import ReactDOM from 'react-dom/client'
 import App from './App.tsx'
 import './index.css'
 
+// redux
+import { Provider } from 'react-redux';
+import { store } from './state/store.ts';
+
+//react router
+
 import {
   createRoutesFromElements,
   createBrowserRouter,
@@ -10,6 +16,7 @@ import {
   RouterProvider,
 } from "react-router-dom";
 import Root from './layouts/Root.tsx';
+import Counter from './components/Counter.tsx';
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -27,8 +34,8 @@ const router = createBrowserRouter(
         index element={<App />} 
         />
         <Route
-          path=""
-          // element={<Contact />}
+          path="/test"
+          element={<Counter />}
           // loader={contactLoader}
           // action={contactAction}
         />
@@ -46,6 +53,8 @@ const router = createBrowserRouter(
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
-    <RouterProvider router={router} />
+    <Provider store={store}>
+        <RouterProvider router={router} />
+    </Provider>
   </React.StrictMode>,
 )
