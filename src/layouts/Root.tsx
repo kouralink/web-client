@@ -35,7 +35,7 @@ const Root: React.FC = () => {
     };
   }, [prevScrollPos]);
   return (
-    <div className="min-h-[200vh]  overflow-hidden">
+    <div className="min-h-[100vh]  overflow-hidden">
       <div
         className={[
           "fixed z-10 w-full   px-2 rounded-lg duration-300 transition-all",
