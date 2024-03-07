@@ -1,18 +1,19 @@
 import "flowbite";
 import { useState } from "react";
 import { AccountNavDropdownMenu } from "./AccountNavDropdownMenu";
+import { Link } from "react-router-dom";
 
 const Navbar: React.FC = () => {
   const [isActive, setIsActive] = useState(false);
   return (
     <nav className="bg-white border-gray-200 rounded-lg dark:bg-gray-900">
       <div className="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
-        <a href="#" className="flex items-center space-x-3 rtl:space-x-reverse">
+        <Link to="/" className="flex items-center space-x-3 rtl:space-x-reverse">
           <img src="/src/assets/logo.svg" className="h-8" alt="Flowbite Logo" />
           <span className="self-center text-2xl font-semibold whitespace-nowrap dark:text-white">
             Kouralink
           </span>
-        </a>
+        </Link>
         <div className="flex md:order-2 space-x-3 md:space-x-0 gap-2 rtl:space-x-reverse">
           {!isActive ? (
             <>
@@ -23,12 +24,14 @@ const Navbar: React.FC = () => {
               >
                 Log in
               </button>
+              <Link to={'/register'}>
               <button
                 type="button"
                 className="text-white bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-4 py-2 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
               >
                 Sing up
               </button>
+              </Link>
             </>
           ) : 
           <AccountNavDropdownMenu />
