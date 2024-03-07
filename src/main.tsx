@@ -1,11 +1,11 @@
-import React from 'react'
-import ReactDOM from 'react-dom/client'
-import App from './App.tsx'
-import './index.css'
+import React from "react";
+import ReactDOM from "react-dom/client";
+import App from "./App.tsx";
+import "./index.css";
 
 // redux
-import { Provider } from 'react-redux';
-import { store } from './state/store.ts';
+import { Provider } from "react-redux";
+import { store } from "./state/store.ts";
 
 //react router
 
@@ -15,8 +15,11 @@ import {
   Route,
   RouterProvider,
 } from "react-router-dom";
-import Root from './layouts/Root.tsx';
-import Counter from './components/Counter.tsx';
+import Root from "./layouts/Root.tsx";
+import Counter from "./components/Counter.tsx";
+import Login from "./pages/auth/Login.tsx";
+import Register from "./pages/auth/Register.tsx";
+import Reset from "./pages/auth/Reset.tsx";
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -27,12 +30,10 @@ const router = createBrowserRouter(
       // action={rootAction}
       // errorElement={<ErrorPage />}
     >
-      <Route 
+      <Route
       // errorElement={<ErrorPage />}
       >
-        <Route 
-        index element={<App />} 
-        />
+        <Route index element={<App />} />
         <Route
           path="/test"
           element={<Counter />}
@@ -40,8 +41,20 @@ const router = createBrowserRouter(
           // action={contactAction}
         />
         <Route
-          path=""
-          // element={<EditContact />}
+          path="/login"
+          element={<Login />}
+          // loader={contactLoader}
+          // action={editAction}
+        />
+        <Route
+          path="/register"
+          element={<Register />}
+          // loader={contactLoader}
+          // action={editAction}
+        />
+        <Route
+          path="/reset-password"
+          element={<Reset />}
           // loader={contactLoader}
           // action={editAction}
         />
@@ -50,11 +63,10 @@ const router = createBrowserRouter(
   )
 );
 
-
-ReactDOM.createRoot(document.getElementById('root')!).render(
+ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
     <Provider store={store}>
-        <RouterProvider router={router} />
+      <RouterProvider router={router} />
     </Provider>
-  </React.StrictMode>,
-)
+  </React.StrictMode>
+);
