@@ -12,7 +12,7 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 // redux state 
 import { useDispatch, useSelector } from "react-redux";
@@ -22,14 +22,21 @@ import { Loader2 } from "lucide-react";
 
 
 export default function Register() {
+  const navigate = useNavigate();
   const authError = useSelector((state: RootState) => state.auth.error);
   const authLoading = useSelector((state: RootState) => state.auth.loading);
+  const authUser = useSelector((state: RootState) => state.auth.user);
   const dispatch = useDispatch<AppDispatch>();
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const formData = Object.fromEntries(new FormData(e.currentTarget))
     dispatch(register({email:formData.email as string, password:formData.password as string}))
   };
+
+  if(!authError && authUser){
+    console.log('redirect to home page')
+    navigate("/");
+  }
   return (
     <div className="w-full h-fit flex items-center gap-4 justify-evenly mt-[100px]">
       <div className=" h-full ">
