@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { createUserWithEmailAndPassword,User,signOut ,updateProfile, signInWithEmailAndPassword, setPersistence, inMemoryPersistence,GoogleAuthProvider, signInWithPopup} from 'firebase/auth'
+import { createUserWithEmailAndPassword,User,signOut ,updateProfile, signInWithEmailAndPassword, setPersistence, inMemoryPersistence,GoogleAuthProvider, signInWithPopup, FacebookAuthProvider} from 'firebase/auth'
 import { auth } from '@/services/firebase';
 import { FirebaseError } from 'firebase/app';
 
@@ -119,14 +119,14 @@ const authSlice = createSlice({
             }
         )
         builder.addCase(
-            login_with_google.pending,
+            login_with_google_or_facebook.pending,
             (state)=>{
                 console.log('login with google pending')
                 state.loading = true
             }
         )
         .addCase(
-            login_with_google.fulfilled,
+            login_with_google_or_facebook.fulfilled,
             (state, action) => {
                 state.loading = false;
                 state.error = null;
@@ -140,7 +140,7 @@ const authSlice = createSlice({
                 }
             }
         ).addCase(
-            login_with_google.rejected,
+            login_with_google_or_facebook.rejected,
             (state, action) => {
                 console.log('login with google rejcted')
                 state.loading = false;
@@ -151,12 +151,18 @@ const authSlice = createSlice({
 });
 
 // login with google with google
-export const login_with_google = createAsyncThunk(
-    'auth/login_with_google',
-    async ()=> {
+export const login_with_google_or_facebook = createAsyncThunk(
+    'auth/login_with_google_or_facebook',
+    async ({login_with}:{login_with:string})=> {
         try{
-            const provider = new GoogleAuthProvider();
-            await signInWithPopup(auth, provider)
+            let provider = null
+            if(login_with === 'facebook'){
+                provider = new FacebookAuthProvider();
+            }
+            else if(login_with === 'google'){
+                provider = new GoogleAuthProvider();
+            }
+            provider && await signInWithPopup(auth, provider)
             return auth.currentUser
         }catch(error){
             if(error instanceof FirebaseError){
@@ -170,6 +176,8 @@ export const login_with_google = createAsyncThunk(
                     return 'Popup blocked'
                 }else if(error.code === 'auth/credential-already-in-use'){
                     return 'Credential already in use'
+                }else if(error.code === 'auth/account-exists-with-different-credential'){
+                    return 'Account exists with different credential'
                 }
                 return error.message
             }else{
