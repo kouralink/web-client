@@ -132,7 +132,7 @@ const authSlice = createSlice({
                 console.log('login with google fullfilled')
                 if (typeof action.payload === 'object' && action.payload !== null) {
                     
-                    state.error = null;
+                    state.error = "reset with no error";
                     state.user = action.payload as User;
 
                 } else {

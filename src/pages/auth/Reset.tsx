@@ -37,12 +37,12 @@ export default function Reset() {
     
   };
   useEffect(() => {
-    if(!authLoading){
+    if(!authLoading && authError ){
     toast({
-        description: authError
-        ? authError
-        : "Reset password message has been sent.",
-        classesStyle:authError ? "bg-red-500 text-white" : ""
+        description: authError === "reset with no error"
+        ?  "Reset password message has been sent." : authError
+        ,
+        classesStyle:authError === "no error" ? "":"bg-red-500 text-white" 
       });}
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [authLoading]);
