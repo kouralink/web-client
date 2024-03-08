@@ -4,7 +4,7 @@ import Facebook from "/src/assets/social/facebook.png";
 import Google from "/src/assets/social/google.png";
 import { useDispatch } from 'react-redux';
 import { AppDispatch } from '@/state/store';
-import { login_with_google } from '@/state/auth/authSlice';
+import { login_with_google_or_facebook } from '@/state/auth/authSlice';
 interface AuthWithProps {
     // Add any props you need for the component here
 }
@@ -13,10 +13,10 @@ const AuthWith: React.FC<AuthWithProps> = () => {
     const dispatch = useDispatch<AppDispatch>();
     // Add your component logic here
     const handleGoogle  = () =>{
-        dispatch(login_with_google())
+        dispatch(login_with_google_or_facebook({login_with:'google'}))
     }
     const handleFacebook  = () =>{
-      console.log('Facebook');
+      dispatch(login_with_google_or_facebook({login_with:'facebook'}))
   }
     return (
         <div className='flex flex-col gap-2'>
