@@ -7,6 +7,7 @@ import { auth } from "@/services/firebase";
 import { useDispatch } from "react-redux";
 import { AppDispatch } from "@/state/store";
 import { setUser } from "@/state/auth/authSlice";
+import { Toaster } from "@/components/ui/toaster";
 
 const Root: React.FC = () => {
   // navbar on scroll effect
@@ -49,6 +50,7 @@ const Root: React.FC = () => {
   }, [prevScrollPos]);
   return (
     <div className="min-h-[100vh]  overflow-hidden">
+      <Toaster />
       <div
         className={[
           "fixed z-10 w-full   px-2 rounded-lg duration-300 transition-all",

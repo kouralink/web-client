@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { createUserWithEmailAndPassword,User,signOut ,updateProfile, signInWithEmailAndPassword, setPersistence, inMemoryPersistence,GoogleAuthProvider, signInWithPopup, FacebookAuthProvider} from 'firebase/auth'
+import { createUserWithEmailAndPassword,User,signOut ,updateProfile, signInWithEmailAndPassword, setPersistence, inMemoryPersistence,GoogleAuthProvider, signInWithPopup, FacebookAuthProvider, sendPasswordResetEmail} from 'firebase/auth'
 import { auth } from '@/services/firebase';
 import { FirebaseError } from 'firebase/app';
 
@@ -46,10 +46,10 @@ const authSlice = createSlice({
             login.fulfilled,
             (state, action) => {
                 state.loading = false;
-                state.error = null;
                 console.log('login fullfilled')
                 if (typeof action.payload === 'object' && action.payload !== null) {
                     
+                    state.error = null;
                     state.user = action.payload as User;
 
                 } else {
@@ -75,10 +75,10 @@ const authSlice = createSlice({
             register.fulfilled,
             (state, action) => {
                 state.loading = false;
-                state.error = null;
                 console.log('fullfilled')
                 if (typeof action.payload === 'object' && action.payload !== null) {
                     
+                    state.error = null;
                     state.user = action.payload as User;
 
                 } else {
@@ -102,8 +102,8 @@ const authSlice = createSlice({
             logout.fulfilled,
             (state, action) => {
                 state.loading = false;
-                state.error = null;
                 if (action.payload == null) {
+                    state.error = null;
                     state.user = null;
                 } else {
                     state.error = action.payload as string;
@@ -129,10 +129,10 @@ const authSlice = createSlice({
             login_with_google_or_facebook.fulfilled,
             (state, action) => {
                 state.loading = false;
-                state.error = null;
                 console.log('login with google fullfilled')
                 if (typeof action.payload === 'object' && action.payload !== null) {
                     
+                    state.error = null;
                     state.user = action.payload as User;
 
                 } else {
@@ -147,8 +147,57 @@ const authSlice = createSlice({
                 state.error = action.error.message as string;
             }
         );
+        builder.addCase(
+            reset_password.pending,
+            (state)=>{
+                console.log('reset password pending')
+                state.loading = true
+            }
+        )
+        .addCase(
+            reset_password.fulfilled,
+            (state, action) => {
+                state.loading = false;
+                console.log('reset password fullfilled')
+                if (action.payload === true) {
+                    state.error = null;
+                } else {
+                    state.error = action.payload as string;
+                }
+            }
+        ).addCase(
+            reset_password.rejected,
+            (state, action) => {
+                console.log('reset password rejcted')
+                state.loading = false;
+                state.error = action.error.message as string;
+            }
+        );
     }
 });
+// reset password
+export const reset_password = createAsyncThunk(
+    'auth/reset_password',
+    async ({email}:{email:string})=> {
+        try{
+            await sendPasswordResetEmail(auth,email)
+            return true
+        }catch(error){
+            if(error instanceof FirebaseError){
+                if(error.code === 'auth/invalid-email'){
+                    return 'Invalid email'
+                }else if(error.code === 'auth/user-not-found'){  
+                    return 'User not found'
+                }else if(error.code === 'auth/too-many-requests'){
+                    return 'Too many requests'
+                }
+                return error.message
+            }else{
+                return 'An error occurred'
+            }
+        }
+    }
+)
 
 // login with google with google
 export const login_with_google_or_facebook = createAsyncThunk(

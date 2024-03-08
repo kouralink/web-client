@@ -11,17 +11,46 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
-import Facebook from "/src/assets/social/facebook.png";
-import Google from "/src/assets/social/google.png";
 import SectionTitle from "@/components/global/SectionTitle";
+import AuthWith from "@/components/global/cards/AuthWith";
+import { useDispatch, useSelector } from "react-redux";
+import { AppDispatch, RootState } from "@/state/store";
+import { reset_password } from "@/state/auth/authSlice";
+import { useToast } from "@/components/ui/use-toast";
+import { Loader2 } from "lucide-react";
+import { useEffect } from "react";
 
 export default function Reset() {
+  const { toast } = useToast();
+  const navigate = useNavigate();
+  const authError = useSelector((state: RootState) => state.auth.error);
+  const authLoading = useSelector((state: RootState) => state.auth.loading);
+  const authUser = useSelector((state: RootState) => state.auth.user);
+  const dispatch = useDispatch<AppDispatch>();
+  
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    console.log("submit");
+    const formData = Object.fromEntries(new FormData(e.currentTarget));
+    dispatch(reset_password({ email: formData.email as string }));    
+    
   };
+  useEffect(() => {
+    if(!authLoading){
+    toast({
+        description: authError
+        ? authError
+        : "Reset password message has been sent.",
+        classesStyle:authError ? "bg-red-500 text-white" : ""
+      });}
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [authLoading]);
+
+
+  if (!authError && !authLoading && authUser ) {
+    navigate("/");
+  }
   return (
     <div className="w-full h-fit flex items-center gap-4 justify-evenly mt-[100px]">
       <div className="flex items-end justify-start">
@@ -53,39 +82,20 @@ export default function Reset() {
                 />
               </div>
               <div className="flex justify-end">
-                <Button type="submit">Reset Password</Button>
+                {authLoading ? (
+                  <Button disabled>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Please wait
+                  </Button>
+                ) : (
+                  <Button type="submit">Reset Password</Button>
+                )}
               </div>
             </div>
           </form>
         </CardContent>
         <CardFooter className="w-full flex flex-col gap-4 [&>*]:w-full">
-          <div className="">
-            <div className="flex gap-6 items-center">
-              <div className="h-[.1rem] bg-gray-200 w-full before:contents"></div>
-              <div className="w-full">or login with</div>
-              <div className="h-[.1rem] bg-gray-200 w-full before:contents"></div>
-            </div>
-          </div>
-          <div className="w-full flex gap-2 items-center justify-center ">
-            <Button
-              variant={"outline"}
-              className="bg-white flex gap-2 rounded-lg border-none shadow-lg "
-            >
-              <img src={Google} className="w-4 h-4 rounded-full" alt="google" />{" "}
-              Google
-            </Button>
-            <Button
-              variant={"outline"}
-              className="bg-white flex gap-2 rounded-lg border-none shadow-lg"
-            >
-              <img
-                src={Facebook}
-                className="w-4 h-4 rounded-full"
-                alt="facebook"
-              />{" "}
-              Facebook
-            </Button>
-          </div>
+          <AuthWith />
           <div className="flex justify-center ">
             <p>
               Don't have an account?{" "}
