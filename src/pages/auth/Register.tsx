@@ -14,10 +14,21 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Link } from "react-router-dom";
 
+// redux state 
+import { useDispatch, useSelector } from "react-redux";
+import { register } from "../../state/auth/authSlice";
+import { AppDispatch, RootState } from "../../state/store";
+import { Loader2 } from "lucide-react";
+
+
 export default function Register() {
+  const authError = useSelector((state: RootState) => state.auth.error);
+  const authLoading = useSelector((state: RootState) => state.auth.loading);
+  const dispatch = useDispatch<AppDispatch>();
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    console.log("submit");
+    const formData = Object.fromEntries(new FormData(e.currentTarget))
+    dispatch(register({email:formData.email as string, password:formData.password as string}))
   };
   return (
     <div className="w-full h-fit flex items-center gap-4 justify-evenly mt-[100px]">
@@ -77,8 +88,17 @@ export default function Register() {
                   required
                 />
               </div>
+              <div>
+                {authError && <p className="text-red-500">{authError}</p>}
+              </div>
               <div className="flex justify-end">
+                { authLoading ? 
+                <Button disabled>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                Please wait
+              </Button>:
                 <Button type="submit">Create</Button>
+                }
               </div>
             </div>
           </form>

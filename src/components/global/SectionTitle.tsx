@@ -13,14 +13,14 @@ const SectionTitle: React.FC<SectionTitleProps> = ({ title, color = 'text-primar
         ;
 
     return (
-        <h1 className={classesStyle}>
+        <p className={classesStyle}>
             {uppercasedTitle.map((word, index) => (
                 <span key={index} className='' >
                 <span className={color}>{word.charAt(0)}</span>
                 <span >{word.slice(1) + " "}</span>
                 </span>
             ))}
-        </h1>
+        </p>
     );
 };
 

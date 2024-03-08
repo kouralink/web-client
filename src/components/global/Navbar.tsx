@@ -1,10 +1,11 @@
 import "flowbite";
-import { useState } from "react";
 import { AccountNavDropdownMenu } from "./AccountNavDropdownMenu";
 import { Link } from "react-router-dom";
+import { useSelector } from "react-redux";
+import { RootState } from "@/state/store";
 
 const Navbar: React.FC = () => {
-  const [isActive, setIsActive] = useState(false);
+  const authUser = useSelector((state: RootState): RootState['auth']['user'] => state.auth.user);
   return (
     <nav className="bg-white border-gray-200 rounded-lg dark:bg-gray-900">
       <div className="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
@@ -15,15 +16,19 @@ const Navbar: React.FC = () => {
           </span>
         </Link>
         <div className="flex md:order-2 space-x-3 md:space-x-0 gap-2 rtl:space-x-reverse">
-          {!isActive ? (
+          {!authUser ? (
             <>
+              <Link to={'/login'}>
+
               <button
                 type="button"
-                onClick={() => setIsActive(true)}
+                
                 className="text-accent-foreground bg-accent hover:bg-gray-200 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-4 py-2 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
               >
                 Log in
               </button>
+              </Link>
+
               <Link to={'/register'}>
               <button
                 type="button"
@@ -53,9 +58,9 @@ const Navbar: React.FC = () => {
             >
               <path
                 stroke="currentColor"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
                 d="M1 1h15M1 7h15M1 13h15"
               />
             </svg>
@@ -91,9 +96,9 @@ const Navbar: React.FC = () => {
                 >
                   <path
                     stroke="currentColor"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
                     d="m1 1 4 4 4-4"
                   />
                 </svg>
