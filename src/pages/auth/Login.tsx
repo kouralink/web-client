@@ -11,18 +11,37 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
-import Facebook from "/src/assets/social/facebook.png";
-import Google from "/src/assets/social/google.png";
 import SectionTitle from "@/components/global/SectionTitle";
+import { useDispatch, useSelector } from "react-redux";
+import { AppDispatch, RootState } from "@/state/store";
+import { login } from "@/state/auth/authSlice";
+import { Loader2 } from "lucide-react";
+import AuthWith from "@/components/global/cards/AuthWith";
 
 export default function Login() {
-
-    const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-        e.preventDefault();
-        console.log("submit");
-    };
+  const navigate = useNavigate();
+  const authError = useSelector((state: RootState) => state.auth.error);
+  const authLoading = useSelector((state: RootState) => state.auth.loading);
+  const authUser = useSelector((state: RootState) => state.auth.user);
+  const dispatch = useDispatch<AppDispatch>();
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    console.log("submit");
+    const formData = Object.fromEntries(new FormData(e.currentTarget));
+    console.log(formData)
+    dispatch(
+      login({
+        email: formData.email as string,
+        password: formData.password as string,
+        rememberMe:formData.rememberme ? formData.rememberme as string: "off",
+      })
+    );
+  };
+  if (!authError && authUser) {
+    navigate("/");
+  }
   return (
     <div className="w-full h-fit flex items-center gap-4 justify-evenly mt-[100px]">
       <div>
@@ -31,11 +50,11 @@ export default function Login() {
       <Card className="w-[400px] aspect-square flex flex-col justify-center">
         <CardHeader>
           <CardTitle>
-          <SectionTitle
+            <SectionTitle
               title="Sing in to Kouralink"
               classesStyle="text-lg  sm:text-1xl md:text-2xl lg:text-3xl"
             />{" "}
-           </CardTitle>
+          </CardTitle>
           <CardDescription>Create your hestory in one-click.</CardDescription>
         </CardHeader>
         <CardContent className="">
@@ -72,43 +91,27 @@ export default function Login() {
                   <Label htmlFor="rememberme">Remember me</Label>
                 </div>
                 <div>
-                  <Link to={'/reset-password'}>Forgot password?</Link>
+                  <Link to={"/reset-password"}>Forgot password?</Link>
                 </div>
               </div>
-            <div className="flex justify-end">
-          <Button type="submit">Join</Button>
-        </div>
+              <div>
+                {authError && <p className="text-red-500">{authError}</p>}
+              </div>
+              <div className="flex justify-end">
+                {authLoading ? (
+                  <Button disabled>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Please wait
+                  </Button>
+                ) : (
+                  <Button type="submit">Join</Button>
+                )}
+              </div>
             </div>
           </form>
         </CardContent>
         <CardFooter className="w-full flex flex-col gap-4 [&>*]:w-full">
-          <div className="">
-            <div className="flex gap-6 items-center">
-              <div className="h-[.1rem] bg-gray-200 w-full before:contents"></div>
-              <div className="w-full">or login with</div>
-              <div className="h-[.1rem] bg-gray-200 w-full before:contents"></div>
-            </div>
-          </div>
-          <div className="w-full flex gap-2 items-center justify-center ">
-            <Button
-              variant={"outline"}
-              className="bg-white flex gap-2 rounded-lg border-none shadow-lg "
-            >
-              <img src={Google} className="w-4 h-4 rounded-full" alt="google" />{" "}
-              Google
-            </Button>
-            <Button
-              variant={"outline"}
-              className="bg-white flex gap-2 rounded-lg border-none shadow-lg"
-            >
-              <img
-                src={Facebook}
-                className="w-4 h-4 rounded-full"
-                alt="facebook"
-              />{" "}
-              Facebook
-            </Button>
-          </div>
+          <AuthWith />
           <div className="flex justify-center mb-2">
             <p>
               Don't have an account?{" "}
@@ -118,7 +121,6 @@ export default function Login() {
             </p>
           </div>
         </CardFooter>
-
       </Card>
     </div>
   );
