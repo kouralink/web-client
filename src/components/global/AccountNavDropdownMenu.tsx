@@ -39,6 +39,7 @@ import { logout } from "@/state/auth/authSlice";
 export function AccountNavDropdownMenu() {
   
   const authLoading = useSelector((state: RootState) => state.auth.loading);
+  const authUser = useSelector((state: RootState) => state.auth.user);
   const dispatch = useDispatch<AppDispatch>();
   return (
     <DropdownMenu>
@@ -49,7 +50,7 @@ export function AccountNavDropdownMenu() {
         </Avatar>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-56">
-        <DropdownMenuLabel>My Account</DropdownMenuLabel>
+        <DropdownMenuLabel>{authUser ? authUser.displayName : "My"} Account</DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
           <DropdownMenuItem>
