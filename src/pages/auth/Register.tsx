@@ -19,6 +19,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { register } from "../../state/auth/authSlice";
 import { AppDispatch, RootState } from "../../state/store";
 import { Loader2 } from "lucide-react";
+import AuthWith from "@/components/global/cards/AuthWith";
 
 
 export default function Register() {
@@ -33,7 +34,9 @@ export default function Register() {
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const formData = Object.fromEntries(new FormData(e.currentTarget))
-    dispatch(register({username:formData.username as string,email:formData.email as string, password:formData.password as string, confPassword:formData.confPassword as string}))
+    dispatch(register({username:formData.username as string,
+      email:formData.email as string, password:formData.password as string,
+       confPassword:formData.confPassword as string,rememberMe:formData.rememberme ? formData.rememberme as string: "off",}))
   };
 
   if(!authError && authUser){
@@ -97,6 +100,15 @@ export default function Register() {
                   required
                 />
               </div>
+              <div className="flex flex-row gap-2 ">
+                  <input
+                    type="checkbox"
+                    id="rememberme"
+                    name="rememberme"
+                    className="rounded-lg"
+                  />
+                  <Label htmlFor="rememberme">Remember me</Label>
+                </div>
               <div>
                 {authError && <p className="text-red-500">{authError}</p>}
               </div>
@@ -112,7 +124,8 @@ export default function Register() {
             </div>
           </form>
         </CardContent>
-        <CardFooter className="w-full">
+        <CardFooter className="w-full flex flex-col gap-4 [&>*]:w-full">
+          <AuthWith/>
         <div className="flex justify-center mb-2">
             <p >
               Already have an account?{" "}
