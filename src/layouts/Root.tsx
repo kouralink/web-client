@@ -2,11 +2,24 @@ import React from "react";
 import { Outlet } from "react-router-dom";
 import Navbar from "../components/global/Navbar";
 import { useEffect, useState } from "react";
+import { onAuthStateChanged } from "firebase/auth";
+import { auth } from "@/services/firebase";
+import { useDispatch } from "react-redux";
+import { AppDispatch } from "@/state/store";
+import { setUser } from "@/state/auth/authSlice";
 
 const Root: React.FC = () => {
-    // navbar on scroll effect  
+  // navbar on scroll effect
   const [navStyle, setNavStyle] = useState("mt-2");
   const [prevScrollPos, setPrevScrollPos] = useState(0);
+  const dispatch = useDispatch<AppDispatch>();
+  useEffect(() => {
+    onAuthStateChanged(auth, (user) => {
+        console.log('auth hase changed:',user)
+        dispatch(setUser(user))
+      }
+    );
+  },[]);
 
   useEffect(() => {
     const handleScroll = () => {

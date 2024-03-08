@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { createUserWithEmailAndPassword,User } from 'firebase/auth'
+import { createUserWithEmailAndPassword,User,signOut } from 'firebase/auth'
 import { auth } from '@/services/firebase';
 import { FirebaseError } from 'firebase/app';
 
@@ -14,7 +14,7 @@ interface AuthState{
 
 // inisial state
 const initialState:AuthState = {
-    user:null,
+    user:auth.currentUser,
     loading:false,
     error:null
 };
@@ -46,6 +46,7 @@ const authSlice = createSlice({
             register.fulfilled,
             (state, action) => {
                 state.loading = false;
+                state.error = null;
                 console.log('fullfilled')
                 if (typeof action.payload === 'object' && action.payload !== null) {
                     state.user = action.payload as User;
@@ -61,6 +62,31 @@ const authSlice = createSlice({
                 state.error = action.error.message as string;
             }
         );
+        builder.addCase(
+            logout.pending,
+            (state)=>{
+                state.loading = true
+            }
+        ).addCase(
+            logout.fulfilled,
+            (state, action) => {
+                state.loading = false;
+                state.error = null;
+                if (action.payload == null) {
+                    state.user = null;
+                } else {
+                    state.error = action.payload as string;
+                    alert(state.error)
+                }
+            }
+        ).addCase(
+            logout.rejected,
+            (state, action) => {
+                state.loading = false;
+                state.error = action.error.message as string;
+                alert(state.error)
+            }
+        )
     }
 });
 
@@ -84,6 +110,21 @@ export const register = createAsyncThunk(
             }else{
                 return 'An error occurred'
             }
+        }
+    }
+)
+
+export const logout = createAsyncThunk(
+    'auth/lougout',
+    async ()=> {
+        try{
+            await signOut(auth)
+            return null
+        }catch(error){
+            if(error instanceof FirebaseError){
+                return error.message 
+            }else{
+                return 'An error occurred'}
         }
     }
 )
