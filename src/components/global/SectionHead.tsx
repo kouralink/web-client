@@ -18,7 +18,7 @@ const SectionHead: React.FC<SectionHeadProps> = ({ title, description }) => {
       </div>
       <div className="relative right-[70px] ">
         <h1 className="text-4xl font-bold mt-30">
-          {<SectionTitle color="text-green-900" title={title} />}
+          {<SectionTitle color="text-primary-700" title={title} />}
         </h1>
         <p className="max-w-[600px] pl-6">{description}</p>
       </div>
