@@ -27,14 +27,16 @@ export default function Register() {
   const authLoading = useSelector((state: RootState) => state.auth.loading);
   const authUser = useSelector((state: RootState) => state.auth.user);
   const dispatch = useDispatch<AppDispatch>();
+
+  
+
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const formData = Object.fromEntries(new FormData(e.currentTarget))
-    dispatch(register({email:formData.email as string, password:formData.password as string}))
+    dispatch(register({username:formData.username as string,email:formData.email as string, password:formData.password as string, confPassword:formData.confPassword as string}))
   };
 
   if(!authError && authUser){
-    console.log('redirect to home page')
     navigate("/");
   }
   return (

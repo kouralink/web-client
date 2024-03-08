@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { createUserWithEmailAndPassword,User,signOut } from 'firebase/auth'
+import { createUserWithEmailAndPassword,User,signOut ,updateProfile} from 'firebase/auth'
 import { auth } from '@/services/firebase';
 import { FirebaseError } from 'firebase/app';
 
@@ -49,7 +49,9 @@ const authSlice = createSlice({
                 state.error = null;
                 console.log('fullfilled')
                 if (typeof action.payload === 'object' && action.payload !== null) {
+                    
                     state.user = action.payload as User;
+
                 } else {
                     state.error = action.payload as string;
                 }
@@ -92,9 +94,23 @@ const authSlice = createSlice({
 
 export const register = createAsyncThunk(
     'auth/register',
-    async ({email, password}: {email: string, password: string})=> {
+    async ({username,email, password,confPassword}: {username: string, email: string,password: string, confPassword: string})=> {
         try{
+            console.log(username,email,password,confPassword)
+            if(password !== confPassword){
+                return 'Password and confirm password do not match'
+            }
+            
             await createUserWithEmailAndPassword(auth,email,password)
+            auth.onAuthStateChanged((user)=>{
+                if(user){
+                updateProfile(user,{
+                    displayName:username
+                }).catch((error)=>{
+                    alert(error.message)
+                })
+                }
+            })
             return auth.currentUser
         }catch(error){
             if(error instanceof FirebaseError){
