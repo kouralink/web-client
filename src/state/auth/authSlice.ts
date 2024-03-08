@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { createUserWithEmailAndPassword,User,signOut ,updateProfile, signInWithEmailAndPassword, setPersistence, inMemoryPersistence} from 'firebase/auth'
+import { createUserWithEmailAndPassword,User,signOut ,updateProfile, signInWithEmailAndPassword, setPersistence, inMemoryPersistence,GoogleAuthProvider, signInWithPopup} from 'firebase/auth'
 import { auth } from '@/services/firebase';
 import { FirebaseError } from 'firebase/app';
 
@@ -118,9 +118,66 @@ const authSlice = createSlice({
                 alert(state.error)
             }
         )
+        builder.addCase(
+            login_with_google.pending,
+            (state)=>{
+                console.log('login with google pending')
+                state.loading = true
+            }
+        )
+        .addCase(
+            login_with_google.fulfilled,
+            (state, action) => {
+                state.loading = false;
+                state.error = null;
+                console.log('login with google fullfilled')
+                if (typeof action.payload === 'object' && action.payload !== null) {
+                    
+                    state.user = action.payload as User;
+
+                } else {
+                    state.error = action.payload as string;
+                }
+            }
+        ).addCase(
+            login_with_google.rejected,
+            (state, action) => {
+                console.log('login with google rejcted')
+                state.loading = false;
+                state.error = action.error.message as string;
+            }
+        );
     }
 });
 
+// login with google with google
+export const login_with_google = createAsyncThunk(
+    'auth/login_with_google',
+    async ()=> {
+        try{
+            const provider = new GoogleAuthProvider();
+            await signInWithPopup(auth, provider)
+            return auth.currentUser
+        }catch(error){
+            if(error instanceof FirebaseError){
+                if(error.code === 'auth/operation-not-allowed'){
+                    return 'Operation not allowed'
+                }else if(error.code === 'auth/popup-closed-by-user'){
+                    return 'Popup closed by user'
+                }else if(error.code === 'auth/cancelled-popup-request'){
+                    return 'Cancelled popup request'
+                }else if(error.code === 'auth/popup-blocked'){
+                    return 'Popup blocked'
+                }else if(error.code === 'auth/credential-already-in-use'){
+                    return 'Credential already in use'
+                }
+                return error.message
+            }else{
+                return 'An error occurred'
+            }
+        }
+    }
+)
 
 export const login = createAsyncThunk(
     'auth/login',
