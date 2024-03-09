@@ -29,13 +29,6 @@ export default function Reset() {
   const authLoading = useSelector((state: RootState) => state.auth.loading);
   const authUser = useSelector((state: RootState) => state.auth.user);
   const dispatch = useDispatch<AppDispatch>();
-  
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    const formData = Object.fromEntries(new FormData(e.currentTarget));
-    dispatch(reset_password({ email: formData.email as string }));    
-    
-  };
   // reset auth error state before destroy componenet
   const reset = () => {
     dispatch(setError(null))
@@ -44,14 +37,22 @@ export default function Reset() {
     return () => {reset()}
   // eslint-disable-next-line react-hooks/exhaustive-deps
   },[])
+  
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const formData = Object.fromEntries(new FormData(e.currentTarget));
+    dispatch(reset_password({ email: formData.email as string }));    
+    
+  };
   useEffect(() => {
-    if(!authLoading && authError ){
+    if( !authLoading && ['Too many requests','User not found','Invalid email',"reset with no error"].find(e => e === authError)){
     toast({
         description: authError === "reset with no error"
         ?  "Reset password message has been sent." : authError
         ,
-        classesStyle:authError === "reset with no error" ? "":"bg-red-500 text-white" 
+        variant: authError === "reset with no error" ? "default": "destructive"
       });}
+      
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [authLoading]);
 

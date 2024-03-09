@@ -29,22 +29,25 @@ export default function Login() {
   const dispatch = useDispatch<AppDispatch>();
   // reset auth error state before destroy componenet
   const reset = () => {
-    dispatch(setError(null))
-  }
+    dispatch(setError(null));
+  };
   useEffect(() => {
-    return () => {reset()}
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  },[])
+    return () => {
+      reset();
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    console.log("submit");
     const formData = Object.fromEntries(new FormData(e.currentTarget));
-    console.log(formData)
+    console.log(formData);
     dispatch(
       login({
         email: formData.email as string,
         password: formData.password as string,
-        rememberMe:formData.rememberme ? formData.rememberme as string: "off",
+        rememberMe: formData.rememberme
+          ? (formData.rememberme as string)
+          : "off",
       })
     );
   };
