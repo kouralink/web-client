@@ -247,7 +247,7 @@ export const login = createAsyncThunk(
             }else{
                 await setPersistence(auth, inMemoryPersistence)
                 .then(() => {
-                    signInWithEmailAndPassword(auth,email,password)
+                    return signInWithEmailAndPassword(auth,email,password)
                 })
             } 
             return auth.currentUser
@@ -287,7 +287,7 @@ export const register = createAsyncThunk(
             }else{
                     await setPersistence(auth, inMemoryPersistence)
                     .then(() => {
-                        createUserWithEmailAndPassword(auth,email,password)
+                        return createUserWithEmailAndPassword(auth,email,password)
                     })
             } 
             
