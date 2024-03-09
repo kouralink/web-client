@@ -136,7 +136,7 @@ export default function Register() {
         <div className="flex justify-center mb-2">
             <p >
               Already have an account?{" "}
-              <Link to="/login" className="text-primary-700">
+              <Link to="/auth" className="text-primary-700">
                 Log in
               </Link>
             </p>

@@ -108,7 +108,7 @@ export default function Reset() {
           <div className="flex justify-center ">
             <p>
               Don't have an account?{" "}
-              <Link to="/register" className="text-primary-700">
+              <Link to="/auth/register" className="text-primary-700">
                 Register
               </Link>
             </p>
@@ -116,7 +116,7 @@ export default function Reset() {
           <div className="flex justify-center ">
             <p>
               Already have an account?{" "}
-              <Link to="/login" className="text-primary-700">
+              <Link to="/auth" className="text-primary-700">
                 Log in
               </Link>
             </p>
