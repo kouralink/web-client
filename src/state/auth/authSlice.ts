@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { createUserWithEmailAndPassword,User,signOut ,updateProfile, signInWithEmailAndPassword, setPersistence, inMemoryPersistence,GoogleAuthProvider, signInWithPopup, FacebookAuthProvider, sendPasswordResetEmail} from 'firebase/auth'
+import { createUserWithEmailAndPassword,User,signOut ,updateProfile, signInWithEmailAndPassword, setPersistence,GoogleAuthProvider, signInWithPopup, FacebookAuthProvider, sendPasswordResetEmail ,browserSessionPersistence} from 'firebase/auth'
 import { auth } from '@/services/firebase';
 import { FirebaseError } from 'firebase/app';
 
@@ -245,7 +245,7 @@ export const login = createAsyncThunk(
             if(rememberMe === "on"){
             await signInWithEmailAndPassword(auth,email,password)
             }else{
-                await setPersistence(auth, inMemoryPersistence)
+                await setPersistence(auth, browserSessionPersistence)
                 .then(() => {
                     return signInWithEmailAndPassword(auth,email,password)
                 })
@@ -285,7 +285,7 @@ export const register = createAsyncThunk(
             if(rememberMe === "on"){
                 await createUserWithEmailAndPassword(auth,email,password)
             }else{
-                    await setPersistence(auth, inMemoryPersistence)
+                    await setPersistence(auth, browserSessionPersistence)
                     .then(() => {
                         return createUserWithEmailAndPassword(auth,email,password)
                     })

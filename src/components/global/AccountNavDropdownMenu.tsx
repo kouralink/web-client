@@ -45,12 +45,12 @@ export function AccountNavDropdownMenu() {
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Avatar className="w-10 h-10">
-          <AvatarImage src="https://github.com/shadcn.png" alt="@shadcn" />
-          <AvatarFallback>WAL</AvatarFallback>
+          <AvatarImage src={authUser?.photoURL ? authUser?.photoURL: "" } alt={"logo of " + authUser?.displayName} />
+          <AvatarFallback>{authUser?.displayName ? authUser?.displayName.charAt(0) :authUser?.email?.charAt(0)}</AvatarFallback>
         </Avatar>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-56">
-        <DropdownMenuLabel>{authUser ? authUser.displayName : "My"} Account</DropdownMenuLabel>
+        <DropdownMenuLabel>{authUser?.displayName ? authUser?.displayName  : "My"} Account</DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
           <DropdownMenuItem>
@@ -65,7 +65,7 @@ export function AccountNavDropdownMenu() {
           </DropdownMenuItem>
           <DropdownMenuItem>
             <Settings className="mr-2 h-4 w-4" />
-            <span>Settings</span>
+            <Link to={'/settings'}>Settings</Link>
             <DropdownMenuShortcut>⌘S</DropdownMenuShortcut>
           </DropdownMenuItem>
           <DropdownMenuItem>

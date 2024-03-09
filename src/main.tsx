@@ -1,6 +1,5 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
-import App from "./App.tsx";
 import "./index.css";
 
 // redux
@@ -8,56 +7,62 @@ import { Provider } from "react-redux";
 import { store } from "./state/store.ts";
 
 //react router
-
 import {
   createRoutesFromElements,
   createBrowserRouter,
   Route,
   RouterProvider,
 } from "react-router-dom";
-import Root from "./layouts/Root.tsx";
-import Counter from "./components/Counter.tsx";
+
+// Layouts
+import RootLyout from "./layouts/RootLyout.tsx";
+import AuthLayout from "./layouts/AuthLyout.tsx";
+import SettingsLayout from "./layouts/SettingsLayout.tsx";
+
+// Pages
+  // Root
+import App from "./App.tsx";
+  // Auth
 import Login from "./pages/auth/Login.tsx";
 import Register from "./pages/auth/Register.tsx";
 import Reset from "./pages/auth/Reset.tsx";
+  // Settings
+import Profile from "./pages/settings/Profile.tsx";
+
 
 const router = createBrowserRouter(
   createRoutesFromElements(
     <Route
       path="/"
-      element={<Root />}
       // loader={rootLoader}
       // action={rootAction}
       // errorElement={<ErrorPage />}
     >
       <Route
-      // errorElement={<ErrorPage />}
+        element={<RootLyout />}
+        // errorElement={<ErrorPage />}
       >
         <Route index element={<App />} />
         <Route
-          path="/test"
-          element={<Counter />}
-          // loader={contactLoader}
-          // action={contactAction}
-        />
+          path="auth"
+          element={<AuthLayout />}
+          // loader={rootLoader}
+          // action={rootAction}
+          // errorElement={<ErrorPage />}
+        >
+          <Route index element={<Login />} />
+          <Route path="register" element={<Register />} />
+          <Route path="reset-password" element={<Reset />} />
+        </Route>
         <Route
-          path="/login"
-          element={<Login />}
-          // loader={contactLoader}
-          // action={editAction}
-        />
-        <Route
-          path="/register"
-          element={<Register />}
-          // loader={contactLoader}
-          // action={editAction}
-        />
-        <Route
-          path="/reset-password"
-          element={<Reset />}
-          // loader={contactLoader}
-          // action={editAction}
-        />
+          path="settings"
+          element={<SettingsLayout />}
+          // loader={rootLoader}
+          // action={rootAction}
+          // errorElement={<ErrorPage />}
+        >
+          <Route index element={<Profile />} />
+        </Route>
       </Route>
     </Route>
   )

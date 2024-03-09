@@ -104,7 +104,7 @@ export default function Login() {
                   <Label htmlFor="rememberme">Remember me</Label>
                 </div>
                 <div>
-                  <Link to={"/reset-password"}>Forgot password?</Link>
+                  <Link to={"/auth/reset-password"}>Forgot password?</Link>
                 </div>
               </div>
               <div>
@@ -128,7 +128,7 @@ export default function Login() {
           <div className="flex justify-center mb-2">
             <p>
               Don't have an account?{" "}
-              <Link to="/register" className="text-primary-700">
+              <Link to="/auth/register" className="text-primary-700">
                 Register
               </Link>
             </p>
