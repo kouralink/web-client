@@ -30,7 +30,7 @@ const authSlice = createSlice({
         setLoading:(state,action:PayloadAction<boolean>)=>{
             state.loading = action.payload
         },
-        setError:(state,action:PayloadAction<string|null>)=>{
+        setError:(state,action:PayloadAction<null|string>)=>{
             state.error = action.payload
         }
     },
@@ -132,7 +132,7 @@ const authSlice = createSlice({
                 console.log('login with google fullfilled')
                 if (typeof action.payload === 'object' && action.payload !== null) {
                     
-                    state.error = "reset with no error";
+                    state.error = null;
                     state.user = action.payload as User;
 
                 } else {
@@ -147,6 +147,8 @@ const authSlice = createSlice({
                 state.error = action.error.message as string;
             }
         );
+
+
         builder.addCase(
             reset_password.pending,
             (state)=>{
@@ -160,7 +162,7 @@ const authSlice = createSlice({
                 state.loading = false;
                 console.log('reset password fullfilled')
                 if (action.payload === true) {
-                    state.error = null;
+                    state.error = "reset with no error";
                 } else {
                     state.error = action.payload as string;
                 }

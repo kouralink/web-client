@@ -17,7 +17,7 @@ import SectionTitle from "@/components/global/SectionTitle";
 import AuthWith from "@/components/global/cards/AuthWith";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "@/state/store";
-import { reset_password } from "@/state/auth/authSlice";
+import { reset_password, setError } from "@/state/auth/authSlice";
 import { useToast } from "@/components/ui/use-toast";
 import { Loader2 } from "lucide-react";
 import { useEffect } from "react";
@@ -36,13 +36,21 @@ export default function Reset() {
     dispatch(reset_password({ email: formData.email as string }));    
     
   };
+  // reset auth error state before destroy componenet
+  const reset = () => {
+    dispatch(setError(null))
+  }
+  useEffect(() => {
+    return () => {reset()}
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  },[])
   useEffect(() => {
     if(!authLoading && authError ){
     toast({
         description: authError === "reset with no error"
         ?  "Reset password message has been sent." : authError
         ,
-        classesStyle:authError === "no error" ? "":"bg-red-500 text-white" 
+        classesStyle:authError === "reset with no error" ? "":"bg-red-500 text-white" 
       });}
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [authLoading]);

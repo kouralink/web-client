@@ -16,10 +16,11 @@ import { Link, useNavigate } from "react-router-dom";
 
 // redux state 
 import { useDispatch, useSelector } from "react-redux";
-import { register } from "../../state/auth/authSlice";
+import { register, setError } from "../../state/auth/authSlice";
 import { AppDispatch, RootState } from "../../state/store";
 import { Loader2 } from "lucide-react";
 import AuthWith from "@/components/global/cards/AuthWith";
+import { useEffect } from "react";
 
 
 export default function Register() {
@@ -28,8 +29,14 @@ export default function Register() {
   const authLoading = useSelector((state: RootState) => state.auth.loading);
   const authUser = useSelector((state: RootState) => state.auth.user);
   const dispatch = useDispatch<AppDispatch>();
-
-  
+  // reset auth error state before destroy componenet
+  const reset = () => {
+    dispatch(setError(null))
+  }
+  useEffect(() => {
+    return () => {reset()}
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  },[])
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
