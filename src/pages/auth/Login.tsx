@@ -16,9 +16,10 @@ import { Link, useNavigate } from "react-router-dom";
 import SectionTitle from "@/components/global/SectionTitle";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "@/state/store";
-import { login } from "@/state/auth/authSlice";
+import { login, setError } from "@/state/auth/authSlice";
 import { Loader2 } from "lucide-react";
 import AuthWith from "@/components/global/cards/AuthWith";
+import { useEffect } from "react";
 
 export default function Login() {
   const navigate = useNavigate();
@@ -26,6 +27,14 @@ export default function Login() {
   const authLoading = useSelector((state: RootState) => state.auth.loading);
   const authUser = useSelector((state: RootState) => state.auth.user);
   const dispatch = useDispatch<AppDispatch>();
+  // reset auth error state before destroy componenet
+  const reset = () => {
+    dispatch(setError(null))
+  }
+  useEffect(() => {
+    return () => {reset()}
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  },[])
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     console.log("submit");
@@ -42,6 +51,7 @@ export default function Login() {
   if (!authError && authUser) {
     navigate("/");
   }
+
   return (
     <div className="w-full h-fit flex items-center gap-4 justify-evenly mt-[100px]">
       <div>
