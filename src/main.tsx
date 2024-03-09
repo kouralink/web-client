@@ -15,23 +15,25 @@ import {
   Route,
   RouterProvider,
 } from "react-router-dom";
-import Root from "./layouts/Root.tsx";
+import RootLyout from "./layouts/RootLyout.tsx";
 import Counter from "./components/Counter.tsx";
 import Login from "./pages/auth/Login.tsx";
 import Register from "./pages/auth/Register.tsx";
 import Reset from "./pages/auth/Reset.tsx";
+import SettingsLayout from "./layouts/SettingsLayout.tsx";
+import Profile from "./pages/profile/Profile.tsx";
 
 const router = createBrowserRouter(
   createRoutesFromElements(
     <Route
       path="/"
-      element={<Root />}
       // loader={rootLoader}
       // action={rootAction}
       // errorElement={<ErrorPage />}
     >
       <Route
-      // errorElement={<ErrorPage />}
+        element={<RootLyout />}
+        // errorElement={<ErrorPage />}
       >
         <Route index element={<App />} />
         <Route
@@ -40,24 +42,18 @@ const router = createBrowserRouter(
           // loader={contactLoader}
           // action={contactAction}
         />
-        <Route
-          path="/login"
-          element={<Login />}
-          // loader={contactLoader}
-          // action={editAction}
-        />
-        <Route
-          path="/register"
-          element={<Register />}
-          // loader={contactLoader}
-          // action={editAction}
-        />
-        <Route
-          path="/reset-password"
-          element={<Reset />}
-          // loader={contactLoader}
-          // action={editAction}
-        />
+        <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
+        <Route path="/reset-password" element={<Reset />} />
+      </Route>
+      <Route
+        path="settings"
+        element={<SettingsLayout />}
+        // loader={rootLoader}
+        // action={rootAction}
+        // errorElement={<ErrorPage />}
+      >
+        <Route path="profile" element={<Profile />} />
       </Route>
     </Route>
   )

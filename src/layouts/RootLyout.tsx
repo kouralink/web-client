@@ -9,7 +9,7 @@ import { AppDispatch } from "@/state/store";
 import { setUser } from "@/state/auth/authSlice";
 import { Toaster } from "@/components/ui/toaster";
 
-const Root: React.FC = () => {
+const RootLyout: React.FC = () => {
   // navbar on scroll effect
   const [navStyle, setNavStyle] = useState("mt-2");
   const [prevScrollPos, setPrevScrollPos] = useState(0);
@@ -64,4 +64,4 @@ const Root: React.FC = () => {
   );
 };
 
-export default Root;
+export default RootLyout;
