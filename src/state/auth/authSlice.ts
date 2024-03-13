@@ -284,23 +284,34 @@ export const register = createAsyncThunk(
             }
             if(rememberMe === "on"){
                 await createUserWithEmailAndPassword(auth,email,password)
+                .then(()=>{
+                    if(auth.currentUser){
+                        updateProfile(auth.currentUser,{
+                            displayName:username
+                        })
+                    }
+                }).catch((error)=>{
+                    console.log(error)
+                })
             }else{
                     await setPersistence(auth, browserSessionPersistence)
                     .then(() => {
                         return createUserWithEmailAndPassword(auth,email,password)
+                        
                     })
-            } 
+                    .then(()=>{
+                        if(auth.currentUser){
+                            updateProfile(auth.currentUser,{
+                                displayName:username
+                            })
+                        }
+                    })
+                    .catch((error)=>{
+                        console.log(error)
+                    })
+            }
+            return auth.currentUser 
             
-            auth.onAuthStateChanged((user)=>{
-                if(user){
-                updateProfile(user,{
-                    displayName:username
-                }).catch((error)=>{
-                    alert(error.message)
-                })
-                }
-            })
-            return auth.currentUser
         }catch(error){
             if(error instanceof FirebaseError){
                 if(error.code === 'auth/email-already-in-use'){
@@ -324,7 +335,10 @@ export const logout = createAsyncThunk(
     async ()=> {
         try{
             await signOut(auth)
-            return null
+            .then(()=>{
+
+                return null
+            })
         }catch(error){
             if(error instanceof FirebaseError){
                 return error.message 
