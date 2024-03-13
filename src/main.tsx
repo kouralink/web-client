@@ -52,6 +52,7 @@ const router = createBrowserRouter(
           // errorElement={<ErrorPage />}
         >
           <Route index element={<Login />} />
+          <Route path="login" element={<Login />} />
           <Route path="register" element={<Register />} />
           <Route path="reset-password" element={<Reset />} />
         </Route>
