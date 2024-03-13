@@ -28,6 +28,7 @@ import Register from "./pages/auth/Register.tsx";
 import Reset from "./pages/auth/Reset.tsx";
   // Settings
 import Profile from "./pages/settings/Profile.tsx";
+import SettingsErrorPage from "./pages/settings/SettingsErrorPage.tsx";
 
 
 const router = createBrowserRouter(
@@ -51,6 +52,7 @@ const router = createBrowserRouter(
           // errorElement={<ErrorPage />}
         >
           <Route index element={<Login />} />
+          <Route path="login" element={<Login />} />
           <Route path="register" element={<Register />} />
           <Route path="reset-password" element={<Reset />} />
         </Route>
@@ -59,9 +61,11 @@ const router = createBrowserRouter(
           element={<SettingsLayout />}
           // loader={rootLoader}
           // action={rootAction}
-          // errorElement={<ErrorPage />}
+          errorElement={<SettingsErrorPage />}
         >
           <Route index element={<Profile />} />
+          <Route path='profile' element={<Profile />} />
+          <Route path="*" element={<SettingsErrorPage />} />
         </Route>
       </Route>
     </Route>

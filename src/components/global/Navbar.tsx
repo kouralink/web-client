@@ -4,11 +4,15 @@ import { Link } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { RootState } from "@/state/store";
 
-const Navbar: React.FC = () => {
+interface NavbarProps {
+  navHeight?: number;
+}
+
+const Navbar: React.FC<NavbarProps> = ({navHeight = 4}) => {
   const authUser = useSelector((state: RootState): RootState['auth']['user'] => state.auth.user);
   return (
     <nav className="bg-white border-gray-200 rounded-lg dark:bg-gray-900">
-      <div className="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
+      <div className={["max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4",`py-${navHeight}`].join(' ') }>
         <Link to="/" className="flex items-center space-x-3 rtl:space-x-reverse">
           <img src="/src/assets/logo.svg" className="h-8" alt="Flowbite Logo" />
           <span className="self-center text-2xl font-semibold whitespace-nowrap dark:text-white">
