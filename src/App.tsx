@@ -14,7 +14,7 @@ export default function App() {
   // navbar on scroll effect
   const [navStyle, setNavStyle] = useState("mt-2");
   const [prevScrollPos, setPrevScrollPos] = useState(0);
-
+  
   useEffect(() => {
     const handleScroll = () => {
       const currentScrollPos = window.scrollY;
