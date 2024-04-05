@@ -32,6 +32,8 @@ import SettingsAccountPage from "./pages/settings/account/page.tsx";
 import SettingsAppearancePage from "./pages/settings/appearance/page.tsx";
 import SettingsNotificationsPage from "./pages/settings/notifications/page.tsx";
 
+// theme 
+import { ThemeProvider } from "@/components/theme-provider"
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -76,7 +78,9 @@ const router = createBrowserRouter(
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
     <Provider store={store}>
+    <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
       <RouterProvider router={router} />
+    </ThemeProvider>
     </Provider>
   </React.StrictMode>
 );
