@@ -1,4 +1,3 @@
-import React from 'react';
 import Icon from './LucidIcon';
 import dynamicIconImports from 'lucide-react/dynamicIconImports';
 
