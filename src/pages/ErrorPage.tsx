@@ -1,6 +1,6 @@
 import React from 'react';
 
-const SettingsErrorPage: React.FC = () => {
+const ErrorPage: React.FC = () => {
     return (
         <div>
             <h1>Error Page</h1>
@@ -9,4 +9,4 @@ const SettingsErrorPage: React.FC = () => {
     );
 }
 
-export default SettingsErrorPage;
+export default ErrorPage;

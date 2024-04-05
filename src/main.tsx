@@ -17,7 +17,6 @@ import {
 // Layouts
 import RootLyout from "./layouts/RootLyout.tsx";
 import AuthLayout from "./layouts/AuthLyout.tsx";
-import SettingsLayout from "./layouts/SettingsLayout.tsx";
 
 // Pages
   // Root
@@ -27,8 +26,11 @@ import Login from "./pages/auth/Login.tsx";
 import Register from "./pages/auth/Register.tsx";
 import Reset from "./pages/auth/Reset.tsx";
   // Settings
-import Profile from "./pages/settings/Profile.tsx";
-import SettingsErrorPage from "./pages/settings/SettingsErrorPage.tsx";
+import SettingsLayout from "./pages/settings/layout.tsx";
+import SettingsProfilePage from "./pages/settings/page.tsx";
+import SettingsAccountPage from "./pages/settings/account/page.tsx"; 
+import SettingsAppearancePage from "./pages/settings/appearance/page.tsx";
+import SettingsNotificationsPage from "./pages/settings/notifications/page.tsx";
 
 
 const router = createBrowserRouter(
@@ -59,13 +61,12 @@ const router = createBrowserRouter(
         <Route
           path="settings"
           element={<SettingsLayout />}
-          // loader={rootLoader}
-          // action={rootAction}
-          errorElement={<SettingsErrorPage />}
         >
-          <Route index element={<Profile />} />
-          <Route path='profile' element={<Profile />} />
-          <Route path="*" element={<SettingsErrorPage />} />
+          <Route index element={<SettingsProfilePage />} />
+          <Route path='profile' element={<SettingsProfilePage />} />
+          <Route path='account' element={<SettingsAccountPage />} />
+          <Route path='appearance' element={<SettingsAppearancePage />} />
+          <Route path='notifications' element={<SettingsNotificationsPage />} />
         </Route>
       </Route>
     </Route>
