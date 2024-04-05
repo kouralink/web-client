@@ -68,7 +68,7 @@ export default function App() {
       />
       <FeatureContents />
       <SectionHead
-        title="Testimonials"
+        title="Testimonials "
         description="Discover what our community says about their unforgettable experiences and triumphs on our football platform."
       />
       <Testimonials />
