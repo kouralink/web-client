@@ -14,6 +14,9 @@ import {
   RouterProvider,
 } from "react-router-dom";
 
+// theme 
+import { ThemeProvider } from "@/components/theme-provider"
+
 // Layouts
 import RootLyout from "./layouts/RootLyout.tsx";
 import AuthLayout from "./layouts/AuthLyout.tsx";
@@ -32,8 +35,8 @@ import SettingsAccountPage from "./pages/settings/account/page.tsx";
 import SettingsAppearancePage from "./pages/settings/appearance/page.tsx";
 import SettingsNotificationsPage from "./pages/settings/notifications/page.tsx";
 
-// theme 
-import { ThemeProvider } from "@/components/theme-provider"
+// 404
+import ErrorPage from "./pages/ErrorPage.tsx";
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -53,23 +56,27 @@ const router = createBrowserRouter(
           element={<AuthLayout />}
           // loader={rootLoader}
           // action={rootAction}
-          // errorElement={<ErrorPage />}
+          errorElement={<ErrorPage />}
         >
           <Route index element={<Login />} />
           <Route path="login" element={<Login />} />
           <Route path="register" element={<Register />} />
           <Route path="reset-password" element={<Reset />} />
+          <Route path="*" element={<ErrorPage />} />
         </Route>
         <Route
           path="settings"
           element={<SettingsLayout />}
+          errorElement={<ErrorPage />}
         >
           <Route index element={<SettingsProfilePage />} />
           <Route path='profile' element={<SettingsProfilePage />} />
           <Route path='account' element={<SettingsAccountPage />} />
           <Route path='appearance' element={<SettingsAppearancePage />} />
           <Route path='notifications' element={<SettingsNotificationsPage />} />
+          <Route path='*' element={<ErrorPage />} />
         </Route>
+        <Route path="*" element={<ErrorPage />} />
       </Route>
     </Route>
   )
