@@ -4,14 +4,14 @@ const SiteAnnouncements = () => {
   const cardsContent = [
     [
       {
-        backgroundImageSrc: "/src/assets/announcements/announc1.jpg",
+        backgroundImageSrc: "/announcements/announc1.jpg",
         title: "System Maintenance",
         date:'Scheduled for March 5, 2024',
         description:
           "We'll be performing system maintenance on March 5th. Expect brief downtime during the process. We apologize for any inconvenience. the top scorer of the season, known for precision and goal-scoring prowess.",
       },
       {
-        backgroundImageSrc: "/src/assets/announcements/announc2.jpg",
+        backgroundImageSrc: "/announcements/announc2.jpg",
         title: "System Maintenance",
         date:'Scheduled for March 5, 2024',
 
@@ -19,7 +19,7 @@ const SiteAnnouncements = () => {
           "We'll be performing system maintenance on March 5th. Expect brief downtime during the process. We apologize for any inconvenience. the top scorer of the season, known for precision and goal-scoring prowess.",
       },
       {
-        backgroundImageSrc: "/src/assets/announcements/announc1.jpg",
+        backgroundImageSrc: "/announcements/announc1.jpg",
         date:'Scheduled for March 5, 2024',
         title: "System Maintenance",
         description:

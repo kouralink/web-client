@@ -4,37 +4,37 @@ import FeatureContentCard from "./cards/FeatureContentCard";
     const cardsContent = [
         [
         {
-            backgroundImageSrc: "/src/assets/feautreContent/im5.png",
+            backgroundImageSrc: "/feautreContent/im5.png",
             title: "Goal Machine",
             description:
                 "Meet the top scorer of the season, known for precision and goal-scoring prowess.",
         },
         {
-            backgroundImageSrc: "/src/assets/feautreContent/im6.png",
+            backgroundImageSrc: "/feautreContent/im6.png",
             title: "Goal Machine",
             description:
                 "Meet the top scorer of the season, known for precision and goal-scoring prowess.",
         },
         {
-            backgroundImageSrc: "/src/assets/feautreContent/im7.png",
+            backgroundImageSrc: "/feautreContent/im7.png",
             title: "Goal Machine",
             description:
                 "Meet the top scorer of the season, known for precision and goal-scoring prowess.",
         }],
         [{
-            backgroundImageSrc: "/src/assets/feautreContent/im8.png",
+            backgroundImageSrc: "/feautreContent/im8.png",
             title: "Goal Machine",
             description:
                 "Meet the top scorer of the season, known for precision and goal-scoring prowess.",
         },
         {
-            backgroundImageSrc: "/src/assets/feautreContent/im9.png",
+            backgroundImageSrc: "/feautreContent/im9.png",
             title: "Goal Machine",
             description:
                 "Meet the top scorer of the season, known for precision and goal-scoring prowess.",
         },
         {
-            backgroundImageSrc: "/src/assets/feautreContent/im10.png",
+            backgroundImageSrc: "/feautreContent/im10.png",
             title: "Goal Machine",
             description:
                 "Meet the top scorer of the season, known for precision and goal-scoring prowess.",

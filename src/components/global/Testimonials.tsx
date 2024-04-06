@@ -18,7 +18,7 @@ export function Testimonials() {
               <div className="p-1">
                 <Card>
                   <CardContent className="flex aspect-square items-center justify-center p-6">
-                  <TestimonialsCard accountType="tournament manager" name="khlifa" rate={4.5} src="/src/assets/logo.png" testimonial="Being part of this platform has been a game-changer for me. The opportunity to connect with fellow football enthusiasts, join exciting tournaments, and experience top-notch gameplay has truly elevated my love for the sport."/>
+                  <TestimonialsCard accountType="tournament manager" name="khlifa" rate={4.5} src="/logo.png" testimonial="Being part of this platform has been a game-changer for me. The opportunity to connect with fellow football enthusiasts, join exciting tournaments, and experience top-notch gameplay has truly elevated my love for the sport."/>
                   </CardContent>
                 </Card>
               </div>

@@ -53,7 +53,7 @@ export default function App() {
       >
         <Navbar />
       </div>
-      <Header title="Welcome to Kouralink" src="/src/assets/bg.png" />
+      <Header title="Welcome to Kouralink" src="/bg.png" />
       <div className="">
         <Privileges />
       </div>
