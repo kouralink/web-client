@@ -1,5 +1,4 @@
 import SectionTitle from "@/components/global/SectionTitle";
-import Image from "/singin.png";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -50,11 +49,9 @@ export default function Register() {
     navigate("/");
   }
   return (
-    <div className="w-full h-fit flex items-center gap-4 justify-evenly mt-[100px]">
-      <div className=" h-full ">
-        <img src={Image} alt="singin" />
-      </div>
-      <Card className="w-[400px] aspect-square flex flex-col justify-center">
+    <div className="w-full h-fit flex items-center gap-4 justify-evenly ">
+     
+      <Card className="w-full aspect-square flex flex-col justify-center">
         <CardHeader>
           <CardTitle>
             <SectionTitle

@@ -26,7 +26,7 @@ const Navbar: React.FC<NavbarProps> = ({ navHeight = 4 }) => {
           className="flex items-center space-x-3 rtl:space-x-reverse"
         >
           <img src="/logo.svg" className="h-8" alt="Kouralink Logo" />
-          <span className="self-center text-2xl font-semibold whitespace-nowrap dark:text-card-foreground">
+          <span className="self-center text-2xl font-semibold whitespace-nowrap dark:text-card-foreground hidden sm:block">
             Kouralink
           </span>
         </Link>

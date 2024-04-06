@@ -23,7 +23,7 @@ const AuthWith: React.FC<AuthWithProps> = () => {
             <div className="">
             <div className="flex gap-6 items-center">
               <div className="h-[.1rem] bg-gray-200 w-full before:contents"></div>
-              <div className="w-full">or login with</div>
+              <div className="w-full text-center">Or <span className='hidden sm:inline-block'>Login With</span></div>
               <div className="h-[.1rem] bg-gray-200 w-full before:contents"></div>
             </div>
           </div>
