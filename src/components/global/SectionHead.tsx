@@ -11,7 +11,7 @@ const SectionHead: React.FC<SectionHeadProps> = ({ title, description }) => {
     <div className="flex w-fit h-[150px] items-center">
       <div className="relative z-[-10] h-[340px] w-[150px]  ">
         <img
-          src="/src/assets/SectionTitelFlish.svg"
+          src="/SectionTitelFlish.svg"
           alt="flish"
           className="absolute  w-full h-full"
         />

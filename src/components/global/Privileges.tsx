@@ -8,22 +8,22 @@ interface PrivilegesProps {
 const Privileges: React.FC<PrivilegesProps> = () => {
   const privileges = [
     {
-      icon: "/src/assets/privileges/global.svg",
+      icon: "/privileges/global.svg",
       title: "Play with 10K+ Players",
       description: "Join a team, engage in matches with a massive community of 10K+ players, and climb to the top.",
     },
     {
-      icon: "/src/assets/privileges/team.svg",
+      icon: "/privileges/team.svg",
       title: "Build & Manage Your Team",
       description: "Design your own football team, recruit players, and strategize your way to victory.",
     },
     {
-      icon: "/src/assets/privileges/tournement.svg",
+      icon: "/privileges/tournement.svg",
       title: "Host Your Own Tournament",
       description: "Organize and host football tournaments, set the rules, and watch the competition unfold.",
     },
     {
-      icon: "/src/assets/privileges/strategize.svg",
+      icon: "/privileges/strategize.svg",
       title: "Strategic Team Planning",
       description: "Utilize visual design tools to plan and strategize the plays for your team's success.",
     },

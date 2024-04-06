@@ -22,7 +22,7 @@ const Header: React.FC<HeaderProps> = ({ title, src }) => {
         <div
           className=" max-w-[400px] 
         ml-10 h-full 
-        bg-[url('/src/assets/flishOfppt.svg')] 
+        bg-[url('/flishOfppt.svg')] 
         
         bg-cover bg-left  overflow-visible
         w-full 

@@ -8,11 +8,11 @@ import { ArrowUpRight } from "lucide-react";
 const NewsLetter: React.FC = () => {
   return (
     <div 
-    style={{backgroundImage: "url('/src/assets/newsletter.svg')"}}
+    style={{backgroundImage: "url('/newsletter.svg')"}}
     className="flex full h-[250px] items-center justify-center text-center  my-20 bg-cover bg-center bg-no-repeat ">
       <div className="relative z-[1] hidden sm:flex h-[500px] w-full  ">
         <img
-          src="/src/assets/player1.svg"
+          src="/player1.svg"
           alt="flish"
           className="w-full h-full  sm:absolute"
         />

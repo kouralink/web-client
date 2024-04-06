@@ -1,4 +1,4 @@
-import Image from "/src/assets/singin.png";
+import Image from "/singin.png";
 
 import { Button } from "@/components/ui/button";
 import {

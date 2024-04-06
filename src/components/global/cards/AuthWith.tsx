@@ -1,7 +1,7 @@
 import { Button } from '@/components/ui/button';
 import React from 'react';
-import Facebook from "/src/assets/social/facebook.png";
-import Google from "/src/assets/social/google.png";
+import Facebook from "/social/facebook.png";
+import Google from "/social/google.png";
 import { useDispatch } from 'react-redux';
 import { AppDispatch } from '@/state/store';
 import { login_with_google_or_facebook } from '@/state/auth/authSlice';
