@@ -12,31 +12,48 @@ import {
   createBrowserRouter,
   Route,
   RouterProvider,
+  Navigate,
 } from "react-router-dom";
 
-// theme 
-import { ThemeProvider } from "@/components/theme-provider"
+// theme
+import { ThemeProvider } from "@/components/theme-provider";
 
 // Layouts
 import RootLyout from "./layouts/RootLyout.tsx";
 import AuthLayout from "./layouts/AuthLyout.tsx";
 
 // Pages
-  // Root
+// Root
 import App from "./App.tsx";
-  // Auth
+// Auth
 import Login from "./pages/auth/Login.tsx";
 import Register from "./pages/auth/Register.tsx";
 import Reset from "./pages/auth/Reset.tsx";
-  // Settings
+// Settings
 import SettingsLayout from "./pages/settings/layout.tsx";
 import SettingsProfilePage from "./pages/settings/page.tsx";
-import SettingsAccountPage from "./pages/settings/account/page.tsx"; 
+import SettingsAccountPage from "./pages/settings/account/page.tsx";
 import SettingsAppearancePage from "./pages/settings/appearance/page.tsx";
 import SettingsNotificationsPage from "./pages/settings/notifications/page.tsx";
 
 // 404
 import ErrorPage from "./pages/ErrorPage.tsx";
+
+// private route
+export const PrivateRoute = ({ children }: { children: React.ReactNode }) => {
+  const isAuthenticated = store.getState().auth.user !== null;
+  return isAuthenticated ? children : <Navigate to="/auth/login" />;
+};
+
+// redirect if logged in
+export const RedirectIfLoggedIn = ({ children }: { children: React.ReactNode }) => {
+  const isAuthenticated = store.getState().auth.user !== null;
+  return isAuthenticated ? <Navigate to="/" /> : children;
+};
+
+
+
+
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -44,16 +61,20 @@ const router = createBrowserRouter(
       path="/"
       // loader={rootLoader}
       // action={rootAction}
-      // errorElement={<ErrorPage />}
+      errorElement={<ErrorPage />}
     >
       <Route
         element={<RootLyout />}
-        // errorElement={<ErrorPage />}
+        errorElement={<ErrorPage />}
       >
         <Route index element={<App />} />
         <Route
           path="auth"
-          element={<AuthLayout />}
+          element={
+            <RedirectIfLoggedIn>
+              <AuthLayout />
+            </RedirectIfLoggedIn>
+          }  
           // loader={rootLoader}
           // action={rootAction}
           errorElement={<ErrorPage />}
@@ -66,15 +87,19 @@ const router = createBrowserRouter(
         </Route>
         <Route
           path="settings"
-          element={<SettingsLayout />}
+          element={
+            <PrivateRoute>
+              <SettingsLayout />
+            </PrivateRoute>
+          }
           errorElement={<ErrorPage />}
         >
           <Route index element={<SettingsProfilePage />} />
-          <Route path='profile' element={<SettingsProfilePage />} />
-          <Route path='account' element={<SettingsAccountPage />} />
-          <Route path='appearance' element={<SettingsAppearancePage />} />
-          <Route path='notifications' element={<SettingsNotificationsPage />} />
-          <Route path='*' element={<ErrorPage />} />
+          <Route path="profile" element={<SettingsProfilePage />} />
+          <Route path="account" element={<SettingsAccountPage />} />
+          <Route path="appearance" element={<SettingsAppearancePage />} />
+          <Route path="notifications" element={<SettingsNotificationsPage />} />
+          <Route path="*" element={<ErrorPage />} />
         </Route>
         <Route path="*" element={<ErrorPage />} />
       </Route>
@@ -85,9 +110,9 @@ const router = createBrowserRouter(
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
     <Provider store={store}>
-    <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
-      <RouterProvider router={router} />
-    </ThemeProvider>
+      <ThemeProvider defaultTheme="system" storageKey="vite-ui-theme">
+        <RouterProvider router={router} />
+      </ThemeProvider>
     </Provider>
   </React.StrictMode>
 );
