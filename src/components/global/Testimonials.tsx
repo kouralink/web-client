@@ -25,8 +25,8 @@ export function Testimonials() {
             </CarouselItem>
           ))}
         </CarouselContent>
-        <CarouselPrevious iconClasses="min-w-16 min-h-16 text-gray-700 md:mr-40 lg:mr-80"/>
-        <CarouselNext iconClasses="min-w-16 min-h-16 text-gray-700 md:ml-40 lg:ml-80 " />
+        <CarouselPrevious iconClasses="min-w-16 min-h-16 text-gray-700 md:mr-40 lg:mr-80 " variant={"ghost"} className="bg-none hover:bg-transparent rounded-none "/>
+        <CarouselNext iconClasses="min-w-16 min-h-16 text-gray-700 md:ml-40 lg:ml-80 " variant={"ghost"} className="bg-none hover:bg-transparent rounded-none " />
       </Carousel>
     </div>
   );

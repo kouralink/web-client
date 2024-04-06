@@ -20,12 +20,12 @@ const NewsLetter: React.FC = () => {
       <div className="flex flex-col w-10/12 gap-11 items-center text-center">
         <h1 className="text-3xl md:text-5xl font-bold mt-30 flex flex-col gap-1">
           <span className="text-primary-700">Newsletter</span>
-          <span className="text-primary-foreground">Subscription</span>
+          <span className="text-card dark:text-card-foreground">Subscription</span>
         </h1>
-        <div className="flex w-full max-w-sm space-x-2 items-center ">
+        <div className="flex w-full h-fit max-w-sm space-x-2 items-center ">
       <Input type="email" placeholder="Email" />
-      <Button type="submit" className="bg-footer w-fit p-0 hover:bg-footer-foreground ">
-        <ArrowUpRight className="w-10 h-10 text-primary"/>
+      <Button type="submit" className="bg-footer w-fit  p-0 hover:bg-footer-foreground dark:bg-primary-900 dark:hover:bg-primary-950 ">
+        <ArrowUpRight className="w-10 h-10 text-primary "/>
         </Button>
     </div>
       </div>

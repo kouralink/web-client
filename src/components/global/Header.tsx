@@ -12,7 +12,7 @@ const Header: React.FC<HeaderProps> = ({ title, src }) => {
       style={{
         backgroundImage: `url(${src})`,
       }}
-      className="h-[75vh] relative bg-cover bg-center p-0 m-0 text-card"
+      className="h-[75vh] relative bg-cover bg-center p-0 m-0 text-card dark:text-card-foreground"
     >
       <div className="w-full h-full flex   justify-center items-center backdrop-brightness-50">
         <Hero

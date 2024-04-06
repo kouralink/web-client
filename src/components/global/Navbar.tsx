@@ -14,7 +14,7 @@ const Navbar: React.FC<NavbarProps> = ({ navHeight = 4 }) => {
     (state: RootState): RootState["auth"]["user"] => state.auth.user
   );
   return (
-    <nav className="bg-white border-gray-200 rounded-lg dark:bg-gray-900">
+    <nav className="bg-card border-gray-200 rounded-lg dark:bg-card">
       <div
         className={[
           "max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4",
@@ -25,19 +25,19 @@ const Navbar: React.FC<NavbarProps> = ({ navHeight = 4 }) => {
           to="/"
           className="flex items-center space-x-3 rtl:space-x-reverse"
         >
-          <img src="/src/assets/logo.svg" className="h-8" alt="Flowbite Logo" />
-          <span className="self-center text-2xl font-semibold whitespace-nowrap dark:text-white">
+          <img src="/src/assets/logo.svg" className="h-8" alt="Kouralink Logo" />
+          <span className="self-center text-2xl font-semibold whitespace-nowrap dark:text-card-foreground">
             Kouralink
           </span>
         </Link>
-        <div className="flex md:order-2 space-x-3 md:space-x-0 gap-2 rtl:space-x-reverse">
+        <div className="flex md:order-2 space-x-3 md:space-x-0 gap-2 rtl:space-x-reverse items-center">
           <ModeToggle />
           {!authUser ? (
             <>
               <Link to={"/auth"}>
                 <button
                   type="button"
-                  className="text-accent-foreground bg-accent hover:bg-gray-200 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-4 py-2 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
+                  className="text-accent-foreground bg-accent hover:bg-primary-foreground focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-4 py-3 text-center "
                 >
                   Log in
                 </button>
@@ -46,7 +46,7 @@ const Navbar: React.FC<NavbarProps> = ({ navHeight = 4 }) => {
               <Link to={"/auth/register"}>
                 <button
                   type="button"
-                  className="text-white bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-4 py-2 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
+                  className="focus:outline-none  font-medium rounded-lg text-sm px-6 py-3 text-center bg-primary-700 text-primary-foreground hover:bg-primary/90"
                 >
                   Sing up
                 </button>
@@ -58,7 +58,7 @@ const Navbar: React.FC<NavbarProps> = ({ navHeight = 4 }) => {
           <button
             data-collapse-toggle="navbar-cta"
             type="button"
-            className="inline-flex items-center p-2 w-10 h-10 justify-center text-sm text-gray-500 rounded-lg md:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600"
+            className="inline-flex items-center p-2 w-10 h-10 justify-center text-sm text-card-foreground rounded-lg md:hidden hover:bg-card focus:outline-none focus:ring-2  dark:text-card-foreground dark:hover:bg-card "
             aria-controls="navbar-cta"
             aria-expanded="false"
           >
@@ -84,11 +84,11 @@ const Navbar: React.FC<NavbarProps> = ({ navHeight = 4 }) => {
           className="items-center justify-between hidden w-full md:flex md:w-auto md:order-1"
           id="navbar-cta"
         >
-          <ul className="flex flex-col font-medium p-4 md:p-0 mt-4 border border-gray-100 rounded-lg bg-gray-50 md:space-x-8 rtl:space-x-reverse md:flex-row md:mt-0 md:border-0 md:bg-white dark:bg-gray-800 md:dark:bg-gray-900 dark:border-gray-700">
+          <ul className="flex flex-col font-medium p-4 md:p-0 mt-4 border  rounded-lg bg-card md:space-x-8 rtl:space-x-reverse md:flex-row md:mt-0 md:border-0 md:bg-card dark:bg-card  ">
             <li>
               <a
                 href="#"
-                className="block py-2 px-3 md:p-0 text-white bg-primary-700 rounded md:bg-transparent md:text-primary-700 md:dark:text-primary-500"
+                className="block py-2 px-3 md:p-0 text-card-foreground bg-primary-700 rounded md:bg-transparent md:text-primary-700 md:dark:text-primary-500"
                 aria-current="page"
               >
                 About
@@ -98,7 +98,7 @@ const Navbar: React.FC<NavbarProps> = ({ navHeight = 4 }) => {
               <button
                 id="dropdownNavbarLink"
                 data-dropdown-toggle="dropdownNavbar"
-                className="flex items-center justify-between w-full py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-primary-700 md:p-0 md:w-auto dark:text-white md:dark:hover:text-primary-500 dark:focus:text-white dark:border-gray-700 dark:hover:bg-gray-700 md:dark:hover:bg-transparent"
+                className="flex items-center justify-between w-full py-2 px-3 text-card-foreground rounded hover:bg-card md:hover:bg-transparent md:border-0 md:hover:text-primary-700 md:p-0 md:w-auto "
               >
                 Quick links{" "}
                 <svg
@@ -119,16 +119,16 @@ const Navbar: React.FC<NavbarProps> = ({ navHeight = 4 }) => {
               </button>
               <div
                 id="dropdownNavbar"
-                className="z-10 hidden font-normal bg-white divide-y divide-gray-100 rounded-lg shadow w-44 dark:bg-gray-700 dark:divide-gray-600"
+                className="z-10 hidden font-normal bg-card divide-y rounded-lg shadow w-44 "
               >
                 <ul
-                  className="py-2 text-sm text-gray-700 dark:text-gray-400"
+                  className="py-2 text-sm text-card-foreground border"
                   aria-labelledby="dropdownLargeButton"
                 >
                   <li>
                     <a
                       href="#"
-                      className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
+                      className="block px-4 py-2 hover:bg-secondary "
                     >
                       Create Team
                     </a>
@@ -136,7 +136,7 @@ const Navbar: React.FC<NavbarProps> = ({ navHeight = 4 }) => {
                   <li>
                     <a
                       href="#"
-                      className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
+                      className="block px-4 py-2 hover:bg-secondary "
                     >
                       Join Team
                     </a>
@@ -147,7 +147,7 @@ const Navbar: React.FC<NavbarProps> = ({ navHeight = 4 }) => {
             <li>
               <a
                 href="#"
-                className="block py-2 px-3 md:p-0 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-primary-700 d:dark:hover:text-primary-500 dark:text-white dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700"
+                className="block py-2 px-3 md:p-0 text-card-foreground rounded hover:bg-secondary md:hover:bg-transparent md:hover:text-primary-700 "
               >
                 Services
               </a>
@@ -155,7 +155,7 @@ const Navbar: React.FC<NavbarProps> = ({ navHeight = 4 }) => {
             <li>
               <a
                 href="#"
-                className="block py-2 px-3 md:p-0 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-primary-700 md:dark:hover:text-primary-500 dark:text-white dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700"
+                className="block py-2 px-3 md:p-0 text-card-foreground rounded hover:bg-secondary md:hover:bg-transparent md:hover:text-primary-700 "
               >
                 Contact
               </a>
