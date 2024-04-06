@@ -30,7 +30,7 @@ const AuthWith: React.FC<AuthWithProps> = () => {
           <div className="w-full flex gap-2 items-center justify-center ">
             <Button
               variant={"outline"}
-              className="bg-white flex gap-2 rounded-lg border-none shadow-lg "
+              className="bg-card flex gap-2 rounded-lg border-none shadow-lg "
               onClick={handleGoogle}
             >
               <img src={Google} className="w-4 h-4 rounded-full" alt="google" />{" "}
@@ -38,7 +38,7 @@ const AuthWith: React.FC<AuthWithProps> = () => {
             </Button>
             <Button
               variant={"outline"}
-              className="bg-white flex gap-2 rounded-lg border-none shadow-lg"
+              className="bg-card flex gap-2 rounded-lg border-none shadow-lg"
               onClick={handleFacebook}
             >
               <img
