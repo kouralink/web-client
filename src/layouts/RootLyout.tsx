@@ -17,8 +17,7 @@ const RootLyout: React.FC = () => {
         dispatch(setUser(user))
       }
     );
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  },[]);
+  },[dispatch]);
   return (
     <div className="min-h-[100vh]  overflow-hidden">
       <Toaster />
