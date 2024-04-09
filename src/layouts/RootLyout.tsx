@@ -7,6 +7,8 @@ import { useDispatch } from "react-redux";
 import { AppDispatch } from "@/state/store";
 import { setUser } from "@/state/auth/authSlice";
 import { Toaster } from "@/components/ui/toaster";
+import 'flowbite';
+
 
 const RootLyout: React.FC = () => {
   
