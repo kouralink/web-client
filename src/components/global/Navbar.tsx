@@ -1,9 +1,11 @@
-import "flowbite";
 import { AccountNavDropdownMenu } from "./AccountNavDropdownMenu";
 import { Link } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { RootState } from "@/state/store";
 import { ModeToggle } from "../mode-toggle";
+import { Separator } from "../ui/separator";
+import SingInUpButtons from "./SingInUpButtons";
+import { CreateTeamPopUp } from "./CreateTeam";
 
 interface NavbarProps {
   navHeight?: number;
@@ -33,25 +35,9 @@ const Navbar: React.FC<NavbarProps> = ({ navHeight = 4 }) => {
         <div className="flex md:order-2 space-x-3 md:space-x-0 gap-2 rtl:space-x-reverse items-center">
           <ModeToggle />
           {!authUser ? (
-            <>
-              <Link to={"/auth"}>
-                <button
-                  type="button"
-                  className="text-accent-foreground bg-accent hover:bg-primary-foreground focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-4 py-3 text-center "
-                >
-                  Log in
-                </button>
-              </Link>
-
-              <Link to={"/auth/register"}>
-                <button
-                  type="button"
-                  className="focus:outline-none  font-medium rounded-lg text-sm px-6 py-3 text-center bg-primary-700 text-primary-foreground hover:bg-primary/90"
-                >
-                  Sing up
-                </button>
-              </Link>
-            </>
+          <div className="hidden md:block">
+            <SingInUpButtons  />
+          </div>
           ) : (
             <AccountNavDropdownMenu />
           )}
@@ -84,7 +70,8 @@ const Navbar: React.FC<NavbarProps> = ({ navHeight = 4 }) => {
           className="items-center justify-between hidden w-full md:flex md:w-auto md:order-1"
           id="navbar-cta"
         >
-          <ul className="flex flex-col font-medium p-4 md:p-0 mt-4 border  rounded-lg bg-card md:space-x-8 rtl:space-x-reverse md:flex-row md:mt-0 md:border-0 md:bg-card dark:bg-card  ">
+          <div className="flex flex-col">
+          <ul className="flex flex-col font-medium p-4 md:p-0 mt-4 border  rounded-lg bg-card md:space-x-4 lg:space-x-6 rtl:space-x-reverse md:flex-row md:mt-0 md:border-0 md:bg-card dark:bg-card  ">
             <li>
               <a
                 href="#"
@@ -130,7 +117,7 @@ const Navbar: React.FC<NavbarProps> = ({ navHeight = 4 }) => {
                       href="#"
                       className="block px-4 py-2 hover:bg-secondary "
                     >
-                      Create Team
+                      <CreateTeamPopUp/>
                     </a>
                   </li>
                   <li>
@@ -161,6 +148,15 @@ const Navbar: React.FC<NavbarProps> = ({ navHeight = 4 }) => {
               </a>
             </li>
           </ul>
+          <div className="md:hidden">
+
+            <Separator className="my-4 md:hidden"/>
+          {!authUser && (
+            
+            <SingInUpButtons />
+          ) }
+          </div>
+          </div>
         </div>
       </div>
     </nav>
