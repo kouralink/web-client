@@ -42,7 +42,7 @@ import FeatureContentCard from "./cards/FeatureContentCard";
     ];
 
     return (
-        <div className="flex w-full flex-col items-center gap-5 bg-card p-8 shadow-lg">
+        <div className="flex w-full flex-col items-center gap-5 bg-transparent p-8 ">
                 {cardsContent.map((cardGroup, groupIndex) => (
                         <div key={groupIndex} className="w-full flex flex-col sm:flex-row items-center justify-center gap-5">
                                 {cardGroup.map((card, cardIndex) => (
