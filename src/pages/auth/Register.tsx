@@ -65,7 +65,7 @@ export default function Register() {
           <form onSubmit={handleSubmit}>
             <div className="grid w-full items-center gap-4">
               <div className="flex flex-col space-y-1.5">
-                <Label htmlFor="username">Username</Label>
+                <Label htmlFor="username">Full Name</Label>
                 <Input
                   type="text"
                   id="username"
