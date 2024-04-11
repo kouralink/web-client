@@ -10,14 +10,14 @@ interface Team {
   createdAt: Date;
   updatedAt: Date;
   teamLogo: string | null;
-  description: string | null ;
+  description: string | null;
   createdBy: string;
 }
 
 interface TeamState {
   team: Team;
   status: "idle" | "loading" | "failed";
-  error: string | null| undefined;
+  error: string | null | undefined;
 }
 
 const initialState: TeamState = {
@@ -42,22 +42,78 @@ const teamSlice = createSlice({
   reducers: {
     setTeam: (state, action: PayloadAction<Team>) => {
       state.team = action.payload;
-
-    }
+    },
+    setError: (state, action: PayloadAction<string | null>) => {
+      state.error = action.payload;
+    },
+    setLoading: (
+      state,
+      action: PayloadAction<"idle" | "loading" | "failed">
+    ) => {
+      state.status = action.payload;
+    },
+    clearTeam: (state) => {
+      state.team = initialState.team;
+    },
   },
   extraReducers: (builder) => {
-    builder.addCase(getTeam.pending, (state) => {
-      state.status = "loading";
-    })
-    .addCase(getTeam.fulfilled, (state, action) => {
-      state.status = "idle";
-      state.team = action.payload;
-    })
-    .addCase(getTeam.rejected, (state, action) => {
-      state.status = "failed";
-      state.error = action.error.message;
-    });
-}});
+    builder
+      .addCase(getTeam.pending, (state) => {
+        state.status = "loading";
+        state.error = null;
+      })
+      .addCase(getTeam.fulfilled, (state, action) => {
+        state.status = "idle";
+        state.team = action.payload;
+      })
+      .addCase(getTeam.rejected, (state, action) => {
+        state.status = "failed";
+        state.error = action.error.message;
+      });
+    builder
+      .addCase(updateTeam.pending, (state) => {
+        state.status = "loading";
+        state.error = null;
+      })
+      .addCase(updateTeam.fulfilled, (state, action) => {
+        state.status = "idle";
+        state.team = action.payload;
+      })
+      .addCase(updateTeam.rejected, (state, action) => {
+        state.status = "failed";
+        state.error = action.error.message;
+      });
+    builder
+      .addCase(deleteTeam.pending, (state) => {
+        state.status = "loading";
+        state.error = null;
+      })
+      .addCase(deleteTeam.fulfilled, (state) => {
+        state.status = "idle";
+        state.team = initialState.team;
+      })
+      .addCase(deleteTeam.rejected, (state, action) => {
+        state.status = "failed";
+        state.error = action.error.message;
+      });
+    builder
+      .addCase(createTeam.pending, (state) => {
+        state.status = "loading";
+        state.error = null;
+      })
+      .addCase(createTeam.fulfilled, (state, action) => {
+        state.status = "idle";
+        state.team = action.payload;
+        console.log(action.payload);
+      })
+      .addCase(createTeam.rejected, (state, action) => {
+        state.status = "failed";
+        //TODO: how to got error message from backend
+        state.error = action.error.message;
+        console.log(action.payload);
+      });
+  },
+});
 
 // create asyncThunk for get team using axios from backend localhost:3000/teams/:id
 export const getTeam = createAsyncThunk("team/getTeam", async (id: string) => {
@@ -66,26 +122,41 @@ export const getTeam = createAsyncThunk("team/getTeam", async (id: string) => {
 });
 
 // create asyncThunk for update team using axios from backend localhost:3000/teams using post method
-export const updateTeam = createAsyncThunk("team/updateTeam", async (team: Team) => {
-  const response = await axios.post("http://localhost:3000/teams", team);
-  return response.data;
-});
+export const updateTeam = createAsyncThunk(
+  "team/updateTeam",
+  async (team: Team) => {
+    
+      const response = await axios.post("http://localhost:3000/teams", team);
+      return response.data;
+    
+
+  }
+  
+  
+);
 
 // create asyncThunk for delete team using axios from backend localhost:3000/teams/:id using delete method
-export const deleteTeam = createAsyncThunk("team/deleteTeam", async (id: string) => {
-  await axios.delete(`http://localhost:3000/teams/${id}`);
-  return id;
-});
+export const deleteTeam = createAsyncThunk(
+  "team/deleteTeam",
+  async (id: string) => {
+    await axios.delete(`http://localhost:3000/teams/${id}`);
+    return id;
+  }
+);
 
 // create asyncThunk for create team using axios from backend localhost:3000/teams using post method
 // sending just the team name and the coach
-export const createTeam = createAsyncThunk("team/createTeam", async (team: {teamName: string, coach: string}) => {
-  const response = await axios.post("http://localhost:3000/teams", team);
-  return response.data;
-});
+export const createTeam = createAsyncThunk(
+  "team/createTeam",
+  async (team: { teamName: string; coach: string }) => {
+    // catch error message if response was not 200
+      const response = await axios.post("http://localhost:3000/teams", team);
+      return response.data;
+    
+    // const response = await axios.post("http://localhost:3000/teams", team);
+    // return response.data;
+  }
+);
 
-
-
-
-export const { setTeam } = teamSlice.actions;
+export const { setTeam, clearTeam, setError, setLoading } = teamSlice.actions;
 export default teamSlice.reducer;
