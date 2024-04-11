@@ -18,6 +18,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { toast } from "../ui/use-toast";
 
 export function CreateTeamPopUp() {
+  let isBtnClicked = false;
   const nameRef = useRef<HTMLInputElement>(null);
   const btnRef = useRef<HTMLButtonElement>(null);
   const error = useSelector((state: RootState) => state.team.error);
@@ -25,7 +26,9 @@ export function CreateTeamPopUp() {
   const dispatch = useDispatch<AppDispatch>();
   const auth = useSelector((state: RootState) => state.auth.user);
   // set error if user is not authenticated
+  //
   const handleSubmit = () => {
+    
     if (!auth) {
       dispatch(setError("You need to be authenticated to create a team"));
       // show a toast
@@ -34,18 +37,23 @@ export function CreateTeamPopUp() {
         title: "Team not created",
         description: "You need to be authenticated to create a team",
       });
-
       return;
     }
-    
+
     const name = nameRef.current?.value;
     if (!name) return;
     // create the team
-    dispatch(createTeam({teamName: name, coach:auth.uid}));
-    
+    dispatch(createTeam({ teamName: name, coach: auth.uid }));
+    isBtnClicked = true;
   };
-
+  const setIsClickedfalse = () => {
+    isBtnClicked = false;
+  }
   useEffect(() => {
+    if (!isBtnClicked) {
+      return;
+    }
+    console.log('i"m here', status, error);
     if (status === "failed") {
       toast({
         variant: "destructive",
@@ -53,7 +61,6 @@ export function CreateTeamPopUp() {
         description: error || "An error occurred",
       });
     }
-    
     if (status === "loading") {
       toast({
         variant: "default",
@@ -65,8 +72,9 @@ export function CreateTeamPopUp() {
     if (status === "idle") {
       btnRef.current?.click();
     }
-
-  }, [status, error]);
+    return () => setIsClickedfalse()
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [status, error, dispatch]);
 
   return (
     <Dialog>
@@ -98,11 +106,17 @@ export function CreateTeamPopUp() {
           <DialogClose asChild className="hidden">
             <Button variant="outline">Cancel</Button>
           </DialogClose>
-          {status === "loading" && <p>Loading...</p>}
+          {status === "loading" ? 
+          
+          <Button variant="outline" disabled>
+            Creating Team...
+          </Button>
+          : 
           <Button type="submit" onClick={handleSubmit}>
             Create Team
           </Button>
-          <DialogClose asChild className="hidden">
+}
+          <DialogClose asChild>
             <button ref={btnRef}>close</button>
           </DialogClose>
         </DialogFooter>
