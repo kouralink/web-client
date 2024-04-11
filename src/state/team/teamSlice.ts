@@ -2,13 +2,19 @@
 import { PayloadAction, createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
 
+
+interface TimeStamp {
+  seconds: number;
+  nanoseconds: number;
+
+}
 interface Team {
   id: string;
   teamName: string;
   blackList: string[];
   coach: string;
-  createdAt: Date;
-  updatedAt: Date;
+  createdAt: TimeStamp;
+  updatedAt: TimeStamp;
   teamLogo: string | null;
   description: string | null;
   createdBy: string;
@@ -17,7 +23,7 @@ interface Team {
 interface TeamState {
   team: Team;
   status: "idle" | "loading" | "failed";
-  error: string | null | undefined ;
+  error: string | null | undefined;
 }
 
 const initialState: TeamState = {
@@ -26,8 +32,8 @@ const initialState: TeamState = {
     teamName: "",
     blackList: [],
     coach: "",
-    createdAt: new Date(),
-    updatedAt: new Date(),
+    createdAt: { seconds: 0, nanoseconds: 0},
+    updatedAt: { seconds: 0, nanoseconds: 0},
     teamLogo: "",
     description: "",
     createdBy: "",
@@ -101,56 +107,72 @@ const teamSlice = createSlice({
         try {
           state.status = "loading";
           state.error = null;
-      } catch (error) {
-        console.log(error)
-      }
+        } catch (error) {
+          console.log(error);
+        }
       })
       .addCase(createTeam.fulfilled, (state, action) => {
         try {
+          console.log('i have runed create team fulfilled')
           state.status = "idle";
           state.team = action.payload;
         } catch (error) {
-          console.log(error)
+          console.log(error);
         }
       })
       .addCase(createTeam.rejected, (state, action) => {
         try {
           state.status = "failed";
           state.error = action.error.message;
-          console.log("Errpr:",action)
+          console.log("Errpr:", action);
         } catch (error) {
-          console.log(error)
+          console.log(error);
         }
       });
   },
 });
-
 // create asyncThunk for get team using axios from backend localhost:3000/teams/:id
 export const getTeam = createAsyncThunk("team/getTeam", async (id: string) => {
-  const response = await axios.get(`http://localhost:3000/teams/${id}`);
-  return response.data;
+  try {
+    const response = await axios.get(`http://localhost:3000/teams/${id}`);
+    const res = response.data;
+    console.log(res);
+    return response.data;
+  }
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  catch (error: any) {
+    throw new Error(error.response.data as string)
+  }
 });
 
 // create asyncThunk for update team using axios from backend localhost:3000/teams using post method
 export const updateTeam = createAsyncThunk(
   "team/updateTeam",
   async (team: Team) => {
-    
+    try {
       const response = await axios.post("http://localhost:3000/teams", team);
       return response.data;
-    
-
+    }
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    catch (error: any) {
+      throw new Error(error.response.data as string)
+    }
   }
-  
-  
 );
 
 // create asyncThunk for delete team using axios from backend localhost:3000/teams/:id using delete method
 export const deleteTeam = createAsyncThunk(
   "team/deleteTeam",
   async (id: string) => {
-    await axios.delete(`http://localhost:3000/teams/${id}`);
-    return id;
+    try {
+      await axios.delete(`http://localhost:3000/teams/${id}`);
+      return id;
+    }
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    catch (error: any) {
+      throw new Error(error.response.data as string)
+    }
+
   }
 );
 
@@ -160,11 +182,12 @@ export const createTeam = createAsyncThunk(
   "team/createTeam",
   async (team: { teamName: string; coach: string }) => {
     // catch error message if response was not 200
-    try{
-    const response = await axios.post("http://localhost:3000/teams", team);
-    return response.data;
-    }catch(error){
-      console.log(error)
+    try {
+      const response = await axios.post("http://localhost:3000/teams", team);
+      return response.data;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (error: any) {
+      throw new Error(error.response.data as string)
     }
     // const response = await axios.post("http://localhost:3000/teams", team);
     // return response.data;
