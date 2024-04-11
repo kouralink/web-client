@@ -1,15 +1,9 @@
-import { Metadata } from "next"
 import { SidebarNav } from "./components/sidebar-nav"
 import { Separator } from "@/components/ui/separator"
 import { Outlet } from "react-router-dom"
 import Navbar from "@/components/global/Navbar"
 import ProfileCard from "@/components/global/cards/ProfileCard"
 import { sidebarNavItemType } from "@/types/types"
-
-export const metadata: Metadata = {
-  title: "Forms",
-  description: "Advanced form example using react-hook-form and Zod.",
-}
 
 const sidebarNavItems:sidebarNavItemType[] = [
   {

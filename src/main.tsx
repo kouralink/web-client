@@ -38,6 +38,8 @@ import SettingsNotificationsPage from "./pages/settings/notifications/page.tsx";
 
 // 404
 import ErrorPage from "./pages/ErrorPage.tsx";
+import { TeamPage } from "./pages/team/TeamPage.tsx";
+import TeamLayout from "./layouts/TeamLayout.tsx";
 
 // private route
 export const PrivateRoute = ({ children }: { children: React.ReactNode }) => {
@@ -101,6 +103,19 @@ const router = createBrowserRouter(
           <Route path="notifications" element={<SettingsNotificationsPage />} />
           <Route path="*" element={<ErrorPage />} />
         </Route>
+        <Route 
+          path="teams"
+          element={
+            <PrivateRoute>
+              <TeamLayout />
+            </PrivateRoute>
+          }
+          errorElement={<ErrorPage />}
+        >
+          {/* <Route index element={<Popular Teams />} /> */}
+          <Route path=":teamId" element={<TeamPage />} />
+          <Route path="*" element={<ErrorPage />} />
+        </Route>
         <Route path="*" element={<ErrorPage />} />
       </Route>
     </Route>
@@ -109,6 +124,7 @@ const router = createBrowserRouter(
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
+
     <Provider store={store}>
       <ThemeProvider defaultTheme="system" storageKey="vite-ui-theme">
         <RouterProvider router={router} />

@@ -6,6 +6,7 @@ import { ModeToggle } from "../mode-toggle";
 import { Separator } from "../ui/separator";
 import SingInUpButtons from "./SingInUpButtons";
 import { CreateTeamPopUp } from "./CreateTeam";
+import 'flowbite'
 
 interface NavbarProps {
   navHeight?: number;
@@ -80,6 +81,14 @@ const Navbar: React.FC<NavbarProps> = ({ navHeight = 4 }) => {
               >
                 About
               </a>
+            </li>
+            <li>
+              <Link
+                to="/teams/60IwF7xDizUnit8ehRFT"
+                className="block py-2 px-3 md:p-0 text-card-foreground rounded hover:bg-secondary md:hover:bg-transparent md:hover:text-primary-700"
+              >
+                yourTeam
+              </Link>
             </li>
             <li>
               <button
