@@ -11,14 +11,62 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { useRef } from "react";
+import { AppDispatch, RootState } from "@/state/store";
+import { createTeam, setError } from "@/state/team/teamSlice";
+import { useEffect, useRef } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { toast } from "../ui/use-toast";
 
 export function CreateTeamPopUp() {
   const nameRef = useRef<HTMLInputElement>(null);
+  const btnRef = useRef<HTMLButtonElement>(null);
+  const error = useSelector((state: RootState) => state.team.error);
+  const status = useSelector((state: RootState) => state.team.status);
+  const dispatch = useDispatch<AppDispatch>();
+  const auth = useSelector((state: RootState) => state.auth.user);
+  // set error if user is not authenticated
   const handleSubmit = () => {
+    if (!auth) {
+      dispatch(setError("You need to be authenticated to create a team"));
+      // show a toast
+      toast({
+        variant: "destructive",
+        title: "Team not created",
+        description: "You need to be authenticated to create a team",
+      });
+
+      return;
+    }
+    
     const name = nameRef.current?.value;
-    console.log(name);
+    if (!name) return;
+    // create the team
+    dispatch(createTeam({teamName: name, coach:auth.uid}));
+    
   };
+
+  useEffect(() => {
+    if (status === "failed") {
+      toast({
+        variant: "destructive",
+        title: "Team not created",
+        description: error || "An error occurred",
+      });
+    }
+    
+    if (status === "loading") {
+      toast({
+        variant: "default",
+        title: "Creating Team",
+        description: "Please wait...",
+      });
+    }
+    // close the dialog
+    if (status === "idle") {
+      btnRef.current?.click();
+    }
+
+  }, [status, error]);
 
   return (
     <Dialog>
@@ -40,17 +88,23 @@ export function CreateTeamPopUp() {
             <Input
               id="name"
               ref={nameRef}
-              defaultValue="Pedro Duarte"
+              defaultValue="l3zawa"
               className="col-span-3"
             />
           </div>
+          {error && <p className="text-red-500">{error}</p>}
         </div>
         <DialogFooter>
-        <DialogClose asChild>
+          <DialogClose asChild className="hidden">
+            <Button variant="outline">Cancel</Button>
+          </DialogClose>
+          {status === "loading" && <p>Loading...</p>}
           <Button type="submit" onClick={handleSubmit}>
             Create Team
           </Button>
-        </DialogClose >
+          <DialogClose asChild className="hidden">
+            <button ref={btnRef}>close</button>
+          </DialogClose>
         </DialogFooter>
       </DialogContent>
     </Dialog>
