@@ -14,11 +14,11 @@ const RootLyout: React.FC = () => {
   
   const dispatch = useDispatch<AppDispatch>();
   useEffect(() => {
-    onAuthStateChanged(auth, (user) => {
-        console.log('auth hase changed:',user)
-        dispatch(setUser(user))
-      }
-    );
+      const unsubscribe = onAuthStateChanged(auth, (user) => {
+      console.log('auth hase changed:',user)
+      dispatch(setUser(user));
+    });
+    return unsubscribe;
   },[dispatch]);
   return (
     <div className="min-h-[100vh]  overflow-hidden">
