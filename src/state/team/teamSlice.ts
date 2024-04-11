@@ -17,7 +17,7 @@ interface Team {
 interface TeamState {
   team: Team;
   status: "idle" | "loading" | "failed";
-  error: string | null | undefined;
+  error: string | null | undefined ;
 }
 
 const initialState: TeamState = {
@@ -98,19 +98,29 @@ const teamSlice = createSlice({
       });
     builder
       .addCase(createTeam.pending, (state) => {
-        state.status = "loading";
-        state.error = null;
+        try {
+          state.status = "loading";
+          state.error = null;
+      } catch (error) {
+        console.log(error)
+      }
       })
       .addCase(createTeam.fulfilled, (state, action) => {
-        state.status = "idle";
-        state.team = action.payload;
-        console.log(action.payload);
+        try {
+          state.status = "idle";
+          state.team = action.payload;
+        } catch (error) {
+          console.log(error)
+        }
       })
       .addCase(createTeam.rejected, (state, action) => {
-        state.status = "failed";
-        //TODO: how to got error message from backend
-        state.error = action.error.message;
-        console.log(action.payload);
+        try {
+          state.status = "failed";
+          state.error = action.error.message;
+          console.log("Errpr:",action)
+        } catch (error) {
+          console.log(error)
+        }
       });
   },
 });
@@ -150,9 +160,12 @@ export const createTeam = createAsyncThunk(
   "team/createTeam",
   async (team: { teamName: string; coach: string }) => {
     // catch error message if response was not 200
-      const response = await axios.post("http://localhost:3000/teams", team);
-      return response.data;
-    
+    try{
+    const response = await axios.post("http://localhost:3000/teams", team);
+    return response.data;
+    }catch(error){
+      console.log(error)
+    }
     // const response = await axios.post("http://localhost:3000/teams", team);
     // return response.data;
   }
