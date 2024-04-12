@@ -35,11 +35,13 @@ import SettingsProfilePage from "./pages/settings/page.tsx";
 import SettingsAccountPage from "./pages/settings/account/page.tsx";
 import SettingsAppearancePage from "./pages/settings/appearance/page.tsx";
 import SettingsNotificationsPage from "./pages/settings/notifications/page.tsx";
+// Teams
+import { TeamPage } from "./pages/team/TeamPage.tsx";
+import TeamLayout from "./layouts/TeamLayout.tsx";
+import TeamSearchPage from "./pages/team/TeamSearchPage.tsx";
 
 // 404
 import ErrorPage from "./pages/ErrorPage.tsx";
-import { TeamPage } from "./pages/team/TeamPage.tsx";
-import TeamLayout from "./layouts/TeamLayout.tsx";
 
 // private route
 export const PrivateRoute = ({ children }: { children: React.ReactNode }) => {
@@ -112,7 +114,7 @@ const router = createBrowserRouter(
           }
           errorElement={<ErrorPage />}
         >
-          {/* <Route index element={<Popular Teams />} /> */}
+          <Route index element={<TeamSearchPage />} />
           <Route path=":teamId" element={<TeamPage />} />
           <Route path="*" element={<ErrorPage />} />
         </Route>

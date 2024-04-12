@@ -2,29 +2,8 @@
 import { PayloadAction, createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
 
+import { Team ,TeamState} from "../../types/types";
 
-interface TimeStamp {
-  seconds: number;
-  nanoseconds: number;
-
-}
-interface Team {
-  id: string;
-  teamName: string;
-  blackList: string[];
-  coach: string;
-  createdAt: TimeStamp;
-  updatedAt: TimeStamp;
-  teamLogo: string | null;
-  description: string | null;
-  createdBy: string;
-}
-
-interface TeamState {
-  team: Team;
-  status: "idle" | "loading" | "failed";
-  error: string | null | undefined;
-}
 
 const initialState: TeamState = {
   team: {
@@ -124,7 +103,6 @@ const teamSlice = createSlice({
         try {
           state.status = "failed";
           state.error = action.error.message;
-          console.log("Errpr:", action);
         } catch (error) {
           console.log(error);
         }
