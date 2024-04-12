@@ -91,6 +91,14 @@ const Navbar: React.FC<NavbarProps> = ({ navHeight = 4 }) => {
               </Link>
             </li>
             <li>
+              <Link
+                to="/teams"
+                className="block py-2 px-3 md:p-0 text-card-foreground rounded hover:bg-secondary md:hover:bg-transparent md:hover:text-primary-700"
+              >
+                Teams
+              </Link>
+            </li>
+            <li>
               <button
                 id="dropdownNavbarLink"
                 data-dropdown-toggle="dropdownNavbar"
