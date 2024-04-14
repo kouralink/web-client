@@ -7,7 +7,7 @@ export default function TeamLayout() {
       <div>
         <Navbar navHeight={2} />
       </div>
-      <h1><Outlet/></h1>
+      <div className="px-2"><Outlet/></div>
     </>
   );
 }

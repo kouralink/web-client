@@ -1,10 +1,11 @@
 # Project Todo List
 
-- [ ] design team page
-- [ ] code team page
+- [X] design team page
+- [X] code team page designe
 
-- [ ] add leader actions
+- [X] add leader actions in designe
 
+- [ ] add leader actions functionality
 
 - [ ] add search bar
 - [ ] add filter by team
@@ -25,4 +26,10 @@
 
 - [ ] working on notifications and team invites and requests
 
+
+- [ ] the user can coach only one team at a time and can be a member in multiple teams
+
+- [ ] when adding a member to team make sure it's not the coach of the team
+
+- 
 
