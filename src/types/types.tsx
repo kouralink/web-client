@@ -17,7 +17,7 @@ export interface Team {
   coach: string;
   createdAt: TimeStamp;
   updatedAt: TimeStamp;
-  teamLogo: string | null;
+  teamLogo: string | null | undefined;
   description: string | null;
   createdBy: string;
 }
@@ -28,4 +28,26 @@ export interface TeamState {
   error: string | null | undefined;
 }
 
+export interface TeamMatchState {
+  teamId: string;
+  teamLogo: string;
+  teamName: string;
+  teamScore: number;
+}
+
+export interface MatchState {
+  team1: TeamMatchState;
+  team2: TeamMatchState;
+  referee: string;
+  matchDate: string;
+  matchTime: string;
+  matchLocation: string;
+  matchStatus: string;
+}
+
+export interface MemberState {
+  username: string;
+  logo: string;
+  uid: string;
+}
 
