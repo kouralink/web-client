@@ -6,7 +6,7 @@ import { ModeToggle } from "../mode-toggle";
 import { Separator } from "../ui/separator";
 import SingInUpButtons from "./SingInUpButtons";
 import { CreateTeamPopUp } from "./CreateTeam";
-import 'flowbite'
+// import "flowbite";
 
 interface NavbarProps {
   navHeight?: number;
@@ -18,6 +18,8 @@ const Navbar: React.FC<NavbarProps> = ({ navHeight = 4 }) => {
   );
   return (
     <nav className="bg-card border-gray-200 rounded-lg dark:bg-card">
+      {/* <script src="/node_modules/flowbite/dist/flowbite.min.js"></script> */}
+
       <div
         className={[
           "max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4",
@@ -36,11 +38,13 @@ const Navbar: React.FC<NavbarProps> = ({ navHeight = 4 }) => {
         <div className="flex md:order-2 space-x-3 md:space-x-0 gap-2 rtl:space-x-reverse items-center">
           <ModeToggle />
           {!authUser ? (
-          <div className="hidden md:block">
-            <SingInUpButtons  />
-          </div>
+            <div className="hidden md:block">
+              <SingInUpButtons />
+            </div>
           ) : (
-            <AccountNavDropdownMenu />
+            <div className="flex gap-2">
+              <AccountNavDropdownMenu />
+            </div>
           )}
           <button
             data-collapse-toggle="navbar-cta"
@@ -72,107 +76,113 @@ const Navbar: React.FC<NavbarProps> = ({ navHeight = 4 }) => {
           id="navbar-cta"
         >
           <div className="flex flex-col">
-          <ul className="flex flex-col font-medium p-4 md:p-0 mt-4 border  rounded-lg bg-card md:space-x-4 lg:space-x-6 rtl:space-x-reverse md:flex-row md:mt-0 md:border-0 md:bg-card dark:bg-card  ">
-            <li>
-              <a
-                href="#"
-                className="block py-2 px-3 md:p-0 text-card-foreground bg-primary-700 rounded md:bg-transparent md:text-primary-700 md:dark:text-primary-500"
-                aria-current="page"
-              >
-                About
-              </a>
-            </li>
-            <li>
-              <Link
-                to="/teams/60IwF7xDizUnit8ehRFT"
-                className="block py-2 px-3 md:p-0 text-card-foreground rounded hover:bg-secondary md:hover:bg-transparent md:hover:text-primary-700"
-              >
-                yourTeam
-              </Link>
-            </li>
-            <li>
-              <Link
-                to="/teams"
-                className="block py-2 px-3 md:p-0 text-card-foreground rounded hover:bg-secondary md:hover:bg-transparent md:hover:text-primary-700"
-              >
-                Teams
-              </Link>
-            </li>
-            <li>
-              <button
-                id="dropdownNavbarLink"
-                data-dropdown-toggle="dropdownNavbar"
-                className="flex items-center justify-between w-full py-2 px-3 text-card-foreground rounded hover:bg-card md:hover:bg-transparent md:border-0 md:hover:text-primary-700 md:p-0 md:w-auto "
-              >
-                Quick links{" "}
-                <svg
-                  className="w-2.5 h-2.5 ms-2.5"
-                  aria-hidden="true"
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 10 6"
+            <ul className="flex flex-col font-medium p-4 md:p-0 mt-4 border  rounded-lg bg-card md:space-x-4 lg:space-x-6 rtl:space-x-reverse md:flex-row md:mt-0 md:border-0 md:bg-card dark:bg-card  ">
+              <li>
+                <a
+                  href="#"
+                  className="block py-2 px-3 md:p-0 text-card-foreground bg-primary-700 rounded md:bg-transparent md:text-primary-700 md:dark:text-primary-500"
+                  aria-current="page"
                 >
-                  <path
-                    stroke="currentColor"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="2"
-                    d="m1 1 4 4 4-4"
-                  />
-                </svg>
-              </button>
-              <div
-                id="dropdownNavbar"
-                className="z-10 hidden font-normal bg-card divide-y rounded-lg shadow w-44 "
-              >
-                <ul
-                  className="py-2 text-sm text-card-foreground border"
-                  aria-labelledby="dropdownLargeButton"
+                  About
+                </a>
+              </li>
+              {/* /users/kAkQbQGA2oXx9GcNFLNdDhwvf2f1 */}
+              <li>
+                <Link
+                  to="/profile/kAkQbQGA2oXx9GcNFLNdDhwvf2f1"
+                  className="block py-2 px-3 md:p-0 text-card-foreground rounded hover:bg-secondary md:hover:bg-transparent md:hover:text-primary-700"
                 >
-                  <li>
-                    <a
-                      href="#"
-                      className="block px-4 py-2 hover:bg-secondary "
-                    >
-                      <CreateTeamPopUp/>
-                    </a>
-                  </li>
-                  <li>
-                    <a
-                      href="#"
-                      className="block px-4 py-2 hover:bg-secondary "
-                    >
-                      Join Team
-                    </a>
-                  </li>
-                </ul>
-              </div>
-            </li>
-            <li>
-              <a
-                href="#"
-                className="block py-2 px-3 md:p-0 text-card-foreground rounded hover:bg-secondary md:hover:bg-transparent md:hover:text-primary-700 "
-              >
-                Services
-              </a>
-            </li>
-            <li>
-              <a
-                href="#"
-                className="block py-2 px-3 md:p-0 text-card-foreground rounded hover:bg-secondary md:hover:bg-transparent md:hover:text-primary-700 "
-              >
-                Contact
-              </a>
-            </li>
-          </ul>
-          <div className="md:hidden">
-
-            <Separator className="my-4 md:hidden"/>
-          {!authUser && (
-            
-            <SingInUpButtons />
-          ) }
-          </div>
+                  najadoui
+                </Link>
+              </li>
+              <li>
+                <Link
+                  to="/teams/60IwF7xDizUnit8ehRFT"
+                  className="block py-2 px-3 md:p-0 text-card-foreground rounded hover:bg-secondary md:hover:bg-transparent md:hover:text-primary-700"
+                >
+                  yourTeam
+                </Link>
+              </li>
+              
+              <li>
+                <Link
+                  to="/teams"
+                  className="block py-2 px-3 md:p-0 text-card-foreground rounded hover:bg-secondary md:hover:bg-transparent md:hover:text-primary-700"
+                >
+                  Teams
+                </Link>
+              </li>
+              <li>
+                <button
+                  id="dropdownNavbarLink"
+                  data-dropdown-toggle="dropdownNavbar"
+                  className="flex items-center justify-between w-full py-2 px-3 text-card-foreground rounded hover:bg-card md:hover:bg-transparent md:border-0 md:hover:text-primary-700 md:p-0 md:w-auto "
+                >
+                  Quick links{" "}
+                  <svg
+                    className="w-2.5 h-2.5 ms-2.5"
+                    aria-hidden="true"
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 10 6"
+                  >
+                    <path
+                      stroke="currentColor"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth="2"
+                      d="m1 1 4 4 4-4"
+                    />
+                  </svg>
+                </button>
+                <div
+                  id="dropdownNavbar"
+                  className="z-10 hidden font-normal bg-card divide-y rounded-lg shadow w-44 "
+                >
+                  <ul
+                    className="py-2 text-sm text-card-foreground border"
+                    aria-labelledby="dropdownLargeButton"
+                  >
+                    <li>
+                      <a
+                        href="#"
+                        className="block px-4 py-2 hover:bg-secondary "
+                      >
+                        <CreateTeamPopUp />
+                      </a>
+                    </li>
+                    <li>
+                      <a
+                        href="#"
+                        className="block px-4 py-2 hover:bg-secondary "
+                      >
+                        Join Team
+                      </a>
+                    </li>
+                  </ul>
+                </div>
+              </li>
+              <li>
+                <a
+                  href="#"
+                  className="block py-2 px-3 md:p-0 text-card-foreground rounded hover:bg-secondary md:hover:bg-transparent md:hover:text-primary-700 "
+                >
+                  Services
+                </a>
+              </li>
+              <li>
+                <a
+                  href="#"
+                  className="block py-2 px-3 md:p-0 text-card-foreground rounded hover:bg-secondary md:hover:bg-transparent md:hover:text-primary-700 "
+                >
+                  Contact
+                </a>
+              </li>
+            </ul>
+            <div className="md:hidden">
+              <Separator className="my-4 md:hidden" />
+              {!authUser && <SingInUpButtons />}
+            </div>
           </div>
         </div>
       </div>

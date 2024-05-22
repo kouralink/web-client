@@ -15,7 +15,7 @@ const RootLyout: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
   useEffect(() => {
       const unsubscribe = onAuthStateChanged(auth, (user) => {
-      console.log('auth hase changed:',user)
+      // console.log('auth hase changed:',user)
       dispatch(setUser(user));
     });
     return unsubscribe;

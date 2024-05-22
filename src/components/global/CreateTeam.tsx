@@ -43,7 +43,7 @@ export function CreateTeamPopUp() {
     const name = nameRef.current?.value;
     if (!name) return;
     // create the team
-    dispatch(createTeam({ teamName: name, coach: auth.uid }));
+    dispatch(createTeam({ teamName: name }));
     isBtnClicked = true;
   };
   const setIsClickedfalse = () => {

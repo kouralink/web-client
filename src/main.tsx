@@ -42,6 +42,7 @@ import TeamSearchPage from "./pages/team/TeamSearchPage.tsx";
 
 // 404
 import ErrorPage from "./pages/ErrorPage.tsx";
+import UserProfile from "./pages/profile/UserProfile.tsx";
 
 // private route
 export const PrivateRoute = ({ children }: { children: React.ReactNode }) => {
@@ -110,7 +111,7 @@ const router = createBrowserRouter(
           element={
             <PrivateRoute>
               <TeamLayout />
-            </PrivateRoute>
+           </PrivateRoute>
           }
           errorElement={<ErrorPage />}
         >
@@ -118,6 +119,7 @@ const router = createBrowserRouter(
           <Route path=":teamId" element={<TeamPage />} />
           <Route path="*" element={<ErrorPage />} />
         </Route>
+        <Route path="profile/:userId" element={<UserProfile />} />
         <Route path="*" element={<ErrorPage />} />
       </Route>
     </Route>

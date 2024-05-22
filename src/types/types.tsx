@@ -51,3 +51,26 @@ export interface MemberState {
   uid: string;
 }
 
+
+
+export interface User {
+  username: string;
+  bio?: string;
+  birthday?: string;
+  firstName?:string;
+  lastName?: string;
+  gender?: string;
+  phoneNumbers?: string[];
+  address?: string;
+  avatar?: string;
+}
+
+export interface UserState {
+  user: User;
+  status: "idle" | "loading" | "failed";
+  error: string | null | undefined;
+}
+  
+  
+
+

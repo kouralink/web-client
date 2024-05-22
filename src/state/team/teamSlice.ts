@@ -1,9 +1,9 @@
 // create store for team manage team have a id and a teamName and a blackList of users that are not allowed to join the team, and a coach that is team leader and createdAt date updateAt date and teamLogo and description and createdBy that is the user that created the team
 import { PayloadAction, createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import axios from "axios";
+import { auth, firestore } from "@/services/firebase";
+import { doc, setDoc, getDoc } from "firebase/firestore";
 
-import { Team ,TeamState} from "../../types/types";
-
+import { Team, TeamState } from "../../types/types";
 
 const initialState: TeamState = {
   team: {
@@ -11,8 +11,8 @@ const initialState: TeamState = {
     teamName: "",
     blackList: [],
     coach: "",
-    createdAt: { seconds: 0, nanoseconds: 0},
-    updatedAt: { seconds: 0, nanoseconds: 0},
+    createdAt: { seconds: 0, nanoseconds: 0 },
+    updatedAt: { seconds: 0, nanoseconds: 0 },
     teamLogo: "",
     description: "",
     createdBy: "",
@@ -45,7 +45,6 @@ const teamSlice = createSlice({
     builder
       .addCase(getTeam.pending, (state) => {
         state.status = "loading";
-        state.error = null;
       })
       .addCase(getTeam.fulfilled, (state, action) => {
         state.status = "idle";
@@ -58,7 +57,6 @@ const teamSlice = createSlice({
     builder
       .addCase(updateTeam.pending, (state) => {
         state.status = "loading";
-        state.error = null;
       })
       .addCase(updateTeam.fulfilled, (state, action) => {
         state.status = "idle";
@@ -69,57 +67,39 @@ const teamSlice = createSlice({
         state.error = action.error.message;
       });
     builder
-      .addCase(deleteTeam.pending, (state) => {
-        state.status = "loading";
-        state.error = null;
-      })
-      .addCase(deleteTeam.fulfilled, (state) => {
-        state.status = "idle";
-        state.team = initialState.team;
-      })
-      .addCase(deleteTeam.rejected, (state, action) => {
-        state.status = "failed";
-        state.error = action.error.message;
-      });
-    builder
       .addCase(createTeam.pending, (state) => {
-        try {
-          state.status = "loading";
-          state.error = null;
-        } catch (error) {
-          console.log(error);
-        }
+        console.log("pending");
+        state.status = "loading";
       })
       .addCase(createTeam.fulfilled, (state, action) => {
-        try {
-          console.log('i have runed create team fulfilled')
-          state.status = "idle";
+        console.log("fulfilled");
+        state.status = "idle";
+        if (action.payload !== undefined) {
           state.team = action.payload;
-        } catch (error) {
-          console.log(error);
+        } else {
+          state.team = initialState.team;
         }
       })
       .addCase(createTeam.rejected, (state, action) => {
-        try {
-          state.status = "failed";
-          state.error = action.error.message;
-        } catch (error) {
-          console.log(error);
-        }
+        console.log("rejected");
+        state.status = "failed";
+        state.error = action.error.message;
       });
   },
 });
 // create asyncThunk for get team using axios from backend localhost:3000/teams/:id
 export const getTeam = createAsyncThunk("team/getTeam", async (id: string) => {
   try {
-    const response = await axios.get(`http://localhost:3000/teams/${id}`);
-    const res = response.data;
-    console.log(res);
-    return response.data;
-  }
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  catch (error: any) {
-    throw new Error(error.response.data as string)
+    const teamRef = doc(firestore, "teams", id);
+    const teamSnap = await getDoc(teamRef);
+    if (teamSnap.exists()) {
+      return teamSnap.data() as Team;
+    } else {
+      throw new Error("No such document!");
+    }
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  } catch (error: any) {
+    throw new Error(error.response.data as string);
   }
 });
 
@@ -128,47 +108,69 @@ export const updateTeam = createAsyncThunk(
   "team/updateTeam",
   async (team: Team) => {
     try {
-      const response = await axios.post("http://localhost:3000/teams", team);
-      return response.data;
-    }
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    catch (error: any) {
-      throw new Error(error.response.data as string)
+      const docRef = doc(firestore, "teams", team.id);
+      await setDoc(docRef, team);
+      return team;
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (error: any) {
+      throw new Error(error.response.data as string);
     }
   }
 );
 
-// create asyncThunk for delete team using axios from backend localhost:3000/teams/:id using delete method
-export const deleteTeam = createAsyncThunk(
-  "team/deleteTeam",
-  async (id: string) => {
-    try {
-      await axios.delete(`http://localhost:3000/teams/${id}`);
-      return id;
+const isItUniqueTeamName = async (teamName: string) => {
+  //  teamName is the team id
+  try {
+    const teamRef = doc(firestore, "teams", teamName);
+    const teamSnap = await getDoc(teamRef);
+    if (teamSnap.exists()) {
+      return false;
+    } else {
+      return true;
     }
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    catch (error: any) {
-      throw new Error(error.response.data as string)
-    }
-
+  } catch (error) {
+    console.log(error);
+    return false;
   }
-);
+};
 
-// create asyncThunk for create team using axios from backend localhost:3000/teams using post method
-// sending just the team name and the coach
 export const createTeam = createAsyncThunk(
   "team/createTeam",
-  async (team: { teamName: string; coach: string }) => {
-    // catch error message if response was not 200
+  async (team: { teamName: string }) => {
     try {
-      const response = await axios.post("http://localhost:3000/teams", team);
-      return response.data;
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      if (!auth.currentUser) {
+        throw new Error("User not logged in");
+      }
+      const isUnique = await isItUniqueTeamName(team.teamName);
+      if (isUnique) {
+        const docRef = doc(firestore, "teams", team.teamName);
+        await setDoc(docRef, {
+          teamName: team.teamName,
+          coach: auth.currentUser.uid,
+          blackList: [],
+          createdAt: new Date(),
+          updatedAt: new Date(),
+          teamLogo: "",
+          description: "",
+          createdBy: auth.currentUser.uid,
+        });
+        // get doc
+
+        const teamInfo = await getDoc(docRef);
+        if (teamInfo.exists()) {
+          console.log("teamInfo", teamInfo.data());
+          return teamInfo.data() as Team;
+        } else {
+          throw new Error("Team Doesn't created!");
+        }
+        
+      } else {
+        throw new Error("Team name is not unique");
+      }
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
-      throw new Error(error.response.data as string)
+      throw new Error(error.response.data as string);
     }
-    // const response = await axios.post("http://localhost:3000/teams", team);
-    // return response.data;
   }
 );
 
