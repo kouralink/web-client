@@ -3,7 +3,7 @@ import {
   createUserWithEmailAndPassword,
   User,
   signOut,
-  updateProfile,
+  // updateProfile,
   signInWithEmailAndPassword,
   setPersistence,
   GoogleAuthProvider,
@@ -12,8 +12,9 @@ import {
   sendPasswordResetEmail,
   browserSessionPersistence,
 } from "firebase/auth";
-import { auth } from "@/services/firebase";
+import { auth, firestore } from "@/services/firebase";
 import { FirebaseError } from "firebase/app";
+import { doc, getDoc, setDoc } from "@firebase/firestore";
 
 // interface
 interface AuthState {
@@ -93,18 +94,23 @@ const authSlice = createSlice({
           }
           console.log(username, first_name, last_name);
           console.log("sending request");
-          fetch(`${import.meta.env.VITE_SERVER_SIDE_IP}:${import.meta.env.VITE_SERVER_SIDE_PORT}/users`, {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              UID: state.user.uid,
-              username: username,
-              firstName: first_name,
-              lastName: last_name,
-            }),
-          })
+          fetch(
+            `${import.meta.env.VITE_SERVER_SIDE_IP}:${
+              import.meta.env.VITE_SERVER_SIDE_PORT
+            }/users`,
+            {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({
+                UID: state.user.uid,
+                username: username,
+                firstName: first_name,
+                lastName: last_name,
+              }),
+            }
+          )
             .then((response) => {
               return response.json();
             })
@@ -170,18 +176,23 @@ const authSlice = createSlice({
           }
           console.log(username, first_name, last_name);
           console.log("sending request");
-          fetch(`${import.meta.env.VITE_SERVER_SIDE_IP}:${import.meta.env.VITE_SERVER_SIDE_PORT}/users`, {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              UID: state.user.uid,
-              username: username,
-              firstName: first_name,
-              lastName: last_name,
-            }),
-          })
+          fetch(
+            `${import.meta.env.VITE_SERVER_SIDE_IP}:${
+              import.meta.env.VITE_SERVER_SIDE_PORT
+            }/users`,
+            {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({
+                UID: state.user.uid,
+                username: username,
+                firstName: first_name,
+                lastName: last_name,
+              }),
+            }
+          )
             .then((response) => {
               return response.json();
             })
@@ -224,6 +235,44 @@ const authSlice = createSlice({
       });
   },
 });
+
+const GetUserAccount = async () => {
+  console.log("------------------------------------33-");
+  // check if there is a user with id == auth.currentUser.uid in the database
+  // if not return false
+  // if yes return true
+
+  if (auth.currentUser) {
+    const uid = auth.currentUser.uid;
+    // get username from email
+
+    console.log("uid:", uid);
+    const docRef = doc(firestore, "users", uid);
+    const docSnap = await getDoc(docRef);
+
+    if (docSnap.exists()) {
+      console.log("Document data:", docSnap.data());
+      return docSnap.data();
+    } else {
+      console.log("No such document!");
+      const username = auth.currentUser.email
+        ? auth.currentUser.email.split("@")[0] +
+          Math.random().toString(36).substring(7)
+        : Math.random().toString(36).substring(7);
+
+      // create doc base on uid
+      const docRef = doc(firestore, "users", uid);
+      await setDoc(docRef, {
+        username: username,
+      });
+      return false;
+    }
+  } else {
+    console.log("user is not authenticated");
+    return false;
+  }
+};
+
 // reset password
 export const reset_password = createAsyncThunk(
   "auth/reset_password",
@@ -259,7 +308,11 @@ export const login_with_google_or_facebook = createAsyncThunk(
       } else if (login_with === "google") {
         provider = new GoogleAuthProvider();
       }
+      console.log("pop about to show");
       provider && (await signInWithPopup(auth, provider));
+      // getUserAccount that after auth.currentUser is updated
+      console.log("hey im about to running");
+      await GetUserAccount();
       return auth.currentUser;
     } catch (error) {
       if (error instanceof FirebaseError) {
@@ -305,6 +358,8 @@ export const login = createAsyncThunk(
           return signInWithEmailAndPassword(auth, email, password);
         });
       }
+      await GetUserAccount();
+
       return auth.currentUser;
     } catch (error) {
       if (error instanceof FirebaseError) {
@@ -332,31 +387,32 @@ export const login = createAsyncThunk(
 export const register = createAsyncThunk(
   "auth/register",
   async ({
-    username,
+    // username,
     email,
     password,
     confPassword,
     rememberMe,
   }: {
-    username: string;
+    // username: string;
     email: string;
     password: string;
     confPassword: string;
     rememberMe: string;
   }) => {
     try {
-      console.log(username, email, password, confPassword);
+      console.log(email, password, confPassword);
       if (password !== confPassword) {
         return "Password and confirm password do not match";
       }
       if (rememberMe === "on") {
         await createUserWithEmailAndPassword(auth, email, password)
           .then(() => {
-            if (auth.currentUser) {
-              updateProfile(auth.currentUser, {
-                displayName: username,
-              });
-            }
+            // if (auth.currentUser) {
+            //   updateProfile(auth.currentUser, {
+            //     displayName: username,
+            //   });
+            // }
+            console.log("user created");
           })
           .catch((error) => {
             console.log(error);
@@ -367,11 +423,12 @@ export const register = createAsyncThunk(
             return createUserWithEmailAndPassword(auth, email, password);
           })
           .then(() => {
-            if (auth.currentUser) {
-              updateProfile(auth.currentUser, {
-                displayName: username,
-              });
-            }
+            // if (auth.currentUser) {
+            //   updateProfile(auth.currentUser, {
+            //     displayName: username,
+            //   });
+            // }
+            console.log("user created");
           })
           .catch((error) => {
             console.log(error);

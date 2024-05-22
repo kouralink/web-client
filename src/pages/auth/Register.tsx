@@ -13,14 +13,13 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Link, useNavigate } from "react-router-dom";
 
-// redux state 
+// redux state
 import { useDispatch, useSelector } from "react-redux";
 import { register, setError } from "../../state/auth/authSlice";
 import { AppDispatch, RootState } from "../../state/store";
 import { Loader2 } from "lucide-react";
 import AuthWith from "@/components/global/cards/AuthWith";
 import { useEffect } from "react";
-
 
 export default function Register() {
   const navigate = useNavigate();
@@ -30,27 +29,35 @@ export default function Register() {
   const dispatch = useDispatch<AppDispatch>();
   // reset auth error state before destroy componenet
   const reset = () => {
-    dispatch(setError(null))
-  }
+    dispatch(setError(null));
+  };
   useEffect(() => {
-    return () => {reset()}
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  },[])
+    return () => {
+      reset();
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const formData = Object.fromEntries(new FormData(e.currentTarget))
-    dispatch(register({username:formData.username as string,
-      email:formData.email as string, password:formData.password as string,
-       confPassword:formData.confPassword as string,rememberMe:formData.rememberme ? formData.rememberme as string: "off",}))
+    const formData = Object.fromEntries(new FormData(e.currentTarget));
+    dispatch(
+      register({
+        email: formData.email as string,
+        password: formData.password as string,
+        confPassword: formData.confPassword as string,
+        rememberMe: formData.rememberme
+          ? (formData.rememberme as string)
+          : "off",
+      })
+    );
   };
 
-  if(!authError && authUser){
+  if (!authError && authUser) {
     navigate("/");
   }
   return (
     <div className="w-full h-fit flex items-center gap-4 justify-evenly ">
-     
       <Card className="w-full aspect-square flex flex-col justify-center">
         <CardHeader>
           <CardTitle>
@@ -64,7 +71,7 @@ export default function Register() {
         <CardContent className="">
           <form onSubmit={handleSubmit}>
             <div className="grid w-full items-center gap-4">
-              <div className="flex flex-col space-y-1.5">
+              {/* <div className="flex flex-col space-y-1.5">
                 <Label htmlFor="username">Full Name</Label>
                 <Input
                   type="text"
@@ -73,7 +80,7 @@ export default function Register() {
                   placeholder="ba kbour"
                   required
                 />
-              </div>
+              </div> */}
               <div className="flex flex-col space-y-1.5">
                 <Label htmlFor="email">Email</Label>
                 <Input
@@ -105,33 +112,34 @@ export default function Register() {
                 />
               </div>
               <div className="flex flex-row gap-2 ">
-                  <input
-                    type="checkbox"
-                    id="rememberme"
-                    name="rememberme"
-                    className="rounded-lg"
-                  />
-                  <Label htmlFor="rememberme">Remember me</Label>
-                </div>
+                <input
+                  type="checkbox"
+                  id="rememberme"
+                  name="rememberme"
+                  className="rounded-lg"
+                />
+                <Label htmlFor="rememberme">Remember me</Label>
+              </div>
               <div>
                 {authError && <p className="text-red-500">{authError}</p>}
               </div>
               <div className="flex justify-end">
-                { authLoading ? 
-                <Button disabled>
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                Please wait
-              </Button>:
-                <Button type="submit">Create</Button>
-                }
+                {authLoading ? (
+                  <Button disabled>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Please wait
+                  </Button>
+                ) : (
+                  <Button type="submit">Create</Button>
+                )}
               </div>
             </div>
           </form>
         </CardContent>
         <CardFooter className="w-full flex flex-col gap-4 [&>*]:w-full">
-          <AuthWith/>
-        <div className="flex justify-center mb-2">
-            <p >
+          <AuthWith />
+          <div className="flex justify-center mb-2">
+            <p>
               Already have an account?{" "}
               <Link to="/auth" className="text-primary-700">
                 Log in
