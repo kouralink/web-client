@@ -55,6 +55,7 @@ export interface MemberState {
 
 export interface User {
   username: string;
+  accountType: "user"|"coach"|"tournement_manager"|"refree"|"player";
   bio?: string;
   birthday?: string;
   firstName?:string;
