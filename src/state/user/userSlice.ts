@@ -18,6 +18,7 @@ const initialState: UserState = {
     phoneNumbers: [],
     address: "",
     avatar: "",
+    accountType:"user"
   },
   status: "idle",
   error: null,

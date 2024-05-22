@@ -32,19 +32,19 @@ export function AccountNavDropdownMenu() {
       <DropdownMenuTrigger asChild>
         <Avatar className="w-10 h-10">
           <AvatarImage
-            src={authUser?.photoURL ? authUser?.photoURL : ""}
-            alt={"logo of " + authUser?.displayName}
+            src={authUser?.avatar ? authUser?.avatar : ""}
+            alt={"logo of " + authUser?.username}
           />
           <AvatarFallback>
-            {authUser?.displayName
-              ? authUser?.displayName.charAt(0)
-              : authUser?.email?.charAt(0)}
+            {authUser?.username
+              ? authUser?.username.charAt(0)
+              : "N"}
           </AvatarFallback>
         </Avatar>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-56">
         <DropdownMenuLabel>
-          {authUser?.displayName ? authUser?.displayName : "My"} Account
+          {authUser?.username ? authUser?.username : "My"} Account
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
