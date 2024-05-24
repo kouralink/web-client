@@ -22,24 +22,25 @@ const ProfileCard: React.FC<ProfileCardProps> = () => {
       <CardHeader className="flex flex-row m-0 p-0 gap-4">
         <Avatar className="w-24 h-24">
           <AvatarImage
-            src={authUser?.photoURL ? authUser?.photoURL : ""}
-            alt={"logo of " + authUser?.displayName}
+            src={authUser?.avatar ? authUser?.avatar : ""}
+            alt={"logo of " + authUser?.username}
+            className="object-cover"
           />
           <AvatarFallback>
-            {authUser?.displayName
-              ? authUser?.displayName.charAt(0)
-              : authUser?.email?.charAt(0)}
+            {authUser?.username
+              ? authUser?.username.charAt(0)
+              : "N"}
           </AvatarFallback>
         </Avatar>
         <div className="flex flex-col justify-center">
           <CardTitle>
-            {authUser?.displayName ? authUser?.displayName : "Account"} (Player)
+            {authUser?.username ? authUser?.username : "Account"} (Player)
           </CardTitle>
           <CardDescription>Your personal account.</CardDescription>
         </div>
       </CardHeader>
       <CardFooter className="p-0 m-0">
-        <Link to={'/profile'}> <Button className="bg-primary-700">Go to your personal profile</Button></Link>
+        <Link to={'/profile/me'}> <Button className="bg-primary-700">Go to your personal profile</Button></Link>
       </CardFooter>
     </Card>
   );

@@ -34,6 +34,7 @@ export function AccountNavDropdownMenu() {
           <AvatarImage
             src={authUser?.avatar ? authUser?.avatar : ""}
             alt={"logo of " + authUser?.username}
+            className="object-cover"
           />
           <AvatarFallback>
             {authUser?.username
@@ -47,19 +48,19 @@ export function AccountNavDropdownMenu() {
           {authUser?.username ? authUser?.username : "My"} Account
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
-        <DropdownMenuGroup>
+        <DropdownMenuGroup><Link to={"/profile/me"}>
           <DropdownMenuItem>
             <User className="mr-2 h-4 w-4" />
-            <span>Profile</span>
+            Prifle
             <DropdownMenuShortcut>⇧⌘P</DropdownMenuShortcut>
-          </DropdownMenuItem>
-          
+          </DropdownMenuItem></Link>
+          <Link to={"/settings"}>
           <DropdownMenuItem>
             <Settings className="mr-2 h-4 w-4" />
-            <Link to={"/settings"}>Settings</Link>
+            Settings
             <DropdownMenuShortcut>⌘S</DropdownMenuShortcut>
           </DropdownMenuItem>
-          
+          </Link>
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
         <DropdownMenuGroup>

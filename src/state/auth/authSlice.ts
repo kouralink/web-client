@@ -12,8 +12,17 @@ import {
 } from "firebase/auth";
 import { auth, firestore } from "@/services/firebase";
 import { FirebaseError } from "firebase/app";
-import { doc, getDoc, setDoc } from "@firebase/firestore";
-import { User as UserInterface } from "../../types/types";
+import {
+  doc,
+  getDoc,
+  setDoc,
+  collection,
+  getDocs,
+  where,
+  query,
+} from "@firebase/firestore";
+import { User as UserInterface, UserUpdate } from "../../types/types";
+import { toast } from "@/components/ui/use-toast";
 
 interface AuthState {
   user: UserInterface | null;
@@ -21,53 +30,6 @@ interface AuthState {
   loading: boolean;
   error: string | null;
 }
-
-const GetUserAccountInfo = async () => {
-  if (auth.currentUser) {
-    console.log("-------------------------------");
-    const uid = auth.currentUser.uid;
-    const docRef = doc(firestore, "users", uid);
-    const docSnap = await getDoc(docRef);
-
-    if (docSnap.exists()) {
-      console.log("Document data:", docSnap.data());
-      console.log("********************************");
-
-      return docSnap.data() as UserInterface;
-    } else {
-      console.log("No such document!");
-      const username = auth.currentUser.email
-        ? auth.currentUser.email.split("@")[0] +
-          Math.random().toString(36).substring(7)
-        : Math.random().toString(36).substring(7);
-      const name_splited = auth.currentUser.displayName?.split(" ") || [
-        username,
-      ];
-
-      const user: UserInterface = {
-        username: username,
-        accountType: "user",
-        firstName: name_splited[0],
-        lastName: name_splited.length > 1 ? name_splited[1] : "",
-        bio: "",
-        birthday: "",
-        gender: "male",
-        phoneNumbers: [],
-        address: "",
-        avatar: auth.currentUser.photoURL ? auth.currentUser.photoURL : "",
-      };
-      // create doc base on uid
-      const docRef = doc(firestore, "users", uid);
-      await setDoc(docRef, user);
-      console.log("********************************");
-
-      return user;
-    }
-  } else {
-    console.log("user is not authenticated");
-    return null;
-  }
-};
 
 // inisial state
 const initialState: AuthState = {
@@ -99,6 +61,7 @@ const authSlice = createSlice({
       .addCase(login.pending, (state) => {
         console.log("login pending");
         state.loading = true;
+        state.error = null;
       })
       .addCase(login.fulfilled, (state, action) => {
         state.loading = false;
@@ -120,6 +83,8 @@ const authSlice = createSlice({
       .addCase(register.pending, (state) => {
         console.log("pen");
         state.loading = true;
+        state.error = null;
+
       })
       .addCase(register.fulfilled, (state, action) => {
         state.loading = false;
@@ -138,6 +103,8 @@ const authSlice = createSlice({
     builder
       .addCase(logout.pending, (state) => {
         state.loading = true;
+        state.error = null;
+
       })
       .addCase(logout.fulfilled, (state, action) => {
         state.loading = false;
@@ -158,6 +125,8 @@ const authSlice = createSlice({
       .addCase(login_with_google_or_facebook.pending, (state) => {
         console.log("login with google pending");
         state.loading = true;
+        state.error = null;
+
       })
       .addCase(login_with_google_or_facebook.fulfilled, (state, action) => {
         state.loading = false;
@@ -178,6 +147,8 @@ const authSlice = createSlice({
       .addCase(reset_password.pending, (state) => {
         console.log("reset password pending");
         state.loading = true;
+        state.error = null;
+
       })
       .addCase(reset_password.fulfilled, (state, action) => {
         state.loading = false;
@@ -196,6 +167,8 @@ const authSlice = createSlice({
     builder
       .addCase(getUserData.pending, (state) => {
         state.loading = true;
+        state.error = null;
+
       })
       .addCase(getUserData.fulfilled, (state, action) => {
         state.loading = false;
@@ -203,15 +176,121 @@ const authSlice = createSlice({
           state.error = null;
           state.uid = auth.currentUser?.uid as string;
           state.user = action.payload as UserInterface;
+        } else {
+          state.error = action.payload as string;
         }
       })
       .addCase(getUserData.rejected, (state, action) => {
         state.loading = false;
         state.error = action.error.message as string;
       });
+    builder
+      .addCase(updateAvatar.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+
+      })
+      .addCase(updateAvatar.fulfilled, (state, action) => {
+        state.loading = false;
+        if (typeof action.payload === "object" && action.payload !== null) {
+          state.error = null;
+          const u = state.user as UserInterface;
+          state.user = { ...u, avatar: action.payload.avatar };
+        } else {
+          state.error = action.payload as string;
+        }
+      })
+      .addCase(updateAvatar.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.error.message as string;
+      });
+
+    builder
+      .addCase(updateUserData.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+
+      })
+      .addCase(updateUserData.fulfilled, (state, action) => {
+        state.loading = false;
+        if (typeof action.payload === "object" && action.payload !== null) {
+          state.error = null;
+          state.user = action.payload as UserInterface;
+          toast({
+            title: "Profile updated",
+            description: "Your profile has been successfully updated.",
+          });
+        } else {
+          state.error = action.payload as string;
+        }
+      })
+      .addCase(updateUserData.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.error.message as string;
+      });
   },
 });
 
+const checkUsernameAvailability = async (username: string) => {
+  const usersRef = collection(firestore, "users");
+  const q = query(usersRef, where("username", "==", username));
+  const querySnapshot = await getDocs(q);
+  return querySnapshot.empty;
+};
+const GetUserAccountInfo = async () => {
+  if (auth.currentUser) {
+    console.log("-------------------------------");
+    const uid = auth.currentUser.uid;
+    const docRef = doc(firestore, "users", uid);
+    const docSnap = await getDoc(docRef);
+
+    if (docSnap.exists()) {
+      console.log("Document data:", docSnap.data());
+      console.log("********************************");
+
+      return docSnap.data() as UserInterface;
+    } else {
+      console.log("No such document!");
+      let username = auth.currentUser.email
+        ? auth.currentUser.email.split("@")[0] +
+          Math.random().toString(36).substring(7)
+        : Math.random().toString(36).substring(7);
+
+      // check if yourname is available by checking if the username is already taken
+      let isUsernameAvailable = await checkUsernameAvailability(username);
+      while (!isUsernameAvailable) {
+        username = username + Math.random().toString(36).substring(7);
+        isUsernameAvailable = await checkUsernameAvailability(username);
+      }
+
+      const name_splited = auth.currentUser.displayName?.split(" ") || [
+        username,
+      ];
+
+      const user: UserInterface = {
+        username: username,
+        accountType: "user",
+        firstName: name_splited[0],
+        lastName: name_splited.length > 1 ? name_splited[1] : "",
+        bio: "",
+        birthday: "",
+        gender: "male",
+        phoneNumbers: [],
+        address: "",
+        avatar: auth.currentUser.photoURL ? auth.currentUser.photoURL : "",
+      };
+      // create doc base on uid
+      const docRef = doc(firestore, "users", uid);
+      await setDoc(docRef, user);
+      console.log("********************************");
+
+      return user;
+    }
+  } else {
+    console.log("user is not authenticated");
+    return null;
+  }
+};
 // reset password
 export const reset_password = createAsyncThunk(
   "auth/reset_password",
@@ -408,6 +487,60 @@ export const getUserData = createAsyncThunk("auth/getUserData", async () => {
     }
   }
 });
+
+export const updateAvatar = createAsyncThunk(
+  "auth/updateAvatar",
+  async (avatar: string) => {
+    try {
+      if (auth.currentUser) {
+        const uid = auth.currentUser.uid;
+        const docRef = doc(firestore, "users", uid);
+        await setDoc(docRef, { avatar: avatar }, { merge: true });
+        return { avatar: avatar };
+      } else {
+        return false;
+      }
+    } catch (error) {
+      if (error instanceof FirebaseError) {
+        return error.message;
+      } else {
+        return "An error occurred";
+      }
+    }
+  }
+);
+
+export const updateUserData = createAsyncThunk(
+  "auth/updateUserData",
+  async (user: UserUpdate) => {
+    try {
+      if (auth.currentUser) {
+        if (user.username) {
+          const isUsernameAvailable = await checkUsernameAvailability(
+            user.username
+          );
+          if (!isUsernameAvailable) {
+            return "Username is not available";
+          }
+        }
+        const uid = auth.currentUser.uid;
+        const docRef = doc(firestore, "users", uid);
+        await setDoc(docRef, user, { merge: true });
+        // get updated user data
+        const updated_user = await GetUserAccountInfo();
+        return updated_user;
+      } else {
+        return null;
+      }
+    } catch (error) {
+      if (error instanceof FirebaseError) {
+        return error.message;
+      } else {
+        return "An error occurred";
+      }
+    }
+  }
+);
 
 export const { setUser, setLoading, setError } = authSlice.actions;
 

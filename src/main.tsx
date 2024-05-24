@@ -51,14 +51,14 @@ export const PrivateRoute = ({ children }: { children: React.ReactNode }) => {
 };
 
 // redirect if logged in
-export const RedirectIfLoggedIn = ({ children }: { children: React.ReactNode }) => {
+export const RedirectIfLoggedIn = ({
+  children,
+}: {
+  children: React.ReactNode;
+}) => {
   const isAuthenticated = store.getState().auth.user !== null;
   return isAuthenticated ? <Navigate to="/" /> : children;
 };
-
-
-
-
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -68,10 +68,7 @@ const router = createBrowserRouter(
       // action={rootAction}
       errorElement={<ErrorPage />}
     >
-      <Route
-        element={<RootLyout />}
-        errorElement={<ErrorPage />}
-      >
+      <Route element={<RootLyout />} errorElement={<ErrorPage />}>
         <Route index element={<App />} />
         <Route
           path="auth"
@@ -79,7 +76,7 @@ const router = createBrowserRouter(
             <RedirectIfLoggedIn>
               <AuthLayout />
             </RedirectIfLoggedIn>
-          }  
+          }
           // loader={rootLoader}
           // action={rootAction}
           errorElement={<ErrorPage />}
@@ -106,12 +103,12 @@ const router = createBrowserRouter(
           <Route path="notifications" element={<SettingsNotificationsPage />} />
           <Route path="*" element={<ErrorPage />} />
         </Route>
-        <Route 
+        <Route
           path="teams"
           element={
             <PrivateRoute>
               <TeamLayout />
-           </PrivateRoute>
+            </PrivateRoute>
           }
           errorElement={<ErrorPage />}
         >
@@ -119,7 +116,7 @@ const router = createBrowserRouter(
           <Route path=":teamId" element={<TeamPage />} />
           <Route path="*" element={<ErrorPage />} />
         </Route>
-        <Route path="profile/:userId" element={<UserProfile />} />
+        <Route path="profile/:username" element={<UserProfile />} />
         <Route path="*" element={<ErrorPage />} />
       </Route>
     </Route>
@@ -128,7 +125,6 @@ const router = createBrowserRouter(
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
-
     <Provider store={store}>
       <ThemeProvider defaultTheme="system" storageKey="vite-ui-theme">
         <RouterProvider router={router} />
