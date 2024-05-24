@@ -1,4 +1,5 @@
 import dynamicIconImports from "lucide-react/dynamicIconImports";
+import { Timestamp } from "firebase/firestore";
 
 export type sidebarNavItemType = {
   title: string;
@@ -6,17 +7,17 @@ export type sidebarNavItemType = {
   icon: keyof typeof dynamicIconImports;
 };
 
-export interface TimeStamp {
-  seconds: number;
-  nanoseconds: number;
-}
+// export interface TimeStamp {
+//   seconds: number;
+//   nanoseconds: number;
+// }
 export interface Team {
   id: string;
   teamName: string;
   blackList: string[];
   coach: string;
-  createdAt: TimeStamp;
-  updatedAt: TimeStamp;
+  createdAt: Timestamp;
+  updatedAt: Timestamp;
   teamLogo: string | null | undefined;
   description: string | null;
   createdBy: string;
@@ -57,7 +58,8 @@ export interface User {
   username: string;
   accountType: "user"|"coach"|"tournement_manager"|"refree"|"player";
   bio?: string;
-  birthday?: string;
+  birthday?: Timestamp;
+  joinDate?:Timestamp;
   firstName?:string;
   lastName?: string;
   gender?: 'male'|'female';
@@ -69,7 +71,7 @@ export interface User {
 export interface UserUpdate {
   username?: string;
   bio?: string;
-  birthday?: string;
+  birthday?: Timestamp;
   firstName?:string;
   lastName?: string
   gender?:'male'|'female';
