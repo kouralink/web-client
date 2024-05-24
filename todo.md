@@ -7,5 +7,5 @@
 ## files edits
 userSLice
 settings
-navbar url photo
-create profile/me === prifile/auth.uid
+
+

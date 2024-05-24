@@ -86,15 +86,7 @@ const Navbar: React.FC<NavbarProps> = ({ navHeight = 4 }) => {
                   About
                 </a>
               </li>
-              {/* /users/kAkQbQGA2oXx9GcNFLNdDhwvf2f1 */}
-              <li>
-                <Link
-                  to="/profile/kAkQbQGA2oXx9GcNFLNdDhwvf2f1"
-                  className="block py-2 px-3 md:p-0 text-card-foreground rounded hover:bg-secondary md:hover:bg-transparent md:hover:text-primary-700"
-                >
-                  najadoui
-                </Link>
-              </li>
+              
               <li>
                 <Link
                   to="/teams/60IwF7xDizUnit8ehRFT"

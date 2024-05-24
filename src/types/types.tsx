@@ -60,7 +60,19 @@ export interface User {
   birthday?: string;
   firstName?:string;
   lastName?: string;
-  gender?: string;
+  gender?: 'male'|'female';
+  phoneNumbers?: string[];
+  address?: string;
+  avatar?: string;
+  
+}
+export interface UserUpdate {
+  username?: string;
+  bio?: string;
+  birthday?: string;
+  firstName?:string;
+  lastName?: string
+  gender?:'male'|'female';
   phoneNumbers?: string[];
   address?: string;
   avatar?: string;
@@ -68,6 +80,7 @@ export interface User {
 
 export interface UserState {
   user: User;
+  uid: string;
   status: "idle" | "loading" | "failed";
   error: string | null | undefined;
 }
