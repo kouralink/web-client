@@ -57,7 +57,6 @@ type ProfileFormValues = z.infer<typeof profileFormSchema>;
 
 // This can come from your database or API.
 
-
 export function ProfileForm() {
   const authUser = useSelector((state: RootState) => state.auth.user);
   const isLoading = useSelector((state: RootState) => state.auth.loading);
@@ -78,33 +77,29 @@ export function ProfileForm() {
   });
 
   useEffect(() => {
-  if (!isLoading && authError) {
+    if (!isLoading && authError) {
       toast({
         title: "Error",
         description: authError || "An error occurred",
         variant: "destructive",
       });
-    }}, [isLoading, authError]);
-    
-  
-
+    }
+  }, [isLoading, authError]);
   const onSubmit = async (data: ProfileFormValues) => {
-    
-
-    const changedInfos:UserUpdate= {}
+    const changedInfos: UserUpdate = {};
     if (authUser?.username !== data.username) {
-      changedInfos.username = data.username
+      changedInfos.username = data.username;
     }
     if (authUser?.bio !== data.bio) {
-      changedInfos.bio = data.bio
+      changedInfos.bio = data.bio;
     }
     if (authUser?.address !== data.address) {
-      changedInfos.address = data.address
+      changedInfos.address = data.address;
     }
     if (authUser?.gender !== data.gender) {
-      changedInfos.gender = data.gender
+      changedInfos.gender = data.gender;
     }
-    console.log(changedInfos)
+    console.log(changedInfos);
     if (Object.keys(changedInfos).length === 0) {
       toast({
         title: "No changes",
@@ -112,25 +107,9 @@ export function ProfileForm() {
       });
       return;
     }
-    
+
     await dispatch(updateUserData(changedInfos));
-
-
-    
-
-      toast({
-        title: "Profile updated",
-        description: "Your profile has been successfully updated.",
-      });
-    
-
-    
-
-
-
-
-     
-  }
+  };
 
   return (
     <Form {...form}>
@@ -142,10 +121,7 @@ export function ProfileForm() {
             <FormItem>
               <FormLabel>Username</FormLabel>
               <FormControl>
-                <Input
-                  placeholder="username"
-                  {...field}
-                />
+                <Input placeholder="username" {...field} />
               </FormControl>
               <FormDescription>
                 This is your public display name. It can be your real name or a
@@ -162,10 +138,7 @@ export function ProfileForm() {
             <FormItem>
               <FormLabel>Address</FormLabel>
               <FormControl>
-                <Input
-                  placeholder="address"
-                  {...field}
-                />
+                <Input placeholder="address" {...field} />
               </FormControl>
               <FormDescription>
                 This is your public address. It can be your real address or a

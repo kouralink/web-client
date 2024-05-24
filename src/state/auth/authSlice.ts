@@ -20,6 +20,7 @@ import {
   getDocs,
   where,
   query,
+  Timestamp 
 } from "@firebase/firestore";
 import { User as UserInterface, UserUpdate } from "../../types/types";
 import { toast } from "@/components/ui/use-toast";
@@ -273,7 +274,8 @@ const GetUserAccountInfo = async () => {
         firstName: name_splited[0],
         lastName: name_splited.length > 1 ? name_splited[1] : "",
         bio: "",
-        birthday: "",
+        birthday: Timestamp.now(),
+        joinDate: Timestamp.now(),
         gender: "male",
         phoneNumbers: [],
         address: "",

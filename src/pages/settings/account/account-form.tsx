@@ -24,8 +24,12 @@ import {
 } from "@/components/ui/popover";
 import { toast } from "@/components/ui/use-toast";
 import { CalendarIcon } from "lucide-react";
-import { RootState } from "@/state/store";
-import { useSelector } from "react-redux";
+import { AppDispatch, RootState } from "@/state/store";
+import { useDispatch, useSelector } from "react-redux";
+import { updateUserData } from "@/state/auth/authSlice";
+import { Timestamp } from "firebase/firestore";
+import { UserUpdate } from "@/types/types";
+import { useEffect } from "react";
 
 const accountFormSchema = z.object({
   firstname: z
@@ -53,26 +57,53 @@ type AccountFormValues = z.infer<typeof accountFormSchema>;
 
 export function AccountForm() {
   const authUser = useSelector((state: RootState) => state.auth.user);
+  const isLoading = useSelector((state: RootState) => state.auth.loading);
+  const authError = useSelector((state: RootState) => state.auth.error);
   const defaultValues: Partial<AccountFormValues> = {
     firstname: authUser?.firstName,
     lastname: authUser?.lastName,
-    dob: new Date("2023-01-23"),
+    dob: authUser?.birthday ? new Date(authUser.birthday.toDate()) : undefined,
   };
   const form = useForm<AccountFormValues>({
     resolver: zodResolver(accountFormSchema),
     defaultValues,
   });
 
-  function onSubmit(data: AccountFormValues) {
-    toast({
-      title: "You submitted the following values:",
-      description: (
-        <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
-          <code className="text-white">{JSON.stringify(data, null, 2)}</code>
-        </pre>
-      ),
-    });
-  }
+  const dispatch = useDispatch<AppDispatch>();
+
+  useEffect(() => {
+    if (!isLoading && authError) {
+      toast({
+        title: "Error",
+        description: authError || "An error occurred",
+        variant: "destructive",
+      });
+    }
+  }, [isLoading, authError]);
+
+  const onSubmit = async (data: AccountFormValues) => {
+    const changedInfos: UserUpdate = {};
+    if (authUser?.firstName !== data.firstname) {
+      changedInfos.firstName = data.firstname;
+    }
+    if (authUser?.lastName !== data.lastname) {
+      changedInfos.lastName = data.lastname;
+    }
+    if (authUser?.birthday !== Timestamp.fromDate(data.dob)) {
+      changedInfos.birthday = Timestamp.fromDate(data.dob);
+    }
+
+    console.log(changedInfos);
+    if (Object.keys(changedInfos).length === 0) {
+      toast({
+        title: "No changes",
+        description: "You haven't made any changes.",
+      });
+      return;
+    }
+
+    await dispatch(updateUserData(changedInfos));
+  };
 
   return (
     <Form {...form}>
@@ -156,7 +187,7 @@ export function AccountForm() {
             </FormItem>
           )}
         />
-        
+
         <Button type="submit">Update account</Button>
       </form>
     </Form>
