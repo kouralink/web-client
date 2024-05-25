@@ -20,10 +20,12 @@ import {
   getDocs,
   where,
   query,
-  Timestamp 
+  Timestamp,
 } from "@firebase/firestore";
 import { User as UserInterface, UserUpdate } from "../../types/types";
 import { toast } from "@/components/ui/use-toast";
+import { changeAccountFormValues } from "@/components/global/ChangeAccountType";
+import { store } from "../store";
 
 interface AuthState {
   user: UserInterface | null;
@@ -85,7 +87,6 @@ const authSlice = createSlice({
         console.log("pen");
         state.loading = true;
         state.error = null;
-
       })
       .addCase(register.fulfilled, (state, action) => {
         state.loading = false;
@@ -105,7 +106,6 @@ const authSlice = createSlice({
       .addCase(logout.pending, (state) => {
         state.loading = true;
         state.error = null;
-
       })
       .addCase(logout.fulfilled, (state, action) => {
         state.loading = false;
@@ -127,7 +127,6 @@ const authSlice = createSlice({
         console.log("login with google pending");
         state.loading = true;
         state.error = null;
-
       })
       .addCase(login_with_google_or_facebook.fulfilled, (state, action) => {
         state.loading = false;
@@ -149,7 +148,6 @@ const authSlice = createSlice({
         console.log("reset password pending");
         state.loading = true;
         state.error = null;
-
       })
       .addCase(reset_password.fulfilled, (state, action) => {
         state.loading = false;
@@ -169,7 +167,6 @@ const authSlice = createSlice({
       .addCase(getUserData.pending, (state) => {
         state.loading = true;
         state.error = null;
-
       })
       .addCase(getUserData.fulfilled, (state, action) => {
         state.loading = false;
@@ -189,7 +186,6 @@ const authSlice = createSlice({
       .addCase(updateAvatar.pending, (state) => {
         state.loading = true;
         state.error = null;
-
       })
       .addCase(updateAvatar.fulfilled, (state, action) => {
         state.loading = false;
@@ -210,7 +206,6 @@ const authSlice = createSlice({
       .addCase(updateUserData.pending, (state) => {
         state.loading = true;
         state.error = null;
-
       })
       .addCase(updateUserData.fulfilled, (state, action) => {
         state.loading = false;
@@ -533,6 +528,58 @@ export const updateUserData = createAsyncThunk(
         return updated_user;
       } else {
         return null;
+      }
+    } catch (error) {
+      if (error instanceof FirebaseError) {
+        return error.message;
+      } else {
+        return "An error occurred";
+      }
+    }
+  }
+);
+
+const isItAlreadyInATeam = async (uid: string) => {
+  const teamsRef = collection(firestore, "teams");
+  const q = query(teamsRef, where("members", "array-contains", uid));
+  const querySnapshot = await getDocs(q);
+  return querySnapshot.empty;
+};
+
+const setAccountType = async (uid: string, accountType: string) => {
+  const docRef = doc(firestore, "users", uid);
+  await setDoc(docRef, { accountType: accountType }, { merge: true });
+  const updated_user = await GetUserAccountInfo();
+  return updated_user;
+};
+
+export const changeAccountType = createAsyncThunk(
+  "auth/changeAccountType",
+  async (data: changeAccountFormValues) => {
+    try {
+      if (auth.currentUser) {
+        // check account type if was user no probeleme it's can change to any of account type
+        // if it was coatch or player check if it's already in a team
+        const uid = auth.currentUser.uid;
+
+        const currentUserAccountType = store.getState().auth.user?.accountType;
+
+        if (currentUserAccountType === "user") {
+          return await setAccountType(uid, data.accountType);
+        } else if (
+          currentUserAccountType === "coach" ||
+          currentUserAccountType === "player"
+        ) {
+          const isAlreadyInTeam = await isItAlreadyInATeam(uid);
+          if (isAlreadyInTeam) {
+            return await setAccountType(uid, data.accountType);
+          } else {
+            return "You are already in a team, you can not change your account type";
+          }
+        }
+        return "Account type is not valid yet.";
+      } else {
+        return "User is not authenticated";
       }
     } catch (error) {
       if (error instanceof FirebaseError) {
