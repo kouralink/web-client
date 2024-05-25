@@ -3,15 +3,11 @@ import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Star } from "lucide-react";
 import { TeamDropDownMenu } from "./TeamDropDownMenu";
+import { Team } from "@/types/types";
 
-export interface TeamHeaderProps {
-    teamname: string;
-    logo: string;
-    stars: number;
-    teamId: string;
-}
 
-const TeamHeader: React.FC<TeamHeaderProps> = (props) => {
+
+const TeamHeader: React.FC<Team> = (props) => {
   return (
     <Card
       className={"flex w-full rounded-lg p-2 justify-between items-center  "}
@@ -19,10 +15,10 @@ const TeamHeader: React.FC<TeamHeaderProps> = (props) => {
       <CardHeader className="flex flex-row  items-center justify-center gap-4 m-0 p-0 ">
         <div className="flex  items-center gap-2">
           <Avatar className="w-16 h-16">
-            <AvatarImage src="https://github.com/shadcn.png" alt="@shadcn" />
-            <AvatarFallback>{props.teamname.charAt(0)}</AvatarFallback>
+            <AvatarImage src={props.teamLogo} alt={props.teamName + " logo"} />
+            <AvatarFallback>{props.teamName.charAt(0)}</AvatarFallback>
           </Avatar>
-          <h2>{props.teamname}</h2>
+          <h2>{props.teamName}</h2>
         </div>
       </CardHeader>
       <CardContent className="flex items-center justify-center gap-4 m-0 p-0">

@@ -21,6 +21,7 @@ import {
   where,
   query,
   Timestamp,
+  collectionGroup
 } from "@firebase/firestore";
 import { User as UserInterface, UserUpdate } from "../../types/types";
 import { toast } from "@/components/ui/use-toast";
@@ -223,6 +224,42 @@ const authSlice = createSlice({
       .addCase(updateUserData.rejected, (state, action) => {
         state.loading = false;
         state.error = action.error.message as string;
+        
+      });
+      builder.addCase(changeAccountType.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+        toast({
+          title: "Updating account type",
+          description: "Updating your account type, please wait...",
+        });
+      })
+      .addCase(changeAccountType.fulfilled, (state, action) => {
+        state.loading = false;
+        if (typeof action.payload === "object" && action.payload !== null) {
+          state.error = null;
+          state.user = action.payload as UserInterface;
+          toast({
+            title: "Account type updated",
+            description: "Your account type has been successfully updated to " + action.payload.accountType + ".",
+          });
+        } else {
+          state.error = action.payload as string;
+          toast({
+            title: "Error",
+            description: state.error,
+            variant: "destructive",
+          });
+        }
+      })
+      .addCase(changeAccountType.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.error.message as string;
+        toast({
+          title: "Error",
+          description: state.error,
+          variant: "destructive",
+        });
       });
   },
 });
@@ -540,10 +577,19 @@ export const updateUserData = createAsyncThunk(
 );
 
 const isItAlreadyInATeam = async (uid: string) => {
-  const teamsRef = collection(firestore, "teams");
-  const q = query(teamsRef, where("members", "array-contains", uid));
-  const querySnapshot = await getDocs(q);
-  return querySnapshot.empty;
+  // the teams collection contain another collection called members the id of the member doc is the uid of the user
+  const membersQuery = collectionGroup(firestore, "members");
+  const snapshot = await getDocs(membersQuery);
+  let isAlreadyInTeam = false;
+
+  snapshot.forEach((doc) => {
+    
+    if (doc.id === uid) {
+      console.log("user is already in a team");
+      isAlreadyInTeam = true;
+    }
+  });
+  return isAlreadyInTeam;
 };
 
 const setAccountType = async (uid: string, accountType: string) => {
@@ -561,9 +607,7 @@ export const changeAccountType = createAsyncThunk(
         // check account type if was user no probeleme it's can change to any of account type
         // if it was coatch or player check if it's already in a team
         const uid = auth.currentUser.uid;
-
         const currentUserAccountType = store.getState().auth.user?.accountType;
-
         if (currentUserAccountType === "user") {
           return await setAccountType(uid, data.accountType);
         } else if (
@@ -571,13 +615,18 @@ export const changeAccountType = createAsyncThunk(
           currentUserAccountType === "player"
         ) {
           const isAlreadyInTeam = await isItAlreadyInATeam(uid);
-          if (isAlreadyInTeam) {
+          if (!isAlreadyInTeam) {
             return await setAccountType(uid, data.accountType);
           } else {
             return "You are already in a team, you can not change your account type";
           }
         }
-        return "Account type is not valid yet.";
+        else if (currentUserAccountType === "tournement_manager") {
+          return await setAccountType(uid, data.accountType);
+        } else if (currentUserAccountType === "refree") {
+          return await setAccountType(uid, data.accountType);
+        }
+        return "Account type is not valid ";
       } else {
         return "User is not authenticated";
       }

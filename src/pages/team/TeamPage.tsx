@@ -1,7 +1,7 @@
 import { AppDispatch, RootState } from "@/state/store";
-import { getTeam } from "@/state/team/teamSlice";
-import { MatchState, MemberState } from "@/types/types";
-import { useEffect } from "react";
+import {  getTeamByTeamName } from "@/state/team/teamSlice";
+import { MatchState } from "@/types/types";
+import { useEffect,  } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 import MatchRecordCardIteam from "@/components/global/cards/MatchRecordCardIteam";
@@ -10,40 +10,44 @@ import TeamHeader from "@/components/global/TeamHeader";
 import { Card } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
 
+
+
 export const TeamPage = () => {
   const { teamId } = useParams<{ teamId: string }>();
   const dispatch = useDispatch<AppDispatch>();
   const team = useSelector((state: RootState) => state.team.team);
+  // const teamStatus = useSelector((state: RootState) => state.team.status);
+  const members = useSelector((state: RootState) => state.team.members);
+  const coach = members.find((member) => member.role === "coach") ;
+
 
   useEffect(() => {
     console.log(team);
     if (!teamId) return;
     if (teamId === team.id) return;
-    dispatch(getTeam(teamId as string));
+    dispatch(getTeamByTeamName(teamId as string));
   }, [dispatch, team, team.id, teamId]);
+
+
   return (
     <div className="flex flex-col gap-8 mt-5 ">
       <TeamHeader
-        logo={"logo"}
-        stars={1000}
-        teamId="13"
-        teamname="Pixels Bytes"
+        {...team}
       />
       <div className="flex gap-8 ">
         <Card className=" flex flex-col py-4 px-2 gap-4 h-fit">
         <div className="flex flex-col gap-2">
 
             <h2>Coach</h2>
-            <MemberCard
-              username="Coach"
-              logo="https://via.placeholder.com/150"
-              uid="564654sdfdsfsdfd4"
-            />
+            {coach && <MemberCard
+
+              key={coach.uid} {...coach}
+            />}
           </div>
           <div className="flex flex-col gap-2">
             <h2>Members</h2>
-            {testMember.map((member: MemberState, index: number) => (
-              <MemberCard key={index} {...member} />
+            {members.map((member) => (
+              <MemberCard key={member.uid} {...member} />
             ))}
           </div>
         </Card>
@@ -66,28 +70,28 @@ export const TeamPage = () => {
   );
 };
 
-const testMember: MemberState[] = [
-  {
-    username: "User 1",
-    logo: "https://via.placeholder.com/150",
-    uid: "1",
-  },
-  {
-    username: "User 2",
-    logo: "https://via.placeholder.com/150",
-    uid: "2",
-  },
-  {
-    username: "User 3",
-    logo: "https://via.placeholder.com/150",
-    uid: "3",
-  },
-  {
-    username: "User 4",
-    logo: "https://via.placeholder.com/150",
-    uid: "4",
-  },
-];
+// const testMember: MemberState[] = [
+//   {
+//     username: "User 1",
+//     logo: "https://via.placeholder.com/150",
+//     uid: "1",
+//   },
+//   {
+//     username: "User 2",
+//     logo: "https://via.placeholder.com/150",
+//     uid: "2",
+//   },
+//   {
+//     username: "User 3",
+//     logo: "https://via.placeholder.com/150",
+//     uid: "3",
+//   },
+//   {
+//     username: "User 4",
+//     logo: "https://via.placeholder.com/150",
+//     uid: "4",
+//   },
+// ];
 
 const testTeamMatchHistory: MatchState[] = [
   {

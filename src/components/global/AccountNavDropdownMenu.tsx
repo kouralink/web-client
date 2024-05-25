@@ -67,10 +67,13 @@ export function AccountNavDropdownMenu() {
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
+        <Link to={"/team/zero"}>
+
           <DropdownMenuItem>
             <Users className="mr-2 h-4 w-4" />
             <span>Team</span>
           </DropdownMenuItem>
+          </Link>
           <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
             <Plus className="mr-2 h-4 w-4" />
             <span><CreateTeamPopUp /></span>
