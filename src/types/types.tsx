@@ -1,5 +1,5 @@
 import dynamicIconImports from "lucide-react/dynamicIconImports";
-import { Timestamp } from "firebase/firestore";
+import { Timestamp } from "@firebase/firestore-types";
 
 export type sidebarNavItemType = {
   title: string;
@@ -7,20 +7,22 @@ export type sidebarNavItemType = {
   icon: keyof typeof dynamicIconImports;
 };
 
-// export interface TimeStamp {
-//   seconds: number;
-//   nanoseconds: number;
-// }
+export interface Member {
+  uid: string;
+  joinedAt: string;
+  role: string;
+}
 export interface Team {
   id: string;
   teamName: string;
-  blackList: string[];
-  coach: string;
+  blackList?: string[];
+  coach?: string;
   createdAt: Timestamp;
   updatedAt: Timestamp;
-  teamLogo: string | null | undefined;
-  description: string | null;
+  teamLogo: string;
+  description: string;
   createdBy: string;
+  members: Member[];
 }
 
 export interface TeamState {
@@ -52,29 +54,26 @@ export interface MemberState {
   uid: string;
 }
 
-
-
 export interface User {
   username: string;
-  accountType: "user"|"coach"|"tournement_manager"|"refree"|"player";
+  accountType: "user" | "coach" | "tournement_manager" | "refree" | "player";
   bio?: string;
   birthday?: Timestamp;
-  joinDate?:Timestamp;
-  firstName?:string;
+  joinDate?: Timestamp;
+  firstName?: string;
   lastName?: string;
-  gender?: 'male'|'female';
+  gender?: "male" | "female";
   phoneNumbers?: string[];
   address?: string;
   avatar?: string;
-  
 }
 export interface UserUpdate {
   username?: string;
   bio?: string;
   birthday?: Timestamp;
-  firstName?:string;
-  lastName?: string
-  gender?:'male'|'female';
+  firstName?: string;
+  lastName?: string;
+  gender?: "male" | "female";
   phoneNumbers?: string[];
   address?: string;
   avatar?: string;
@@ -86,7 +85,3 @@ export interface UserState {
   status: "idle" | "loading" | "failed";
   error: string | null | undefined;
 }
-  
-  
-
-
