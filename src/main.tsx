@@ -104,7 +104,7 @@ const router = createBrowserRouter(
           <Route path="*" element={<ErrorPage />} />
         </Route>
         <Route
-          path="teams"
+          path="team"
           element={
             <PrivateRoute>
               <TeamLayout />
