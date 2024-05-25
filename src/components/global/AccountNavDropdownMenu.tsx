@@ -22,6 +22,7 @@ import { Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "@/state/store";
 import { logout } from "@/state/auth/authSlice";
+import { CreateTeamPopUp } from "./CreateTeam";
 
 export function AccountNavDropdownMenu() {
   const authLoading = useSelector((state: RootState) => state.auth.loading);
@@ -68,10 +69,9 @@ export function AccountNavDropdownMenu() {
             <Users className="mr-2 h-4 w-4" />
             <span>Team</span>
           </DropdownMenuItem>
-          
-          <DropdownMenuItem>
+          <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
             <Plus className="mr-2 h-4 w-4" />
-            <span>New Team</span>
+            <span><CreateTeamPopUp /></span>
             <DropdownMenuShortcut>⌘+T</DropdownMenuShortcut>
           </DropdownMenuItem>
         </DropdownMenuGroup>
