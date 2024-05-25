@@ -11,10 +11,10 @@ const initialState: UserState = {
   user: {
     username: "",
     bio: "",
-    birthday: "",
+    birthday: undefined,
     firstName: "",
     lastName: "",
-    gender: "",
+    gender:undefined,
     phoneNumbers: [],
     address: "",
     avatar: "",

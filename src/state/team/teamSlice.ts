@@ -1,9 +1,12 @@
 // create store for team manage team have a id and a teamName and a blackList of users that are not allowed to join the team, and a coach that is team leader and createdAt date updateAt date and teamLogo and description and createdBy that is the user that created the team
 import { PayloadAction, createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { auth, firestore } from "@/services/firebase";
-import { doc, setDoc, getDoc } from "firebase/firestore";
+import { auth, firestore, storage } from "@/services/firebase";
+import { doc, setDoc, getDoc, Timestamp } from "firebase/firestore";
 
 import { Team, TeamState } from "../../types/types";
+import { CreateTeamFormValues } from "@/components/global/CreateTeam";
+import { getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
+import { toast } from "@/components/ui/use-toast";
 
 const initialState: TeamState = {
   team: {
@@ -11,11 +14,12 @@ const initialState: TeamState = {
     teamName: "",
     blackList: [],
     coach: "",
-    createdAt: { seconds: 0, nanoseconds: 0 },
-    updatedAt: { seconds: 0, nanoseconds: 0 },
+    createdAt: Timestamp.now(),
+    updatedAt: Timestamp.now(),
     teamLogo: "",
     description: "",
     createdBy: "",
+    members: [],
   },
   status: "idle",
   error: null,
@@ -74,16 +78,35 @@ const teamSlice = createSlice({
       .addCase(createTeam.fulfilled, (state, action) => {
         console.log("fulfilled");
         state.status = "idle";
-        if (action.payload !== undefined) {
+        if (typeof action.payload === "object" && action.payload !== null) {
           state.team = action.payload;
+          toast({
+            variant: "default",
+            title: "Team Created",
+            description: "Team created successfully!",
+            className: "text-primary border-2 border-primary text-start",
+          });
         } else {
           state.team = initialState.team;
+          toast({
+            variant: "default",
+            title: "Team Creation Failed",
+            description: action.payload as string,
+            className: "text-error border-2 border-error text-start",
+          });
         }
       })
       .addCase(createTeam.rejected, (state, action) => {
         console.log("rejected");
         state.status = "failed";
+        console.log(action.error);
         state.error = action.error.message;
+        toast({
+          variant: "default",
+          title: "Team Creation Failed 2",
+          description: state.error,
+          className: "text-error border-2 border-error text-start",
+        });
       });
   },
 });
@@ -136,36 +159,101 @@ const isItUniqueTeamName = async (teamName: string) => {
 
 export const createTeam = createAsyncThunk(
   "team/createTeam",
-  async (team: { teamName: string }) => {
+  async (team:CreateTeamFormValues) => {
     try {
       if (!auth.currentUser) {
         throw new Error("User not logged in");
       }
       const isUnique = await isItUniqueTeamName(team.teamName);
       if (isUnique) {
+        // upload image
+        const storageRef = ref(storage, `Avatars/${team.teamName}`);
+        const uploadTask = uploadBytesResumable(storageRef, team.logo as Blob);
+        let logoUrl = "";
+
+
+        uploadTask.on(
+          "state_changed",
+          (snapshot) => {
+            // Progress
+            const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+            toast({
+              variant: "default",
+              title: "Upload progress",
+              description: "Upload is " + progress.toFixed(2) + "% done",
+              className:
+                "text-secondary-foreground border-2 border-secondary-foreground text-start",
+            });
+            switch (snapshot.state) {
+              case "paused":
+                teamSlice.actions.setLoading("idle");
+                console.log("Upload is paused");
+                break;
+              case "running":
+                teamSlice.actions.setLoading("loading");
+
+                console.log("Upload is running");
+                break;
+            }
+          },
+          () => {
+            // Error
+            toast({
+              variant: "default",
+              title: "Upload Image Failed!3",
+              description: "Upload failed! Please try again.",
+              className: "text-error border-2 border-error text-start",
+            });
+          },
+          () => {
+            // Complete
+            getDownloadURL(uploadTask.snapshot.ref).then(async (downloadURL) => {
+              console.log("File available at", downloadURL);
+              logoUrl = downloadURL as string;
+              toast({
+                variant: "default",
+                title: "Upload Image",
+                description: "Image uploaded successfully!",
+                className: "text-primary border-2 border-primary text-start",
+              });
+              teamSlice.actions.setLoading("idle");
+            });
+          }
+        );
+
+
+
         const docRef = doc(firestore, "teams", team.teamName);
         await setDoc(docRef, {
           teamName: team.teamName,
           coach: auth.currentUser.uid,
           blackList: [],
-          createdAt: new Date(),
-          updatedAt: new Date(),
-          teamLogo: "",
-          description: "",
+          createdAt: Timestamp.now(),
+          updatedAt: Timestamp.now(),
+          teamLogo: logoUrl,
+          description: team.teamBio,
           createdBy: auth.currentUser.uid,
+          members: [],
         });
         // get doc
 
         const teamInfo = await getDoc(docRef);
         if (teamInfo.exists()) {
           console.log("teamInfo", teamInfo.data());
+          
           return teamInfo.data() as Team;
         } else {
           throw new Error("Team Doesn't created!");
         }
-        
       } else {
-        throw new Error("Team name is not unique");
+        console.log("Team Name Not Unique");
+        toast({
+          variant: "default",
+          title: "Team Name Not Unique",
+          description: "Team name is not unique! Please try another name.",
+          className: "text-error border-2 border-error text-start",
+        });
+        return "Team name is not unique";
       }
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
