@@ -13,7 +13,6 @@ const initialState: TeamState = {
     id: "",
     teamName: "",
     blackList: [],
-    coach: "",
     createdAt: Timestamp.now(),
     updatedAt: Timestamp.now(),
     teamLogo: "",
@@ -226,14 +225,19 @@ export const createTeam = createAsyncThunk(
         const docRef = doc(firestore, "teams", team.teamName);
         await setDoc(docRef, {
           teamName: team.teamName,
-          coach: auth.currentUser.uid,
           blackList: [],
           createdAt: Timestamp.now(),
           updatedAt: Timestamp.now(),
           teamLogo: logoUrl,
           description: team.teamBio,
           createdBy: auth.currentUser.uid,
-          members: [],
+          members: [
+            {
+              uid: auth.currentUser.uid,
+              joinedAt: Timestamp.now(),
+              role: "coach",
+            },
+          ],
         });
         // get doc
 
