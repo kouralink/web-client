@@ -16,7 +16,6 @@ export interface Team {
   id: string;
   teamName: string;
   blackList?: string[];
-  coach?: string;
   createdAt: Timestamp;
   updatedAt: Timestamp;
   teamLogo: string;
