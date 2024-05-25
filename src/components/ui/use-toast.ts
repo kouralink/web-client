@@ -15,6 +15,7 @@ type ToasterToast = ToastProps & {
   description?: React.ReactNode
   action?: ToastActionElement
   icon?: React.ReactNode
+  classesStyle?:string
 }
 
 const actionTypes = {

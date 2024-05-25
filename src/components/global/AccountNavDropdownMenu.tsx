@@ -2,6 +2,7 @@ import {
   Loader2,
   LogOut,
   Plus,
+  RefreshCcw,
   Settings,
   User,
   Users,
@@ -23,6 +24,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "@/state/store";
 import { logout } from "@/state/auth/authSlice";
 import { CreateTeamPopUp } from "./CreateTeam";
+import { ChangeAccountType } from "./ChangeAccountType";
 
 export function AccountNavDropdownMenu() {
   const authLoading = useSelector((state: RootState) => state.auth.loading);
@@ -73,6 +75,11 @@ export function AccountNavDropdownMenu() {
             <Plus className="mr-2 h-4 w-4" />
             <span><CreateTeamPopUp /></span>
             <DropdownMenuShortcut>⌘+T</DropdownMenuShortcut>
+          </DropdownMenuItem>
+          <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
+            <RefreshCcw  className="mr-2 h-4 w-4" />
+            <span><ChangeAccountType /></span>
+            <DropdownMenuShortcut>⌘+C</DropdownMenuShortcut>
           </DropdownMenuItem>
         </DropdownMenuGroup>
         
