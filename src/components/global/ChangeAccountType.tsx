@@ -65,7 +65,7 @@ export function ChangeAccountType() {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <div>New Team</div>
+        <div>Change Account Type</div>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[400px] md:max-w-[600px] overflow-y-scroll">
         <Form {...form}>
