@@ -1,7 +1,7 @@
 import { AppDispatch, RootState } from "@/state/store";
-import {  getTeamByTeamName } from "@/state/team/teamSlice";
+import { clearTeam, getTeamByTeamName } from "@/state/team/teamSlice";
 import { MatchState } from "@/types/types";
-import { useEffect,  } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 import MatchRecordCardIteam from "@/components/global/cards/MatchRecordCardIteam";
@@ -10,59 +10,72 @@ import TeamHeader from "@/components/global/TeamHeader";
 import { Card } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
 
-
-
 export const TeamPage = () => {
-  const { teamId } = useParams<{ teamId: string }>();
+  const { paramteamname } = useParams<{ paramteamname: string }>();
   const dispatch = useDispatch<AppDispatch>();
   const team = useSelector((state: RootState) => state.team.team);
   // const teamStatus = useSelector((state: RootState) => state.team.status);
   const members = useSelector((state: RootState) => state.team.members);
-  const coach = members.find((member) => member.role === "coach") ;
-
+  const [coach, setCoach] = useState(
+    members.find((member) => member.role === "coach")
+  );
+  
 
   useEffect(() => {
-    console.log(team);
-    if (!teamId) return;
-    if (teamId === team.id) return;
-    dispatch(getTeamByTeamName(teamId as string));
-  }, [dispatch, team, team.id, teamId]);
+    setCoach(members.find((member) => member.role === "coach"));
+  }, [members]);
 
+  useEffect(() => {
+    console.log("i worked now");
+    console.log(team);
+    if (!paramteamname) return;
+    if (paramteamname === team.teamName) return;
+    console.log("the team id changed");
+    dispatch(getTeamByTeamName(paramteamname as string));
+    return () => { 
+      console.log("clean up");
+      dispatch(clearTeam())
+    }
+  }, [dispatch, team, paramteamname, members]);
 
   return (
     <div className="flex flex-col gap-8 mt-5 ">
-      <TeamHeader
-        {...team}
-      />
+      <TeamHeader {...team} />
       <div className="flex gap-8 ">
         <Card className=" flex flex-col py-4 px-2 gap-4 h-fit">
-        <div className="flex flex-col gap-2">
-
+          <div className="flex flex-col gap-2">
             <h2>Coach</h2>
-            {coach && <MemberCard
-
-              key={coach.uid} {...coach}
-            />}
+            <div className=" ml-4">
+              {coach ? <MemberCard key={coach.uid} {...coach} /> : 'coach Not Found'}
+            </div>
           </div>
           <div className="flex flex-col gap-2">
             <h2>Members</h2>
-            {members.map((member) => (
-              <MemberCard key={member.uid} {...member} />
-            ))}
+            <div className=" ml-4">
+              {members.map((member) => {
+                if (member.role !== "coach") {
+                  return <MemberCard key={member.uid} {...member} />;
+                }
+              })}
+              {/* if the members len = 1 write no members yet message */}
+              {members.length === 1 && (
+                <p className="text-gray-500">No members yet</p>
+              )}
+            </div>
           </div>
         </Card>
         <div className="p-2 gap-4 w-full flex justify-center items-center">
-        <div className="flex flex-col gap-2 ">
-
-          <h2>Match History</h2>
-          <ScrollArea className="h-96">
-            <div className="flex flex-col gap-4 pr-6">
-
-          {testTeamMatchHistory.map((match: MatchState, index: number) => (
-            <MatchRecordCardIteam key={index} {...match} />
-          ))}
-          </div>
-          </ScrollArea>
+          <div className="flex flex-col gap-2 ">
+            <h2>Match History</h2>
+            <ScrollArea className="h-96">
+              <div className="flex flex-col gap-4 pr-6">
+                {testTeamMatchHistory.map(
+                  (match: MatchState, index: number) => (
+                    <MatchRecordCardIteam key={index} {...match} />
+                  )
+                )}
+              </div>
+            </ScrollArea>
           </div>
         </div>
       </div>
@@ -227,7 +240,4 @@ const testTeamMatchHistory: MatchState[] = [
     matchLocation: "Stadium 7",
     matchStatus: "Finished",
   },
-    
 ];
-
-

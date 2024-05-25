@@ -43,12 +43,37 @@ import TeamSearchPage from "./pages/team/TeamSearchPage.tsx";
 // 404
 import ErrorPage from "./pages/ErrorPage.tsx";
 import UserProfile from "./pages/profile/UserProfile.tsx";
+import CreateTeam from "./pages/team/CreateTeam.tsx";
+import UpdateTeam from "./pages/team/UpdateTeam.tsx";
 
 // private route
 export const PrivateRoute = ({ children }: { children: React.ReactNode }) => {
   const isAuthenticated = store.getState().auth.user !== null;
   return isAuthenticated ? children : <Navigate to="/auth/login" />;
 };
+
+// account type coach route
+export const CoachRoute = ({ children }: { children: React.ReactNode }) => {
+  const user = store.getState().auth.user;
+  return user?.accountType === "coach" ? children : <Navigate to="/" />;
+};
+
+// account type tournement_manager route
+export const TournamentManagerRoute = ({
+  children,
+}: {
+  children: React.ReactNode;
+}) => {
+  const user = store.getState().auth.user;
+  return user?.accountType === "tournement_manager" ? children : <Navigate to="/" />;
+};
+
+// account type refree route
+export const RefreeRoute = ({ children }: { children: React.ReactNode }) => {
+  const user = store.getState().auth.user;
+  return user?.accountType === "refree" ? children : <Navigate to="/" />;
+};
+
 
 // redirect if logged in
 export const RedirectIfLoggedIn = ({
@@ -67,6 +92,7 @@ const router = createBrowserRouter(
       // loader={rootLoader}
       // action={rootAction}
       errorElement={<ErrorPage />}
+      
     >
       <Route element={<RootLyout />} errorElement={<ErrorPage />}>
         <Route index element={<App />} />
@@ -113,7 +139,9 @@ const router = createBrowserRouter(
           errorElement={<ErrorPage />}
         >
           <Route index element={<TeamSearchPage />} />
-          <Route path=":teamId" element={<TeamPage />} />
+          <Route path="create" element={<CoachRoute> <CreateTeam /> </CoachRoute>} />
+          <Route path="update/:paramteamname" element={ <CoachRoute> <UpdateTeam /> </CoachRoute>} />
+          <Route path="page/:paramteamname" element={<TeamPage />} />
           <Route path="*" element={<ErrorPage />} />
         </Route>
         <Route path="profile/:username" element={<UserProfile />} />
@@ -127,7 +155,7 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
     <Provider store={store}>
       <ThemeProvider defaultTheme="system" storageKey="vite-ui-theme">
-        <RouterProvider router={router} />
+        <RouterProvider  router={router} />
       </ThemeProvider>
     </Provider>
   </React.StrictMode>

@@ -576,7 +576,7 @@ export const updateUserData = createAsyncThunk(
   }
 );
 
-const isItAlreadyInATeam = async (uid: string) => {
+export const isItAlreadyInATeam = async (uid: string) => {
   // the teams collection contain another collection called members the id of the member doc is the uid of the user
   const membersQuery = collectionGroup(firestore, "members");
   const snapshot = await getDocs(membersQuery);
@@ -608,6 +608,16 @@ export const changeAccountType = createAsyncThunk(
         // if it was coatch or player check if it's already in a team
         const uid = auth.currentUser.uid;
         const currentUserAccountType = store.getState().auth.user?.accountType;
+        if (currentUserAccountType === data.accountType) {
+          toast({
+            title: "Error",
+            description: "You are already a " + data.accountType,
+            variant: "destructive",
+          
+          })
+
+          return "You are already a " + data.accountType;
+        }
         if (currentUserAccountType === "user") {
           return await setAccountType(uid, data.accountType);
         } else if (
