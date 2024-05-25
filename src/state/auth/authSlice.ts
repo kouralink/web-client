@@ -576,7 +576,7 @@ export const updateUserData = createAsyncThunk(
   }
 );
 
-const isItAlreadyInATeam = async (uid: string) => {
+export const isItAlreadyInATeam = async (uid: string) => {
   // the teams collection contain another collection called members the id of the member doc is the uid of the user
   const membersQuery = collectionGroup(firestore, "members");
   const snapshot = await getDocs(membersQuery);

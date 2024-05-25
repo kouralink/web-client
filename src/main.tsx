@@ -113,7 +113,7 @@ const router = createBrowserRouter(
           errorElement={<ErrorPage />}
         >
           <Route index element={<TeamSearchPage />} />
-          <Route path=":teamId" element={<TeamPage />} />
+          <Route path=":paramteamname" element={<TeamPage />} />
           <Route path="*" element={<ErrorPage />} />
         </Route>
         <Route path="profile/:username" element={<UserProfile />} />

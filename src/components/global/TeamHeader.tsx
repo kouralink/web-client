@@ -15,7 +15,7 @@ const TeamHeader: React.FC<Team> = (props) => {
       <CardHeader className="flex flex-row  items-center justify-center gap-4 m-0 p-0 ">
         <div className="flex  items-center gap-2">
           <Avatar className="w-16 h-16">
-            <AvatarImage src={props.teamLogo} alt={props.teamName + " logo"} />
+            <AvatarImage src={props.teamLogo} alt={props.teamName + " logo"}  className="object-cover" />
             <AvatarFallback>{props.teamName.charAt(0)}</AvatarFallback>
           </Avatar>
           <h2>{props.teamName}</h2>

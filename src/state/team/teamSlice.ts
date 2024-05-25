@@ -14,6 +14,7 @@ import { Member, Team, TeamState, User } from "../../types/types";
 import { CreateTeamFormValues } from "@/components/global/CreateTeam";
 import { getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
 import { toast } from "@/components/ui/use-toast";
+import { isItAlreadyInATeam } from "../auth/authSlice";
 
 const initialState: TeamState = {
   team: {
@@ -280,64 +281,105 @@ export const createTeam = createAsyncThunk(
       if (!auth.currentUser) {
         throw new Error("User not logged in");
       }
+      console.log(1)
+      // check accountType
+        const userRef = doc(firestore, "users", auth.currentUser.uid);
+        const userSnap = await getDoc(userRef);
+        if (userSnap.exists()) {
+          const user = userSnap.data() as User;
+          if (user.accountType !== "coach") {
+            
+            throw new Error("User is not a coach");
+          } else{
+            // test if user already have a team
+            const isInTeam = await isItAlreadyInATeam(auth.currentUser.uid);
+            if (isInTeam) {
+              throw new Error("User already in a team");
+            }
+          }
+        } else {
+          throw new Error("User not found");
+        }
+
+      console.log(2)
+
       const isUnique = await isItUniqueTeamName(team.teamName);
       if (isUnique) {
         // upload image
         const storageRef = ref(storage, `Avatars/${team.teamName}`);
-        const uploadTask = uploadBytesResumable(storageRef, team.logo as Blob);
+        // const uploadTask =  uploadBytesResumable(storageRef, team.logo as Blob);
+        // let logoUrl = "";
+
+        // uploadTask.on(
+        //   "state_changed",
+        //   (snapshot) => {
+        //     // Progress
+        //     const progress =
+        //       (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+        //     toast({
+        //       variant: "default",
+        //       title: "Upload progress",
+        //       description: "Upload is " + progress.toFixed(2) + "% done",
+        //       className:
+        //         "text-secondary-foreground border-2 border-secondary-foreground text-start",
+        //     });
+        //     switch (snapshot.state) {
+        //       case "paused":
+        //         teamSlice.actions.setLoading("idle");
+        //         console.log("Upload is paused");
+        //         break;
+        //       case "running":
+        //         teamSlice.actions.setLoading("loading");
+
+        //         console.log("Upload is running");
+        //         break;
+        //     }
+        //   },
+        //   () => {
+        //     // Error
+        //     toast({
+        //       variant: "default",
+        //       title: "Upload Image Failed!3",
+        //       description: "Upload failed! Please try again.",
+        //       className: "text-error border-2 border-error text-start",
+        //     });
+        //   },
+        //   () => {
+        //     // Complete
+        //     getDownloadURL(uploadTask.snapshot.ref).then(
+        //       async (downloadURL) => {
+        //         console.log("File available at", downloadURL);
+        //         logoUrl = downloadURL as string;
+        //         toast({
+        //           variant: "default",
+        //           title: "Upload Image",
+        //           description: "Image uploaded successfully!",
+        //           className: "text-primary border-2 border-primary text-start",
+        //         });
+        //         teamSlice.actions.setLoading("idle");
+        //       }
+        //     );
+        //   }
+        // );
+
+        const uploadTask =  await uploadBytesResumable(storageRef, team.logo as Blob);
+      console.log(3)
+
         let logoUrl = "";
-
-        uploadTask.on(
-          "state_changed",
-          (snapshot) => {
-            // Progress
-            const progress =
-              (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-            toast({
-              variant: "default",
-              title: "Upload progress",
-              description: "Upload is " + progress.toFixed(2) + "% done",
-              className:
-                "text-secondary-foreground border-2 border-secondary-foreground text-start",
-            });
-            switch (snapshot.state) {
-              case "paused":
-                teamSlice.actions.setLoading("idle");
-                console.log("Upload is paused");
-                break;
-              case "running":
-                teamSlice.actions.setLoading("loading");
-
-                console.log("Upload is running");
-                break;
-            }
-          },
-          () => {
-            // Error
-            toast({
-              variant: "default",
-              title: "Upload Image Failed!3",
-              description: "Upload failed! Please try again.",
-              className: "text-error border-2 border-error text-start",
-            });
-          },
-          () => {
-            // Complete
-            getDownloadURL(uploadTask.snapshot.ref).then(
-              async (downloadURL) => {
-                console.log("File available at", downloadURL);
-                logoUrl = downloadURL as string;
-                toast({
-                  variant: "default",
-                  title: "Upload Image",
-                  description: "Image uploaded successfully!",
-                  className: "text-primary border-2 border-primary text-start",
-                });
-                teamSlice.actions.setLoading("idle");
-              }
-            );
-          }
-        );
+        try {
+          const snapshot = await uploadTask;
+          logoUrl = await getDownloadURL(snapshot.ref);
+          console.log(logoUrl)
+          toast({
+            variant: "default",
+            title: "Upload Image",
+            description: "Image uploaded successfully!",
+            className: "text-primary border-2 border-primary text-start",
+          });
+        } catch (error) {
+          console.log(error);
+          throw new Error("Upload Image Failed!3");
+        }
 
         const docRef = doc(firestore, "teams", team.teamName);
         await setDoc(docRef, {
