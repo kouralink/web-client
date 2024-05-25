@@ -1,5 +1,5 @@
 import { AppDispatch, RootState } from "@/state/store";
-import { getTeamByTeamName } from "@/state/team/teamSlice";
+import { clearTeam, getTeamByTeamName } from "@/state/team/teamSlice";
 import { MatchState } from "@/types/types";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -32,6 +32,10 @@ export const TeamPage = () => {
     if (paramteamname === team.teamName) return;
     console.log("the team id changed");
     dispatch(getTeamByTeamName(paramteamname as string));
+    return () => { 
+      console.log("clean up");
+      dispatch(clearTeam())
+    }
   }, [dispatch, team, paramteamname, members]);
 
   return (

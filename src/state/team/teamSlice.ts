@@ -11,10 +11,11 @@ import {
 } from "firebase/firestore";
 
 import { Member, Team, TeamState, User } from "../../types/types";
-import { CreateTeamFormValues } from "@/components/global/CreateTeam";
+import { CreateTeamFormValues } from "@/pages/team/CreateTeam";
 import { getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
 import { toast } from "@/components/ui/use-toast";
 import { isItAlreadyInATeam } from "../auth/authSlice";
+import { createBrowserHistory } from "@remix-run/router";
 
 const initialState: TeamState = {
   team: {
@@ -48,8 +49,8 @@ const teamSlice = createSlice({
     ) => {
       state.status = action.payload;
     },
-    clearTeam: (state) => {
-      state.team = initialState.team;
+    clearTeam: () => {
+      return initialState;
     },
   },
   extraReducers: (builder) => {
@@ -83,6 +84,10 @@ const teamSlice = createSlice({
             description: "Team created successfully!",
             className: "text-primary border-2 border-primary text-start",
           });
+          // redirect to team page
+          const history = createBrowserHistory();
+          history.push(`/team/page/${state.team.teamName}`)
+
         } else {
           state.team = initialState.team;
           toast({
@@ -436,6 +441,7 @@ export const createTeam = createAsyncThunk(
     }
   }
 );
+
 
 
 export const { setTeam, clearTeam, setError, setLoading } = teamSlice.actions;
