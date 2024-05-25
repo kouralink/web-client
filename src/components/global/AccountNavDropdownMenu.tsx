@@ -23,15 +23,15 @@ import { Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "@/state/store";
 import { logout } from "@/state/auth/authSlice";
-import { CreateTeamPopUp } from "./CreateTeam";
 import { ChangeAccountType } from "./ChangeAccountType";
 
 export function AccountNavDropdownMenu() {
   const authLoading = useSelector((state: RootState) => state.auth.loading);
   const authUser = useSelector((state: RootState) => state.auth.user);
   const dispatch = useDispatch<AppDispatch>();
+  
   return (
-    <DropdownMenu>
+    <DropdownMenu >
       <DropdownMenuTrigger asChild>
         <Avatar className="w-10 h-10">
           <AvatarImage
@@ -67,18 +67,20 @@ export function AccountNavDropdownMenu() {
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
-        <Link to={"/team/zero"}>
+        <Link to={"/team/page/zero"}>
 
           <DropdownMenuItem>
             <Users className="mr-2 h-4 w-4" />
             <span>Team</span>
           </DropdownMenuItem>
           </Link>
-          <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
+          <Link to={"/team/create"}>
+          <DropdownMenuItem  onSelect={(e) => e.preventDefault()}>
             <Plus className="mr-2 h-4 w-4" />
-            <span><CreateTeamPopUp /></span>
+            <span>Create Team</span>
             <DropdownMenuShortcut>⌘+T</DropdownMenuShortcut>
           </DropdownMenuItem>
+          </Link>
           <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
             <RefreshCcw  className="mr-2 h-4 w-4" />
             <span><ChangeAccountType /></span>

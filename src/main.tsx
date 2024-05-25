@@ -43,6 +43,7 @@ import TeamSearchPage from "./pages/team/TeamSearchPage.tsx";
 // 404
 import ErrorPage from "./pages/ErrorPage.tsx";
 import UserProfile from "./pages/profile/UserProfile.tsx";
+import CreateTeam from "./pages/team/CreateTeam.tsx";
 
 // private route
 export const PrivateRoute = ({ children }: { children: React.ReactNode }) => {
@@ -113,7 +114,8 @@ const router = createBrowserRouter(
           errorElement={<ErrorPage />}
         >
           <Route index element={<TeamSearchPage />} />
-          <Route path=":paramteamname" element={<TeamPage />} />
+          <Route path="create" element={<CreateTeam />} />
+          <Route path="page/:paramteamname" element={<TeamPage />} />
           <Route path="*" element={<ErrorPage />} />
         </Route>
         <Route path="profile/:username" element={<UserProfile />} />

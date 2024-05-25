@@ -1,14 +1,5 @@
 import { Button } from "@/components/ui/button";
-import {
-  Dialog,
-  DialogClose,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
+
 import {
   Form,
   FormControl,
@@ -25,11 +16,20 @@ import { useDispatch, useSelector } from "react-redux";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { Textarea } from "../ui/textarea";
-import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
+
 import { Loader2 } from "lucide-react";
 import { useState } from "react";
 import { createTeam } from "@/state/team/teamSlice";
+import { Textarea } from "@/components/ui/textarea";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import {
+    Card,
+    CardContent,
+    CardDescription,
+    CardFooter,
+    CardHeader,
+    CardTitle,
+  } from "@/components/ui/card"
 
 const MAX_FILE_SIZE = 1024 * 1024 * 2;
 const ACCEPTED_IMAGE_MIME_TYPES = [
@@ -41,16 +41,17 @@ const ACCEPTED_IMAGE_MIME_TYPES = [
 // const ACCEPTED_IMAGE_TYPES = ["jpeg", "jpg", "png", "webp"];
 
 const createTeamSchema = z.object({
-  teamName: z
-    .string()
+  teamName: z.string()
     .min(4, {
       message: "Team name must be at least 4 characters.",
     })
     .max(30, {
       message: "Team name must not be longer than 30 characters.",
     }),
-  teamBio: z.string().max(160).min(4, {
-    message: "Team bio must be between 4 and 160 characters.",
+  teamBio: z.string().max(160,{
+    message: "Team bio must be less then 160 characters.",
+  }).min(4, {
+    message: "Team bio must be more then 4 characters.",
   }),
   logo: z
     .any()
@@ -65,7 +66,7 @@ const createTeamSchema = z.object({
 
 export type CreateTeamFormValues = z.infer<typeof createTeamSchema>;
 
-export function CreateTeamPopUp() {
+export default function CreateTeam() {
   const status = useSelector((state: RootState) => state.team.status);
   const error = useSelector((state: RootState) => state.team.error);
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
@@ -84,24 +85,18 @@ export function CreateTeamPopUp() {
     data.logo = data.logo[0]
     dispatch(createTeam(data));
 
-
-
   };
 
   return (
-    <Dialog>
-      <DialogTrigger asChild>
-        <div>New Team</div>
-      </DialogTrigger>
-      <DialogContent className="sm:max-w-[400px] md:max-w-[600px] h-screen overflow-y-scroll">
+    <Card className="w-[800px]">
+    <CardHeader>
+      <CardTitle>Create Team</CardTitle>
+      <CardDescription> Create your team and invite others to join.</CardDescription>
+    </CardHeader>
+    <CardContent>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-            <DialogHeader>
-              <DialogTitle>Create Team</DialogTitle>
-              <DialogDescription>
-                Create your team and invite others to join.
-              </DialogDescription>
-            </DialogHeader>
+            
             <div className="grid gap-4 py-4">
               <div className="flex flex-col items-center px-7  mt-7 mb-8">
                 {status === 'loading' ? (
@@ -151,7 +146,7 @@ export function CreateTeamPopUp() {
                   <FormItem>
                     <FormLabel>Team Name</FormLabel>
                     <FormControl>
-                      <Input placeholder="Team Name" {...field} />
+                      <Input  placeholder="Team Name" {...field} />
                     </FormControl>
                     <FormDescription>
                       This is the name of your team.
@@ -186,10 +181,9 @@ export function CreateTeamPopUp() {
                 {error}
               </FormMessage>
             )}
-            <DialogFooter>
-              <DialogClose asChild className="hidden">
+           <CardFooter className="flex justify-between">
+
                 <Button variant="outline">Cancel</Button>
-              </DialogClose>
               {status === "loading" ? (
                 <Button variant="outline" disabled>
                   Creating Team...
@@ -197,13 +191,14 @@ export function CreateTeamPopUp() {
               ) : (
                 <Button type="submit">Create Team</Button>
               )}
-              <DialogClose asChild>
-                <button>close</button>
-              </DialogClose>
-            </DialogFooter>
+                </CardFooter>
+
+            
           </form>
         </Form>
-      </DialogContent>
-    </Dialog>
+        </CardContent>
+     
+    </Card>
+    
   );
 }
