@@ -24,7 +24,7 @@ const TeamHeader: React.FC<Team> = (props) => {
       <CardContent className="flex items-center justify-center gap-4 m-0 p-0">
         <span>3.5K</span>
         <Star />
-        <TeamDropDownMenu />
+        <TeamDropDownMenu teamname={props.teamName} />
       </CardContent>
     </Card>
   );
