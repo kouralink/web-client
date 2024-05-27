@@ -39,6 +39,10 @@ import SettingsNotificationsPage from "./pages/settings/notifications/page.tsx";
 import { TeamPage } from "./pages/team/TeamPage.tsx";
 import TeamLayout from "./layouts/TeamLayout.tsx";
 import TeamSearchPage from "./pages/team/TeamSearchPage.tsx";
+import CreateTeam from "./pages/team/CreateTeam.tsx";
+import UpdateTeam from "./pages/team/UpdateTeam.tsx";
+
+
 // Tounaments
 import TournamentLayout from "./layouts/TournamentLayout.tsx";
 import TournamentSearchPage from "./pages/Tournament/TournamentSearchPage.tsx";
@@ -47,8 +51,6 @@ import TournamentBrackets from "./pages/Tournament/TournamentBrackets.tsx";
 // 404
 import ErrorPage from "./pages/ErrorPage.tsx";
 import UserProfile from "./pages/profile/UserProfile.tsx";
-import CreateTeam from "./pages/team/CreateTeam.tsx";
-import UpdateTeam from "./pages/team/UpdateTeam.tsx";
 
 
 // private route

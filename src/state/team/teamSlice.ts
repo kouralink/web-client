@@ -8,6 +8,7 @@ import {
   Timestamp,
   collection,
   getDocs,
+  deleteDoc
 } from "firebase/firestore";
 
 import { Member, Team, TeamState, User } from "../../types/types";
@@ -15,6 +16,7 @@ import { CreateTeamFormValues } from "@/pages/team/CreateTeam";
 import { getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
 import { toast } from "@/components/ui/use-toast";
 import { isItAlreadyInATeam } from "../auth/authSlice";
+import { UpdateTeamDataType } from "@/pages/team/UpdateTeam";
 
 const initialState: TeamState = {
   team: {
@@ -145,6 +147,45 @@ const teamSlice = createSlice({
         toast({
           variant: "default",
           title: "Refresh Team Members Failed",
+          description: state.error,
+          className: "text-error border-2 border-error text-start",
+        });
+      });
+      builder.addCase(updateTeam.pending, (state) => {
+        state.status = "loading";
+        state.error = null;
+      })
+      .addCase(updateTeam.fulfilled, (state, action) => {
+        state.status = "idle";
+        state.error = null;
+        if (typeof action.payload === "object" && action.payload !== null) {
+          state.team = action.payload.team;
+          state.members = action.payload.members;
+          state.error = '  1  ';
+
+          toast({
+            variant: "default",
+            title: "Team Updated",
+            description: "Team updated successfully!",
+            className: "text-primary border-2 border-primary text-start",
+          });
+        } else {
+          state.team = initialState.team;
+          state.error = action.payload as string;
+          toast({
+            variant: "default",
+            title: "Team Update Failed",
+            description: action.payload as string,
+            className: "text-error border-2 border-error text-start",
+          });
+        }
+      })
+      .addCase(updateTeam.rejected, (state, action) => {
+        state.status = "failed";
+        state.error = action.error.message;
+        toast({
+          variant: "default",
+          title: "Team Update Rejected",
           description: state.error,
           className: "text-error border-2 border-error text-start",
         });
@@ -407,6 +448,111 @@ export const createTeam = createAsyncThunk(
           className: "text-error border-2 border-error text-start",
         });
         return "Team name is not unique";
+      }
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (error: any) {
+      throw new Error(error.response.data as string);
+    }
+  }
+);
+
+export const updateTeam = createAsyncThunk(
+  "team/updateTeam",
+  async (team: UpdateTeamDataType) => {
+    try {
+      if (!auth.currentUser) {
+        return "This action requires authentication please login first";
+      }
+      console.log(1);
+      // check accountType
+      const userRef = doc(firestore, "users", auth.currentUser.uid);
+      const userSnap = await getDoc(userRef);
+      if (userSnap.exists()) {
+        const user = userSnap.data() as User;
+        if (user.accountType !== "coach") {
+          return "User is not a coach";
+        }
+      } else {
+        return "User not found";
+      }
+
+      console.log(2);
+      let oldData = {}
+      if(team.isNameChanged ){
+        const isUnique = await isItUniqueTeamName(team.teamName);
+        if (!isUnique) {
+          return "Team Name Not Unique";
+        }
+        const oldDocRef = doc(firestore, "teams", team.oldTeamName);
+        const oldDocSnap = await getDoc(oldDocRef);
+        // delete old doc that with old doc name
+        if (oldDocSnap.exists()) {
+          oldData = oldDocSnap.data() as Team
+          await deleteDoc(oldDocRef).then(() => {
+            console.log('Document deleted succesfully');
+          }).catch((error) => {
+            console.error('Error removing document: ', error);
+          })
+        }
+
+
+
+
+      }
+      if(team.teamLogo ){
+        const storageRef = ref(storage, `Avatars/${team.teamName}`);
+        const snapshot = await uploadBytesResumable(
+          storageRef,
+          team.teamLogo as Blob
+        );
+        console.log(3);
+
+        let logoUrl = "";
+        try {
+          logoUrl = await getDownloadURL(snapshot.ref);
+          console.log(logoUrl);
+          toast({
+            variant: "default",
+            title: "Upload Image",
+            description: "Image uploaded successfully!",
+            className: "text-primary border-2 border-primary text-start",
+          });
+        } catch (error) {
+          console.log(error);
+          return "Get Download URL Failed!";
+        }
+      }
+
+    
+
+
+
+
+      const docRef = doc(firestore, "teams", team.teamName);
+      await setDoc(docRef, {
+        ...oldData,
+        updatedAt: Timestamp.now(),
+        ...team,
+      }, { merge: true });
+
+      const teamInfo = await getDoc(docRef);
+      if (teamInfo.exists()) {
+        console.log("teamInfo", teamInfo.data());
+        // get members
+
+        const members = await getTeamMembers(team.teamName);
+        members.map(async (member) => {
+          member.userInfo = (await getMemberInfo(member.uid)) as User;
+        });
+
+        const data = {
+          members: members,
+          team: teamInfo.data() as Team,
+        };
+
+        return data;
+      } else {
+        return "Team Doesn't created!";
       }
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {

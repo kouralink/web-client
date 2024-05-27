@@ -54,7 +54,7 @@ export function AccountNavDropdownMenu() {
         <DropdownMenuGroup><Link to={"/profile/me"}>
           <DropdownMenuItem>
             <User className="mr-2 h-4 w-4" />
-            Prifle
+            Profile
             <DropdownMenuShortcut>⇧⌘P</DropdownMenuShortcut>
           </DropdownMenuItem></Link>
           <Link to={"/settings"}>
@@ -75,7 +75,7 @@ export function AccountNavDropdownMenu() {
           </DropdownMenuItem>
           </Link>
           <Link to={"/team/create"}>
-          <DropdownMenuItem  onSelect={(e) => e.preventDefault()}>
+          <DropdownMenuItem  >
             <Plus className="mr-2 h-4 w-4" />
             <span>Create Team</span>
             <DropdownMenuShortcut>⌘+T</DropdownMenuShortcut>
