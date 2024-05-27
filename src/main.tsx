@@ -45,6 +45,10 @@ import ErrorPage from "./pages/ErrorPage.tsx";
 import UserProfile from "./pages/profile/UserProfile.tsx";
 import CreateTeam from "./pages/team/CreateTeam.tsx";
 import UpdateTeam from "./pages/team/UpdateTeam.tsx";
+import TournamentLayout from "./layouts/TournamentLayout.tsx";
+import TournamentSearchPage from "./pages/Tournament/TournamentSearchPage.tsx";
+import { TournamentPage } from "./pages/Tournament/TournamentPage.tsx";
+import TournamentBrackets from "./pages/Tournament/TournamentBrackets.tsx";
 
 // private route
 export const PrivateRoute = ({ children }: { children: React.ReactNode }) => {
@@ -92,7 +96,7 @@ const router = createBrowserRouter(
       // loader={rootLoader}
       // action={rootAction}
       errorElement={<ErrorPage />}
-      
+
     >
       <Route element={<RootLyout />} errorElement={<ErrorPage />}>
         <Route index element={<App />} />
@@ -129,6 +133,7 @@ const router = createBrowserRouter(
           <Route path="notifications" element={<SettingsNotificationsPage />} />
           <Route path="*" element={<ErrorPage />} />
         </Route>
+        {/* -------------- Team Routes --------------- */}
         <Route
           path="team"
           element={
@@ -140,8 +145,23 @@ const router = createBrowserRouter(
         >
           <Route index element={<TeamSearchPage />} />
           <Route path="create" element={<CoachRoute> <CreateTeam /> </CoachRoute>} />
-          <Route path="update/:paramteamname" element={ <CoachRoute> <UpdateTeam /> </CoachRoute>} />
+          <Route path="update/:paramteamname" element={<CoachRoute> <UpdateTeam /> </CoachRoute>} />
           <Route path="page/:paramteamname" element={<TeamPage />} />
+          <Route path="*" element={<ErrorPage />} />
+        </Route>
+        {/* -------------- Tournament Routes --------------- */}
+        <Route
+          path="tournament"
+          element={
+            <PrivateRoute>
+              <TournamentLayout />
+            </PrivateRoute>
+          }
+          errorElement={<ErrorPage />}
+        >
+          <Route index element={<TournamentSearchPage />} />
+          <Route path=":tournamentId" element={<TournamentPage />} />
+          <Route path="tournamentBrackets" element={<TournamentBrackets />} />
           <Route path="*" element={<ErrorPage />} />
         </Route>
         <Route path="profile/:username" element={<UserProfile />} />
@@ -155,7 +175,7 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
     <Provider store={store}>
       <ThemeProvider defaultTheme="system" storageKey="vite-ui-theme">
-        <RouterProvider  router={router} />
+        <RouterProvider router={router} />
       </ThemeProvider>
     </Provider>
   </React.StrictMode>
