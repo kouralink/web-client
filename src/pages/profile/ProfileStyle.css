@@ -13,19 +13,21 @@
 }
 
 .content {
-    margin-left: 10rem; /* Adjust this value as needed */
+    margin-left: 10rem;
+    font-size: 50px;
 }
 
 @media (max-width: 640px) {
     .half-image img {
-        top: -25%;
-        width: 75px;
-        height: 75px;
+        bottom: -25%;
+        left: 0%;
+        width: 120px;
+        height: 120px;
     }
 
-    .half-image .content {
-        margin-left: 0;
+    .content {
+        margin-left: 7rem;
         margin-top: 4rem;
-        text-align: center;
+        font-size: 20px;
     }
 }

@@ -19,7 +19,7 @@ const userState = useSelector((state: RootState) => state.user.user);
   const timestamp = new Timestamp(authUser?.birthday?.seconds || 0, authUser?.birthday?.nanoseconds || 0);
 
 return (
-    <Card className="w-4/12">
+    <Card className="md:w-[600px]">
         <CardHeader>
             <div className="flex items-center justify-between">
                 <div className="flex items-center">

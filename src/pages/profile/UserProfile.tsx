@@ -30,13 +30,11 @@ export default function UserProfile() {
       </div>
 
             <div className="bg-green-700 h-60 w-svw  p-6 flex items-end half-image">
-              <img src={userState.avatar} alt="Profile" className="block mx-auto"/>
-              <div className="p-4 flex-grow rounded-md flex justify-start content">
-                <p className="text-5xl font-semibold text-white">{userState.firstName} {userState.lastName}</p>
-              </div>
+              <img src={userState.avatar} alt="Profile" className="block mx-auto"/> 
+                <p className="font-semibold text-white content">{userState.firstName} {userState.lastName}</p>
             </div>
 
-            <div className="h-90 w-svw  p-6 flex items-end justify-center">
+            <div className="my-24 md:flex md:items-end md:justify-center">
               <MyProfileCard/>
             </div>
     </div>
