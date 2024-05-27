@@ -1,7 +1,7 @@
 import { AppDispatch, RootState } from "@/state/store";
-import { clearTeam, getTeamByTeamName } from "@/state/team/teamSlice";
+import {  getTeamByTeamName } from "@/state/team/teamSlice";
 import { MatchState } from "@/types/types";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 import MatchRecordCardIteam from "@/components/global/cards/MatchRecordCardIteam";
@@ -16,27 +16,25 @@ export const TeamPage = () => {
   const team = useSelector((state: RootState) => state.team.team);
   // const teamStatus = useSelector((state: RootState) => state.team.status);
   const members = useSelector((state: RootState) => state.team.members);
-  const [coach, setCoach] = useState(
-    members.find((member) => member.role === "coach")
-  );
-  
+  // const [coach, setCoach] = useState(
+  //   members.find((member) => member.role === "coach")
+  // );
+
+  // useEffect(() => {
+  //   setCoach(members.find((member) => member.role === "coach"));
+  // }, [members]);
+  // let coach;
+  // coach = members.find((member) => member.role === "coach");
 
   useEffect(() => {
-    setCoach(members.find((member) => member.role === "coach"));
-  }, [members]);
-
-  useEffect(() => {
-    console.log("i worked now");
-    console.log(team);
-    if (!paramteamname) return;
-    if (paramteamname === team.teamName) return;
+    
     console.log("the team id changed");
     dispatch(getTeamByTeamName(paramteamname as string));
-    return () => { 
-      console.log("clean up");
-      dispatch(clearTeam())
-    }
-  }, [dispatch, team, paramteamname, members]);
+    // return () => {
+    //   console.log("clean up");
+    //   dispatch(clearTeam());
+    // };
+  }, [dispatch, team, paramteamname]);
 
   return (
     <div className="flex flex-col gap-8 mt-5 ">
@@ -46,7 +44,14 @@ export const TeamPage = () => {
           <div className="flex flex-col gap-2">
             <h2>Coach</h2>
             <div className=" ml-4">
-              {coach ? <MemberCard key={coach.uid} {...coach} /> : 'coach Not Found'}
+              {/* {
+                members.find((member) => member.role === "coach") ? (
+                  <MemberCard
+                    {...members.find((member) => member.role === "coach")}
+
+                  />
+                ) : ( */}
+              <p className="text-gray-500">No coach yet</p>
             </div>
           </div>
           <div className="flex flex-col gap-2">
