@@ -18,7 +18,7 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 
 import { Loader2 } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { createTeam } from "@/state/team/teamSlice";
 import { Textarea } from "@/components/ui/textarea";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -30,6 +30,7 @@ import {
     CardHeader,
     CardTitle,
   } from "@/components/ui/card"
+import { useNavigate } from "react-router-dom";
 
 const MAX_FILE_SIZE = 1024 * 1024 * 2;
 const ACCEPTED_IMAGE_MIME_TYPES = [
@@ -71,6 +72,7 @@ export default function CreateTeam() {
   const error = useSelector((state: RootState) => state.team.error);
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
   const dispatch = useDispatch<AppDispatch>();
+  const team = useSelector((state: RootState) => state.team.team);
 
   const form = useForm<CreateTeamFormValues>({
     resolver: zodResolver(createTeamSchema),
@@ -86,6 +88,16 @@ export default function CreateTeam() {
     dispatch(createTeam(data));
 
   };
+  const navigate = useNavigate()
+      
+
+  // redirect to team page after team created
+  useEffect(() => {
+    if (error === '  0  ' && status !== "loading" && team.teamName) {
+      // react router redirect
+      navigate(`/team/${team.teamName}`);
+    }
+  } , [error, navigate, team.teamName, status]);
 
   return (
     <Card className="w-[800px]">
