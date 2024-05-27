@@ -3,7 +3,7 @@ import {  getTeamByTeamName } from "@/state/team/teamSlice";
 import { MatchState } from "@/types/types";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useNavigate, useParams } from "react-router-dom";
+import {  useParams } from "react-router-dom";
 import MatchRecordCardIteam from "@/components/global/cards/MatchRecordCardIteam";
 import MemberCard from "@/components/global/cards/MemberCard";
 import TeamHeader from "@/components/global/TeamHeader";
@@ -14,23 +14,14 @@ export const TeamPage = () => {
   const { paramteamname } = useParams<{ paramteamname: string }>();
   const dispatch = useDispatch<AppDispatch>();
   const team = useSelector((state: RootState) => state.team.team);
-  const error = useSelector((state: RootState) => state.team.error);
-  const isloading = useSelector((state: RootState) => state.team.status === "loading");
+
   // const teamStatus = useSelector((state: RootState) => state.team.status);
   const members = useSelector((state: RootState) => state.team.members);
   const [coach, setCoach] = useState(
     members.find((member) => member.role === "coach")
   );
 
-  const navigate = useNavigate()
-      navigate(`/team/${team.teamName}`);
-
-  // redirect to team page after team created
-  useEffect(() => {
-    if (error === '  0  ' && !isloading && team.teamName) {
-      // react router redirect
-    }
-  } , [error, navigate, team.teamName, isloading]);
+  
   
 
   useEffect(() => {
