@@ -1,0 +1,31 @@
+.half-image {
+    position: relative;
+}
+
+.half-image img {
+    position: absolute;
+    bottom: -30%;
+    left: 0;
+    width: 180px;
+    height: 180px;
+    border-radius: 50%;
+    border: 4px solid white;
+}
+
+.content {
+    margin-left: 10rem; /* Adjust this value as needed */
+}
+
+@media (max-width: 640px) {
+    .half-image img {
+        top: -25%;
+        width: 75px;
+        height: 75px;
+    }
+
+    .half-image .content {
+        margin-left: 0;
+        margin-top: 4rem;
+        text-align: center;
+    }
+}
