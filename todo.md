@@ -13,6 +13,7 @@ authentication
 
 
 ## what i need to add;
+create team error handling
 style profile page
 update team info
 invite team member
