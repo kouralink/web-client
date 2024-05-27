@@ -1,9 +1,9 @@
 import { AppDispatch, RootState } from "@/state/store";
 import {  getTeamByTeamName } from "@/state/team/teamSlice";
 import { MatchState } from "@/types/types";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import MatchRecordCardIteam from "@/components/global/cards/MatchRecordCardIteam";
 import MemberCard from "@/components/global/cards/MemberCard";
 import TeamHeader from "@/components/global/TeamHeader";
@@ -14,27 +14,33 @@ export const TeamPage = () => {
   const { paramteamname } = useParams<{ paramteamname: string }>();
   const dispatch = useDispatch<AppDispatch>();
   const team = useSelector((state: RootState) => state.team.team);
+  const error = useSelector((state: RootState) => state.team.error);
+  const isloading = useSelector((state: RootState) => state.team.status === "loading");
   // const teamStatus = useSelector((state: RootState) => state.team.status);
   const members = useSelector((state: RootState) => state.team.members);
-  // const [coach, setCoach] = useState(
-  //   members.find((member) => member.role === "coach")
-  // );
+  const [coach, setCoach] = useState(
+    members.find((member) => member.role === "coach")
+  );
 
-  // useEffect(() => {
-  //   setCoach(members.find((member) => member.role === "coach"));
-  // }, [members]);
+  const navigate = useNavigate()
+      navigate(`/team/${team.teamName}`);
+
+  // redirect to team page after team created
+  useEffect(() => {
+    if (error === '  0  ' && !isloading && team.teamName) {
+      // react router redirect
+    }
+  } , [error, navigate, team.teamName, isloading]);
+  
+
+  useEffect(() => {
+    setCoach(members.find((member) => member.role === "coach"));
+  }, [members]);
   // let coach;
   // coach = members.find((member) => member.role === "coach");
 
-  useEffect(() => {
-    
-    console.log("the team id changed");
-    dispatch(getTeamByTeamName(paramteamname as string));
-    // return () => {
-    //   console.log("clean up");
-    //   dispatch(clearTeam());
-    // };
-  }, [dispatch, team, paramteamname]);
+  dispatch(getTeamByTeamName(paramteamname as string));
+
 
   return (
     <div className="flex flex-col gap-8 mt-5 ">
@@ -44,14 +50,12 @@ export const TeamPage = () => {
           <div className="flex flex-col gap-2">
             <h2>Coach</h2>
             <div className=" ml-4">
-              {/* {
-                members.find((member) => member.role === "coach") ? (
-                  <MemberCard
-                    {...members.find((member) => member.role === "coach")}
-
-                  />
-                ) : ( */}
+              {
+                coach ? (
+                  <MemberCard {...coach} key={coach.uid} />
+                ) : (
               <p className="text-gray-500">No coach yet</p>
+                )}
             </div>
           </div>
           <div className="flex flex-col gap-2">
