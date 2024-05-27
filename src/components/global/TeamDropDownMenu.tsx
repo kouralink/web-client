@@ -3,6 +3,7 @@ import {
     BadgePlus,
     Info,
     LogOut,
+    PenLine,
     UserPlus
   } from "lucide-react";
   
@@ -16,8 +17,9 @@ import {
     DropdownMenuShortcut,
     DropdownMenuTrigger,
   } from "@/components/ui/dropdown-menu";
+import { Link } from "react-router-dom";
   
-  export function TeamDropDownMenu() {
+  export function TeamDropDownMenu({teamname}: {teamname:string}) {
     
     return (
       <DropdownMenu>
@@ -53,10 +55,17 @@ import {
               <span>Invite Player</span>
               <DropdownMenuShortcut>coach</DropdownMenuShortcut>
             </DropdownMenuItem>
+            <Link to={`/team/update/${teamname}`}>
+              <DropdownMenuItem>
+                <PenLine className="mr-2 h-4 w-4" />
+                <span>Update team</span>
+                <DropdownMenuShortcut>coach</DropdownMenuShortcut>
+              </DropdownMenuItem>
+            </Link>
             <DropdownMenuItem>
               <ArrowLeftRight className="mr-2 h-4 w-4" />
               <span>Change coach</span>
-              <DropdownMenuShortcut>owner</DropdownMenuShortcut>
+              <DropdownMenuShortcut>coach</DropdownMenuShortcut>
             </DropdownMenuItem>
             <DropdownMenuItem>
               <LogOut className="mr-2 h-4 w-4" />
@@ -66,7 +75,7 @@ import {
             <DropdownMenuItem>
               <Info className="mr-2 h-4 w-4" />
               <span>Details</span>
-              <DropdownMenuShortcut></DropdownMenuShortcut>
+              <DropdownMenuShortcut>user</DropdownMenuShortcut>
             </DropdownMenuItem>
           </DropdownMenuGroup>
         </DropdownMenuContent>
