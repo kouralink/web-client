@@ -1,7 +1,7 @@
 import { AppDispatch, RootState } from "@/state/store";
-import { clearTeam, getTeamByTeamName } from "@/state/team/teamSlice";
+import {  getTeamByTeamName } from "@/state/team/teamSlice";
 import { MatchState } from "@/types/types";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 import MatchRecordCardIteam from "@/components/global/cards/MatchRecordCardIteam";
