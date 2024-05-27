@@ -39,16 +39,17 @@ import SettingsNotificationsPage from "./pages/settings/notifications/page.tsx";
 import { TeamPage } from "./pages/team/TeamPage.tsx";
 import TeamLayout from "./layouts/TeamLayout.tsx";
 import TeamSearchPage from "./pages/team/TeamSearchPage.tsx";
-
+// Tounaments
+import TournamentLayout from "./layouts/TournamentLayout.tsx";
+import TournamentSearchPage from "./pages/Tournament/TournamentSearchPage.tsx";
+import { TournamentPage } from "./pages/Tournament/TournamentPage.tsx";
+import TournamentBrackets from "./pages/Tournament/TournamentBrackets.tsx";
 // 404
 import ErrorPage from "./pages/ErrorPage.tsx";
 import UserProfile from "./pages/profile/UserProfile.tsx";
 import CreateTeam from "./pages/team/CreateTeam.tsx";
 import UpdateTeam from "./pages/team/UpdateTeam.tsx";
-import TournamentLayout from "./layouts/TournamentLayout.tsx";
-import TournamentSearchPage from "./pages/Tournament/TournamentSearchPage.tsx";
-import { TournamentPage } from "./pages/Tournament/TournamentPage.tsx";
-import TournamentBrackets from "./pages/Tournament/TournamentBrackets.tsx";
+
 
 // private route
 export const PrivateRoute = ({ children }: { children: React.ReactNode }) => {
