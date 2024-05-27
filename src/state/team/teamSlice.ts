@@ -53,7 +53,6 @@ const teamSlice = createSlice({
     },
   },
   extraReducers: (builder) => {
-    
     builder
       .addCase(createTeam.pending, (state) => {
         console.log("pending");
@@ -67,6 +66,7 @@ const teamSlice = createSlice({
         if (typeof action.payload === "object" && action.payload !== null) {
           state.team = action.payload.team;
           state.members = action.payload.members;
+          state.error = '  0  ';
 
           toast({
             variant: "default",
@@ -74,9 +74,6 @@ const teamSlice = createSlice({
             description: "Team created successfully!",
             className: "text-primary border-2 border-primary text-start",
           });
-          // redirect to team page
-          
-
         } else {
           state.team = initialState.team;
           state.error = action.payload as string;
@@ -87,7 +84,6 @@ const teamSlice = createSlice({
             className: "text-error border-2 border-error text-start",
           });
         }
-        window.location.href = `/team/${state.team.teamName}`;
       })
       .addCase(createTeam.rejected, (state, action) => {
         console.log("rejected");
@@ -107,13 +103,12 @@ const teamSlice = createSlice({
         state.error = null;
       })
       .addCase(getTeamByTeamName.fulfilled, (state, action) => {
-
         state.status = "idle";
         state.error = null;
         if (typeof action.payload === "object" && action.payload !== null) {
           state.team = action.payload.team;
           state.members = action.payload.members;
-        }else{
+        } else {
           state.team = initialState.team;
           state.error = action.payload as string;
 
@@ -129,10 +124,12 @@ const teamSlice = createSlice({
         state.status = "failed";
         state.error = action.error.message;
       });
-      builder.addCase(refreshTeamMembers.pending, (state) => {
+    builder
+      .addCase(refreshTeamMembers.pending, (state) => {
         state.status = "loading";
         state.error = null;
-      }).addCase(refreshTeamMembers.fulfilled, (state, action) => {
+      })
+      .addCase(refreshTeamMembers.fulfilled, (state, action) => {
         state.status = "idle";
         state.members = action.payload;
         toast({
@@ -140,8 +137,9 @@ const teamSlice = createSlice({
           title: "Refresh Team Members",
           description: "Team members refreshed successfully!",
           className: "text-primary border-2 border-primary text-start",
-        })
-      }).addCase(refreshTeamMembers.rejected, (state, action) => {
+        });
+      })
+      .addCase(refreshTeamMembers.rejected, (state, action) => {
         state.status = "failed";
         state.error = action.error.message;
         toast({
@@ -167,8 +165,7 @@ const getMemberInfo = async (uid: string) => {
     console.log(error);
     return null;
   }
-} 
-
+};
 
 const isItUniqueTeamName = async (teamName: string) => {
   //  teamName is the team id
@@ -201,10 +198,10 @@ const getTeamMembers = async (teamName: string) => {
     });
     return members;
   } catch (error) {
-    console.log('Members Error', error);
+    console.log("Members Error", error);
     return [];
   }
-}
+};
 
 export const getTeamByTeamName = createAsyncThunk(
   "team/getTeamByTeamName",
@@ -220,26 +217,25 @@ export const getTeamByTeamName = createAsyncThunk(
             const userInfo = await getMemberInfo(member.uid);
             return {
               ...member,
-              userInfo
+              userInfo,
             };
           })
         );
-        
+
         const data = {
           members: updatedMembers,
-          team:teamSnap.data() as Team,
+          team: teamSnap.data() as Team,
         };
 
         return data;
       } else {
-        return "Team Doesn't Exist!"
+        return "Team Doesn't Exist!";
       }
     } catch (error) {
-      return "Team couldn't be fetched!"
+      return "Team couldn't be fetched!";
     }
   }
 );
-
 
 export const refreshTeamMembers = createAsyncThunk(
   "team/refreshTeamMembers",
@@ -247,7 +243,7 @@ export const refreshTeamMembers = createAsyncThunk(
     try {
       const members = await getTeamMembers(teamName);
       members.map(async (member) => {
-        member.userInfo = await getMemberInfo(member.uid) as User;
+        member.userInfo = (await getMemberInfo(member.uid)) as User;
       });
       return members;
     } catch (error) {
@@ -264,27 +260,25 @@ export const createTeam = createAsyncThunk(
       if (!auth.currentUser) {
         return "This action requires authentication please login first";
       }
-      console.log(1)
+      console.log(1);
       // check accountType
-        const userRef = doc(firestore, "users", auth.currentUser.uid);
-        const userSnap = await getDoc(userRef);
-        if (userSnap.exists()) {
-          const user = userSnap.data() as User;
-          if (user.accountType !== "coach") {
-            
-            return "User is not a coach"
-          } else{
-            // test if user already have a team
-            const isInTeam = await isItAlreadyInATeam(auth.currentUser.uid);
-            if (isInTeam) {
-              return "User already in a team"
-            }
-          }
-        } else {
-          return "User not found"
+      const userRef = doc(firestore, "users", auth.currentUser.uid);
+      const userSnap = await getDoc(userRef);
+      if (userSnap.exists()) {
+        const user = userSnap.data() as User;
+        if (user.accountType !== "coach") {
+          return "User is not a coach";
         }
+        // test if user already have a team
+        const isInTeam = await isItAlreadyInATeam(auth.currentUser.uid);
+        if (isInTeam) {
+          return "User already in a team";
+        }
+      } else {
+        return "User not found";
+      }
 
-      console.log(2)
+      console.log(2);
 
       const isUnique = await isItUniqueTeamName(team.teamName);
       if (isUnique) {
@@ -345,13 +339,16 @@ export const createTeam = createAsyncThunk(
         //   }
         // );
 
-        const snapshot =  await uploadBytesResumable(storageRef, team.logo as Blob);
-      console.log(3)
+        const snapshot = await uploadBytesResumable(
+          storageRef,
+          team.logo as Blob
+        );
+        console.log(3);
 
         let logoUrl = "";
         try {
           logoUrl = await getDownloadURL(snapshot.ref);
-          console.log(logoUrl)
+          console.log(logoUrl);
           toast({
             variant: "default",
             title: "Upload Image",
@@ -386,21 +383,20 @@ export const createTeam = createAsyncThunk(
         if (teamInfo.exists()) {
           console.log("teamInfo", teamInfo.data());
           // get members
-          
+
           const members = await getTeamMembers(team.teamName);
           members.map(async (member) => {
-            member.userInfo = await getMemberInfo(member.uid) as User;
+            member.userInfo = (await getMemberInfo(member.uid)) as User;
           });
-          
 
           const data = {
             members: members,
-            team:teamInfo.data() as Team,
+            team: teamInfo.data() as Team,
           };
 
           return data;
         } else {
-          return "Team Doesn't created!"
+          return "Team Doesn't created!";
         }
       } else {
         console.log("Team Name Not Unique");
@@ -418,8 +414,6 @@ export const createTeam = createAsyncThunk(
     }
   }
 );
-
-
 
 export const { setTeam, clearTeam, setError, setLoading } = teamSlice.actions;
 export default teamSlice.reducer;
