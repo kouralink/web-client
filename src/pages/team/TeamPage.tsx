@@ -3,7 +3,7 @@ import {  getTeamByTeamName } from "@/state/team/teamSlice";
 import { MatchState } from "@/types/types";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import {  useParams } from "react-router-dom";
+import {  useNavigate, useParams } from "react-router-dom";
 import MatchRecordCardIteam from "@/components/global/cards/MatchRecordCardIteam";
 import MemberCard from "@/components/global/cards/MemberCard";
 import TeamHeader from "@/components/global/TeamHeader";
@@ -14,23 +14,30 @@ export const TeamPage = () => {
   const { paramteamname } = useParams<{ paramteamname: string }>();
   const dispatch = useDispatch<AppDispatch>();
   const team = useSelector((state: RootState) => state.team.team);
-
-  // const teamStatus = useSelector((state: RootState) => state.team.status);
   const members = useSelector((state: RootState) => state.team.members);
+  const error = useSelector((state: RootState) => state.team.error);
+  const navigate = useNavigate()
+  
   const [coach, setCoach] = useState(
     members.find((member) => member.role === "coach")
   );
 
+  useEffect(() => {
+    if (error === "Team Doesn't Exist!") {
+      // react router redirect to team page
+      navigate(`/team`);
+    }
+  }, [error, navigate]);
   
-  
+  useEffect(() => {
 
+  dispatch(getTeamByTeamName(paramteamname as string));
+  }, [paramteamname, dispatch]);
+  
   useEffect(() => {
     setCoach(members.find((member) => member.role === "coach"));
   }, [members]);
-  // let coach;
-  // coach = members.find((member) => member.role === "coach");
 
-  dispatch(getTeamByTeamName(paramteamname as string));
 
 
   return (
