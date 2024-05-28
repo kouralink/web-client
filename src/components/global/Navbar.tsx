@@ -6,6 +6,7 @@ import { ModeToggle } from "../mode-toggle";
 import SingInUpButtons from "./SingInUpButtons";
 import { AccountNavDropdownMenu } from "./AccountNavDropdownMenu";
 // import { CreateTeamPopUp } from "./CreateTeam";
+import Notification from "./cards/Notification";
 
 interface NavbarProps {
   navHeight?: number;
@@ -87,6 +88,9 @@ const Navbar: React.FC<NavbarProps> = ({ navHeight = 4 }) => {
           >
             Contact
           </NavLink>
+
+          <Notification/>
+
           {/* <div className="relative" onMouseLeave={() => setDropdownOpen(false)}>
             <button
               onClick={() => setDropdownOpen(!dropdownOpen)}
