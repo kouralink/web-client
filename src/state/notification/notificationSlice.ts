@@ -243,7 +243,7 @@ export const sendRequestToJoinTeam = createAsyncThunk(
         return "Error user already in a team";
       }
 
-      // test if there is already a not read notification with same to_id and from_id in last 24 hours
+      // test if there is already a notification with same to_id and from_id in last 24 hours
       const isAlreadySend = await isAlreadySendNotification(
         from_uid,
         notificationInfo.to
@@ -260,7 +260,7 @@ export const sendRequestToJoinTeam = createAsyncThunk(
         title: "Request to join team",
         message: "I want to join your team",
         from_id: from_uid,
-        read: false,
+        action: null,
         createdAt: Timestamp.now(),
         type: "request_to_join_team",
       });
@@ -292,7 +292,7 @@ export const inviteToTeam = createAsyncThunk(
         title: "Invite to team",
         message: `You invited to joint Team ${teamId}`,
         from_id: teamId,
-        read: false,
+        action: null,
         createdAt: Timestamp.now(),
         type: "invite_to_team",
       });
@@ -306,5 +306,33 @@ export const inviteToTeam = createAsyncThunk(
     }
   }
 );
+
+export const sendInfoNotification = createAsyncThunk(
+  "notification/sendInfoNotification",
+  async (notificationInfo: { to: string; title: string; message: string }) => {
+    try {
+      const notificationCollection = collection(firestore, "notifications");
+
+      const notificationDoc = await addDoc(notificationCollection, {
+        to_id: notificationInfo.to,
+        title: notificationInfo.title,
+        message: notificationInfo.message,
+        from_id: auth.currentUser?.uid,
+        action: null,
+        createdAt: Timestamp.now(),
+        type: "info",
+      });
+      // return true is sended succesfully in not return false
+      if (notificationDoc.id) {
+        return true;
+      }
+      return "Error sending request to join team";
+    } catch (error) {
+      throw new Error("Error sending request to join team");
+    }
+  }
+);
+
+
 
 export default notificationSlice.reducer;
