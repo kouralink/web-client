@@ -3,6 +3,7 @@ import { AppDispatch, RootState } from '@/state/store';
 import { useDispatch, useSelector } from 'react-redux';
 import teams from '/teams.jpg'; // adjust the path as needed
 import { Input } from "@/components/ui/input"
+import { Link } from 'react-router-dom';
 
 
 const TeamSearchPage: React.FC = () => {
@@ -23,7 +24,7 @@ const TeamSearchPage: React.FC = () => {
             <Input type="text" onChange={handleSearch} placeholder="Search teams..." />
             <ul>
                 {searchResults.map((result, i) => {
-                        return <li key={i}> Team: {result.teamName }</li>;
+                        return <Link to={`/team/page/${result.team_info.teamName}`}><li key={i}> Team: {result.team_info.teamName }</li></Link>;
                 })}
             </ul>
             </div>
