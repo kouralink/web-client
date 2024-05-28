@@ -19,7 +19,10 @@ import { z } from "zod";
 
 import { Loader2 } from "lucide-react";
 import { useEffect, useState } from "react";
-import { getTeamByTeamName,updateTeam as updateTeamAction } from "@/state/team/teamSlice";
+import {
+  getTeamByTeamName,
+  updateTeam as updateTeamAction,
+} from "@/state/team/teamSlice";
 import { Textarea } from "@/components/ui/textarea";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
@@ -74,11 +77,9 @@ const createTeamSchema = z.object({
 export type CreateTeamFormValues = z.infer<typeof createTeamSchema>;
 
 export type UpdateTeamDataType = {
-  teamName: string;
+  teamName?: string;
   description?: string;
   teamLogo?: File;
-  isNameChanged?: boolean;
-  oldTeamName: string;
 };
 
 export default function UpdateTeam() {
@@ -93,14 +94,11 @@ export default function UpdateTeam() {
   const members = useSelector((state: RootState) => state.team.members);
   const navigate = useNavigate();
 
-
   useEffect(() => {
-
     if (team.teamName !== paramteamname) {
       dispatch(getTeamByTeamName(paramteamname as string));
     }
-    }, [paramteamname, dispatch, team.teamName]);
-  
+  }, [paramteamname, dispatch, team.teamName]);
 
   useEffect(() => {
     if (team.teamName === paramteamname && members.length != 0) {
@@ -114,12 +112,12 @@ export default function UpdateTeam() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-    useEffect(() => {
-      if (error === '  1  ' && status !== "loading" && team.teamName) {
-        // react router redirect
-        navigate(`/team/${team.teamName}`);
-      }
-    } , [error, navigate, team.teamName, status]);
+  useEffect(() => {
+    if (error === "  1  " && status !== "loading" && team.teamName) {
+      // react router redirect
+      navigate(`/team/${team.teamName}`);
+    }
+  }, [error, navigate, team.teamName, status]);
   const form = useForm<CreateTeamFormValues>({
     resolver: zodResolver(createTeamSchema),
     mode: "onSubmit",
@@ -130,11 +128,7 @@ export default function UpdateTeam() {
     },
   });
   const onSubmit = async (data: CreateTeamFormValues) => {
-    const changed_data: UpdateTeamDataType = {
-      isNameChanged: false,
-      teamName: data.teamName,
-      oldTeamName: team.teamName,
-    };
+    const changed_data: UpdateTeamDataType = {};
     console.log(data);
     console.log("what");
     if (
@@ -148,15 +142,14 @@ export default function UpdateTeam() {
       changed_data.teamLogo = data.logo;
     }
     if (data.teamName !== team.teamName) {
-      changed_data.isNameChanged = true;
+      changed_data.teamName = data.teamName;
     }
     if (data.teamBio !== team.description) {
       changed_data.description = data.teamBio;
     }
 
-    dispatch(updateTeamAction(changed_data));
+    dispatch(updateTeamAction({ id: team.id, team: changed_data}));
   };
-
 
   return (
     <Card className="w-[800px]">
