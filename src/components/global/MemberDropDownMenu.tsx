@@ -11,7 +11,11 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
-export function MemberDropDownMenu() {
+export function MemberDropDownMenu({
+  role,
+}: {
+  role: "user" | "coach" | "member";
+}) {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild className="cursor-pointer">
@@ -36,7 +40,7 @@ export function MemberDropDownMenu() {
         <DropdownMenuLabel>Member Menu</DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
-        <DropdownMenuItem>
+          <DropdownMenuItem>
             <User className="mr-2 h-4 w-4" />
             <span>Profile</span>
             <DropdownMenuShortcut></DropdownMenuShortcut>
@@ -46,13 +50,20 @@ export function MemberDropDownMenu() {
             <span>Info</span>
             <DropdownMenuShortcut></DropdownMenuShortcut>
           </DropdownMenuItem>
-          <DropdownMenuItem>
-            <Ban className="mr-2 h-4 w-4" />
-            <span>Kick</span>
-            <DropdownMenuShortcut>coach</DropdownMenuShortcut>
-          </DropdownMenuItem>
-          
-          
+          {role === "coach" && (
+            <DropdownMenuGroup>
+              <DropdownMenuItem>
+                <Ban className="mr-2 h-4 w-4" />
+                <span>Kick</span>
+                <DropdownMenuShortcut>coach</DropdownMenuShortcut>
+              </DropdownMenuItem>
+              <DropdownMenuItem>
+                <Ban className="mr-2 h-4 w-4" />
+                <span>Ban</span>
+                <DropdownMenuShortcut></DropdownMenuShortcut>
+              </DropdownMenuItem>
+            </DropdownMenuGroup>
+          )}
         </DropdownMenuGroup>
       </DropdownMenuContent>
     </DropdownMenu>

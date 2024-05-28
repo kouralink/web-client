@@ -10,6 +10,7 @@ export type sidebarNavItemType = {
 export interface Member {
   uid: string;
   joinedAt: string;
+  team_id: string;
   role: string;
   userInfo: User | null;
 }
