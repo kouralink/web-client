@@ -27,8 +27,8 @@ export default function UserProfile() {
       
 
             <div className="bg-green-700 h-60 w-svw  p-6 flex items-end half-image">
-              <img src={userState.avatar} alt="Profile" className="block mx-auto"/> 
-                <p className="font-semibold text-white content">{userState.firstName} {userState.lastName}</p>
+              {userState.avatar?<img src={userState.avatar} alt="Profile" className="block mx-auto profile-img"/>:<div className="rounded-full bg-gray-300 w-[180px] h-[180px] profile-img"></div>                                                }
+                <p className="font-semibold text-white content">{userState.firstName} {userState.lastName}</p>    
             </div>
 
             <div className="my-24 md:flex md:items-end md:justify-center">
