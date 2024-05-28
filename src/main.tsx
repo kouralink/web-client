@@ -183,7 +183,7 @@ const router = createBrowserRouter(
 
         </Route>
       
-        <Route path="profile/:username" element={<UserProfile />} />       
+        {/* <Route path="profile/:username" element={<UserProfile />} />        */}
         <Route path="*" element={<ErrorPage />} />
       </Route>
     </Route>

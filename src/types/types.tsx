@@ -87,14 +87,19 @@ export interface UserState {
   error: string | null | undefined;
 }
 
+export interface NotificationAction {
+  actionType: "accept" | "decline" | "view" | null;
+  actionUrl: string;
+}
+
 export interface Notification {
   id: string;
   from_id: string;
   to_id: string;
   title: string;
   message: string;
-  read: boolean;
   createdAt: Timestamp;
+  action: NotificationAction;
   type:
     | "info"
     | "request_to_join_team"
