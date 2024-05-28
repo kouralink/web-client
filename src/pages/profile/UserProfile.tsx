@@ -4,7 +4,6 @@ import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 import MyProfileCard from "@/components/global/cards/MyProfileCard"
-import Navbar from "@/components/global/Navbar"
 import './ProfileStyle.css';
 
 
@@ -25,9 +24,7 @@ export default function UserProfile() {
 
   return (
     <div>
-      <div>
-        <Navbar navHeight={2} />
-      </div>
+      
 
             <div className="bg-green-700 h-60 w-svw  p-6 flex items-end half-image">
               <img src={userState.avatar} alt="Profile" className="block mx-auto"/> 
