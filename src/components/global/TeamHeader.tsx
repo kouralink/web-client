@@ -5,9 +5,11 @@ import { Star } from "lucide-react";
 import { TeamDropDownMenu } from "./TeamDropDownMenu";
 import { Team } from "@/types/types";
 
+type TeamHeaderProps = {
+  role: "user" | "coach" | "member";
+} & Team;
 
-
-const TeamHeader: React.FC<Team> = (props) => {
+const TeamHeader: React.FC<TeamHeaderProps> = (props) => {
   return (
     <Card
       className={"flex w-full rounded-lg p-2 justify-between items-center  "}
@@ -24,7 +26,7 @@ const TeamHeader: React.FC<Team> = (props) => {
       <CardContent className="flex items-center justify-center gap-4 m-0 p-0">
         <span>3.5K</span>
         <Star />
-        <TeamDropDownMenu teamname={props.teamName} />
+        <TeamDropDownMenu teamname={props.teamName} role={props.role} />
       </CardContent>
     </Card>
   );
