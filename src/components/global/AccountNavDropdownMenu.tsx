@@ -24,11 +24,31 @@ import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "@/state/store";
 import { logout } from "@/state/auth/authSlice";
 import { ChangeAccountType } from "./ChangeAccountType";
+import { useEffect, useState } from "react";
+import { getMemberTeamName } from "@/state/team/teamSlice";
 
 export function AccountNavDropdownMenu() {
   const authLoading = useSelector((state: RootState) => state.auth.loading);
-  const authUser = useSelector((state: RootState) => state.auth.user);
+  const auth = useSelector((state: RootState) => state.auth);
+  const authUser = auth.user;
   const dispatch = useDispatch<AppDispatch>();
+  const accountType = authUser?.accountType;
+  const uid = auth?.uid;
+  const [teamName, setTeamName] = useState<string | null>(null);
+  
+
+  useEffect(() => {
+    if ( uid && (accountType === "coach" || accountType === "player")) {
+      getMemberTeamName(uid).then((teamName) => {
+        if (!teamName) {
+          console.log("Error getting coach team name");
+          return;
+        }
+        setTeamName(teamName);
+      });
+    }
+  }, [accountType, uid]);
+  
   
   return (
     <DropdownMenu >
@@ -67,13 +87,16 @@ export function AccountNavDropdownMenu() {
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
-        <Link to={"/team/page/zero"}>
+          { teamName &&
+
+            <Link to={`/team/page/${teamName}`}>
 
           <DropdownMenuItem>
             <Users className="mr-2 h-4 w-4" />
             <span>Team</span>
           </DropdownMenuItem>
           </Link>
+        }
           <Link to={"/team/create"}>
           <DropdownMenuItem  >
             <Plus className="mr-2 h-4 w-4" />
