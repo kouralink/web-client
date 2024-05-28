@@ -1,6 +1,7 @@
 import { searchByUserName } from '@/state/search/searchUsersSlice';
 import { AppDispatch, RootState } from '@/state/store';
 import { useDispatch, useSelector } from 'react-redux';
+import { Link } from 'react-router-dom';
 
 const UserSearchPage: React.FC = () => {
     const dispatch = useDispatch<AppDispatch>();
@@ -17,7 +18,7 @@ const UserSearchPage: React.FC = () => {
             <input type="text" onChange={handleSearch} placeholder="Search users..." />
             <ul>
                 {searchResults.map((result, i) => {
-                        return <li key={i}> username: {result.user_info.username }</li>;
+                        return <Link to={`/users/profile/${result.user_info.username}`}><li key={i}> username: {result.user_info.username }</li></Link>;
                 })}
             </ul>
         </div>
