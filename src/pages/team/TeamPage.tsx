@@ -1,9 +1,9 @@
 import { AppDispatch, RootState } from "@/state/store";
-import {  getTeamByTeamName } from "@/state/team/teamSlice";
+import { getTeamByTeamName } from "@/state/team/teamSlice";
 import { MatchState } from "@/types/types";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import {  useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import MatchRecordCardIteam from "@/components/global/cards/MatchRecordCardIteam";
 import MemberCard from "@/components/global/cards/MemberCard";
 import TeamHeader from "@/components/global/TeamHeader";
@@ -16,11 +16,26 @@ export const TeamPage = () => {
   const team = useSelector((state: RootState) => state.team.team);
   const members = useSelector((state: RootState) => state.team.members);
   const error = useSelector((state: RootState) => state.team.error);
-  const navigate = useNavigate()
-  
+  const navigate = useNavigate();
+  const userId = useSelector((state: RootState) => state.auth?.uid);
+
+  const [role, setRole] = useState<"coach"|"member"|"user">("user");
+
   const [coach, setCoach] = useState(
     members.find((member) => member.role === "coach")
   );
+  useEffect(() => {
+    if (userId === coach?.uid) {
+      setRole("coach");
+    } else {
+      const isMemeber = members.find((member) => member.uid === userId);
+      if (isMemeber) {
+        setRole("member");
+      } else {
+        setRole("user");
+      }
+    }
+  }, [userId, coach?.uid, members]);
 
   useEffect(() => {
     if (error === "Team Doesn't Exist!") {
@@ -28,32 +43,28 @@ export const TeamPage = () => {
       navigate(`/team`);
     }
   }, [error, navigate]);
-  
-  useEffect(() => {
 
-  dispatch(getTeamByTeamName(paramteamname as string));
+  useEffect(() => {
+    dispatch(getTeamByTeamName(paramteamname as string));
   }, [paramteamname, dispatch]);
-  
+
   useEffect(() => {
     setCoach(members.find((member) => member.role === "coach"));
   }, [members]);
 
-
-
   return (
     <div className="flex flex-col gap-8 mt-5 ">
-      <TeamHeader {...team} />
+      <TeamHeader {...team} role={role} />
       <div className="flex gap-8 ">
         <Card className=" flex flex-col py-4 px-2 gap-4 h-fit">
           <div className="flex flex-col gap-2">
             <h2>Coach</h2>
             <div className=" ml-4">
-              {
-                coach ? (
-                  <MemberCard {...coach} key={coach.uid} />
-                ) : (
-              <p className="text-gray-500">No coach yet</p>
-                )}
+              {coach ? (
+                <MemberCard member={coach} key={coach.uid} role={role}/>
+              ) : (
+                <p className="text-gray-500">No coach yet</p>
+              )}
             </div>
           </div>
           <div className="flex flex-col gap-2">
@@ -61,7 +72,7 @@ export const TeamPage = () => {
             <div className=" ml-4">
               {members.map((member) => {
                 if (member.role !== "coach") {
-                  return <MemberCard key={member.uid} {...member} />;
+                  return <MemberCard key={member.uid} member={member} role={role} />;
                 }
               })}
               {/* if the members len = 1 write no members yet message */}
