@@ -8,7 +8,10 @@ import {
   Timestamp,
   collection,
   getDocs,
-  deleteDoc
+  collectionGroup,
+  query,
+  where,
+  addDoc
 } from "firebase/firestore";
 
 import { Member, Team, TeamState, User } from "../../types/types";
@@ -68,7 +71,7 @@ const teamSlice = createSlice({
         if (typeof action.payload === "object" && action.payload !== null) {
           state.team = action.payload.team;
           state.members = action.payload.members;
-          state.error = '  0  ';
+          state.error = "  0  ";
 
           toast({
             variant: "default",
@@ -151,7 +154,8 @@ const teamSlice = createSlice({
           className: "text-error border-2 border-error text-start",
         });
       });
-      builder.addCase(updateTeam.pending, (state) => {
+    builder
+      .addCase(updateTeam.pending, (state) => {
         state.status = "loading";
         state.error = null;
       })
@@ -161,7 +165,7 @@ const teamSlice = createSlice({
         if (typeof action.payload === "object" && action.payload !== null) {
           state.team = action.payload.team;
           state.members = action.payload.members;
-          state.error = '  1  ';
+          state.error = "  1  ";
 
           toast({
             variant: "default",
@@ -211,12 +215,13 @@ const getMemberInfo = async (uid: string) => {
 const isItUniqueTeamName = async (teamName: string) => {
   //  teamName is the team id
   try {
-    const teamRef = doc(firestore, "teams", teamName);
-    const teamSnap = await getDoc(teamRef);
-    if (teamSnap.exists()) {
-      return false;
-    } else {
+    const colRef = collection(firestore, "teams");
+    const queryRef = query(colRef, where("teamName", "==", teamName));
+    const snap = await getDocs(queryRef);
+    if (snap.empty) {
       return true;
+    } else {
+      return false;
     }
   } catch (error) {
     console.log(error);
@@ -224,18 +229,14 @@ const isItUniqueTeamName = async (teamName: string) => {
   }
 };
 
-const getTeamMembers = async (teamName: string) => {
+const getTeamMembers = async (docID: string) => {
   try {
-    const teamRef = doc(firestore, "teams", teamName);
+    const teamRef = doc(firestore, "teams", docID);
     const membersRef = collection(teamRef, "members");
     const membersSnap = await getDocs(membersRef);
     const members: Member[] = [];
     membersSnap.forEach((doc) => {
-      const m = {
-        uid: doc.id,
-        ...doc.data(),
-      } as Member;
-      members.push(m);
+      members.push(doc.data() as Member);
     });
     return members;
   } catch (error) {
@@ -248,30 +249,32 @@ export const getTeamByTeamName = createAsyncThunk(
   "team/getTeamByTeamName",
   async (teamName: string) => {
     try {
-      const teamRef = doc(firestore, "teams", teamName);
-      const teamSnap = await getDoc(teamRef);
-      if (teamSnap.exists()) {
-        // get members
-        const members = await getTeamMembers(teamName);
-        const updatedMembers = await Promise.all(
-          members.map(async (member) => {
-            const userInfo = await getMemberInfo(member.uid);
-            return {
-              ...member,
-              userInfo,
-            };
-          })
-        );
-
-        const data = {
-          members: updatedMembers,
-          team: teamSnap.data() as Team,
-        };
-
-        return data;
-      } else {
+      const colRef = collection(firestore, "teams");
+      const queryRef = query(colRef, where("teamName", "==", teamName));
+      const snap = await getDocs(queryRef);
+      if (snap.empty) {
         return "Team Doesn't Exist!";
+
       }
+      const teamData = {...snap.docs[0].data(),id:snap.docs[0].id} as Team;
+
+      const members = await getTeamMembers(teamData.id);
+      const updatedMembers = await Promise.all(
+        members.map(async (member) => {
+          const userInfo = await getMemberInfo(member.uid);
+          return {
+            ...member,
+            userInfo,
+          };
+        })
+      );
+
+      const data = {
+        members: updatedMembers,
+        team: teamData,
+      };
+
+      return data;
     } catch (error) {
       return "Team couldn't be fetched!";
     }
@@ -280,13 +283,13 @@ export const getTeamByTeamName = createAsyncThunk(
 
 export const refreshTeamMembers = createAsyncThunk(
   "team/refreshTeamMembers",
-  async (teamName: string) => {
+  async (teamId: string) => {
     try {
-      const members = await getTeamMembers(teamName);
+      const members = await getTeamMembers(teamId);
       members.map(async (member) => {
         member.userInfo = (await getMemberInfo(member.uid)) as User;
       });
-      return members;
+      return members as Member[];
     } catch (error) {
       console.log(error);
       return [];
@@ -401,8 +404,20 @@ export const createTeam = createAsyncThunk(
           return "Get Download URL Failed!";
         }
 
-        const docRef = doc(firestore, "teams", team.teamName);
-        await setDoc(docRef, {
+        const colRef = collection(firestore, "teams");
+
+        // await setDoc(docRef, {
+        //   teamName: team.teamName,
+        //   blackList: [],
+        //   createdAt: Timestamp.now(),
+        //   updatedAt: Timestamp.now(),
+        //   teamLogo: logoUrl,
+        //   description: team.teamBio,
+        //   createdBy: auth.currentUser.uid,
+        // });
+
+        // add doc to teams collection
+        const docRef = await addDoc(colRef, {
           teamName: team.teamName,
           blackList: [],
           createdAt: Timestamp.now(),
@@ -411,28 +426,32 @@ export const createTeam = createAsyncThunk(
           description: team.teamBio,
           createdBy: auth.currentUser.uid,
         });
+        const teamId = docRef.id;
         // set members doc on /teams/teamName/members/userId
         const membersDocRef = doc(docRef, "members", auth.currentUser.uid);
         await setDoc(membersDocRef, {
+          team_id: teamId,
+          uid: auth.currentUser.uid,
           role: "coach",
           joinedAt: Timestamp.now(),
         });
 
         // get doc
-
+        let members:Member[] = []
         const teamInfo = await getDoc(docRef);
         if (teamInfo.exists()) {
           console.log("teamInfo", teamInfo.data());
           // get members
 
-          const members = await getTeamMembers(team.teamName);
+          members = await getTeamMembers(teamId);
           members.map(async (member) => {
             member.userInfo = (await getMemberInfo(member.uid)) as User;
           });
+          const teamData = {...teamInfo.data(), id: teamId} as Team
 
           const data = {
-            members: members,
-            team: teamInfo.data() as Team,
+            members: members as Member[],
+            team: teamData,
           };
 
           return data;
@@ -458,8 +477,9 @@ export const createTeam = createAsyncThunk(
 
 export const updateTeam = createAsyncThunk(
   "team/updateTeam",
-  async (team: UpdateTeamDataType) => {
+  async ({team,id}: {id:string,team:UpdateTeamDataType}) => {
     try {
+      // check authentication
       if (!auth.currentUser) {
         return "This action requires authentication please login first";
       }
@@ -476,30 +496,29 @@ export const updateTeam = createAsyncThunk(
         return "User not found";
       }
 
+      // check if team name is unique
+
       console.log(2);
-      let oldData = {}
-      if(team.isNameChanged ){
+      if (team.teamName) {
         const isUnique = await isItUniqueTeamName(team.teamName);
         if (!isUnique) {
           return "Team Name Not Unique";
         }
-        const oldDocRef = doc(firestore, "teams", team.oldTeamName);
-        const oldDocSnap = await getDoc(oldDocRef);
+        // const oldDocRef = doc(firestore, "teams", team.oldTeamName);
+        // const oldDocSnap = await getDoc(oldDocRef);
         // delete old doc that with old doc name
-        if (oldDocSnap.exists()) {
-          oldData = oldDocSnap.data() as Team
-          await deleteDoc(oldDocRef).then(() => {
-            console.log('Document deleted succesfully');
-          }).catch((error) => {
-            console.error('Error removing document: ', error);
-          })
-        }
-
-
-
-
+        // if (oldDocSnap.exists()) {
+        //   oldData = oldDocSnap.data() as Team;
+        //   await deleteDoc(oldDocRef)
+        //     .then(() => {
+        //       console.log("Document deleted succesfully");
+        //     })
+        //     .catch((error) => {
+        //       console.error("Error removing document: ", error);
+        //     });
+        // }
       }
-      if(team.teamLogo ){
+      if (team.teamLogo) {
         const storageRef = ref(storage, `Avatars/${team.teamName}`);
         const snapshot = await uploadBytesResumable(
           storageRef,
@@ -523,31 +542,30 @@ export const updateTeam = createAsyncThunk(
         }
       }
 
-    
-
-
-
-
-      const docRef = doc(firestore, "teams", team.teamName);
-      await setDoc(docRef, {
-        ...oldData,
-        updatedAt: Timestamp.now(),
-        ...team,
-      }, { merge: true });
+      const docRef = doc(firestore, "teams", id);
+      await setDoc(
+        docRef,
+        {
+          updatedAt: Timestamp.now(),
+          ...team,
+        },
+        { merge: true }
+      );
 
       const teamInfo = await getDoc(docRef);
       if (teamInfo.exists()) {
         console.log("teamInfo", teamInfo.data());
         // get members
 
-        const members = await getTeamMembers(team.teamName);
+        const members = await getTeamMembers(id);
         members.map(async (member) => {
           member.userInfo = (await getMemberInfo(member.uid)) as User;
         });
+        const teamData = {...teamInfo.data(), id: id} as Team
 
         const data = {
           members: members,
-          team: teamInfo.data() as Team,
+          team: teamData,
         };
 
         return data;
@@ -560,6 +578,42 @@ export const updateTeam = createAsyncThunk(
     }
   }
 );
+
+export const getMemberTeamId = async (uid: string) => {
+  // search in the members of all teams to get member with uid and return the teamName
+  try {
+    const colRef = collectionGroup(firestore, "members");
+    const queryRef = query(colRef, where("uid", "==", uid));
+    const snap = await getDocs(queryRef);
+    if (snap.empty) {
+      return null;
+    }
+    return snap.docs[0].data().team_id;
+  } catch (error) {
+    console.log("nul 3");
+    console.log(error);
+    return null;
+  }
+};
+
+export const getMemberTeamName = async (uid: string) => {
+  try{
+    const colRef = collectionGroup(firestore, "members");
+    const queryRef = query(colRef, where("uid", "==", uid));
+    const snap = await getDocs(queryRef);
+    const docRef = doc(firestore, "teams", snap.docs[0].data().team_id);
+    const docSnap = await getDoc(docRef);
+    if (docSnap.exists()) {
+      return docSnap.data().teamName;
+    } else {
+      return null;
+    }
+  } catch (error) {
+    console.log("nul 3");
+    console.log(error);
+    return null;
+  }
+}
 
 export const { setTeam, clearTeam, setError, setLoading } = teamSlice.actions;
 export default teamSlice.reducer;
