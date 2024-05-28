@@ -4,6 +4,7 @@ import {
     Info,
     LogOut,
     PenLine,
+    Send,
     UserPlus
   } from "lucide-react";
   
@@ -18,9 +19,18 @@ import {
     DropdownMenuTrigger,
   } from "@/components/ui/dropdown-menu";
 import { Link } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { AppDispatch, RootState } from "@/state/store";
+import { sendRequestToJoinTeam } from "@/state/notification/notificationSlice";
   
   export function TeamDropDownMenu({teamname}: {teamname:string}) {
-    
+    const teamId = useSelector((state: RootState) => state.team.team.id)
+    const dispatch = useDispatch<AppDispatch>();
+    const handleRequistTojoin = async () => {
+      console.log("Request to join 1");
+      await dispatch(sendRequestToJoinTeam({to:teamId}))
+
+    }
     return (
       <DropdownMenu>
         <DropdownMenuTrigger asChild className="cursor-pointer">
@@ -72,6 +82,11 @@ import { Link } from "react-router-dom";
               <span>Leave team</span>
               <DropdownMenuShortcut>Member</DropdownMenuShortcut>
             </DropdownMenuItem>
+              <DropdownMenuItem onClick={handleRequistTojoin}>
+                <Send className="mr-2 h-4 w-4" />
+                <span>Request to join</span>
+                <DropdownMenuShortcut>user</DropdownMenuShortcut>
+              </DropdownMenuItem>
             <DropdownMenuItem>
               <Info className="mr-2 h-4 w-4" />
               <span>Details</span>
