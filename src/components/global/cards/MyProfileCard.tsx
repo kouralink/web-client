@@ -13,8 +13,8 @@ import {ProfileInfoDopDownMenu} from "@/components/global/cards/ProfileInfoDopDo
 
 
 const MyProfileCard = () => {
-const userState = useSelector((state: RootState) => state.user.user);
-  const authUser = useSelector((state: RootState) => state.auth.user);
+    const userState = useSelector((state: RootState) => state.user.user);
+    const authUser = useSelector((state: RootState) => state.auth.user);
 
   const timestamp = new Timestamp(authUser?.birthday?.seconds || 0, authUser?.birthday?.nanoseconds || 0);
 
