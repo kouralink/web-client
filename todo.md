@@ -1,6 +1,7 @@
 # Project Todo List
 
 ## what i can do:
+
 create account
 update account info
 create team
@@ -9,10 +10,8 @@ open profile page
 open team page
 authentication
 
-
-
-
 ## what i need to add;
+
 create team error handling
 style profile page
 update team info
@@ -27,8 +26,8 @@ notification
 search on users
 search on teams
 
+## was working on:
 
-
-
-
-
+@@ilorez => request to join team notification
+@@Abdo-Nsila => tournament optimize brackets component
+@@Wahmane-Hamza => team search  page
