@@ -33,7 +33,7 @@ const MemberCard: React.FC<MemberCardProps> = (props) => {
         </div>
       </CardHeader>
       <CardContent className="flex items-center justify-center gap-4 m-0 p-0">
-        <MemberDropDownMenu role={props.role} isAdmin={props.member.role === "coach"} />
+        <MemberDropDownMenu teamId={props.member.team_id} uid={props.member.uid} role={props.role} isAdmin={props.member.role === "coach"} />
       </CardContent>
     </Card>
   );
