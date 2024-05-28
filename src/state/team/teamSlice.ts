@@ -11,7 +11,10 @@ import {
   collectionGroup,
   query,
   where,
-  addDoc
+  addDoc,
+  deleteDoc,
+  updateDoc,
+  arrayUnion,
 } from "firebase/firestore";
 
 import { Member, Team, TeamState, User } from "../../types/types";
@@ -194,6 +197,76 @@ const teamSlice = createSlice({
           className: "text-error border-2 border-error text-start",
         });
       });
+    builder
+      .addCase(kickMember.pending, (state) => {
+        state.status = "loading";
+        state.error = null;
+      })
+      .addCase(kickMember.fulfilled, (state, action) => {
+        state.status = "idle";
+        state.error = null;
+        if (action.payload === true) {
+          toast({
+            variant: "default",
+            title: "Player Kicked",
+            description: "Player kicked successfully!",
+            className: "text-primary border-2 border-primary text-start",
+          });
+        } else {
+          state.error = action.payload as string;
+          toast({
+            variant: "default",
+            title: "Player Kick Failed",
+            description: state.error,
+            className: "text-error border-2 border-error text-start",
+          });
+        }
+      })
+      .addCase(kickMember.rejected, (state, action) => {
+        state.status = "failed";
+        state.error = action.error.message;
+        toast({
+          variant: "default",
+          title: "Player Kick Rejected",
+          description: state.error,
+          className: "text-error border-2 border-error text-start",
+        });
+      });
+    builder
+      .addCase(banMember.pending, (state) => {
+        state.status = "loading";
+        state.error = null;
+      })
+      .addCase(banMember.fulfilled, (state, action) => {
+        state.status = "idle";
+        state.error = null;
+        if (action.payload === true) {
+          toast({
+            variant: "default",
+            title: "Player Banned",
+            description: "Player banned successfully!",
+            className: "text-primary border-2 border-primary text-start",
+          });
+        } else {
+          state.error = action.payload as string;
+          toast({
+            variant: "default",
+            title: "Player Ban Failed",
+            description: state.error,
+            className: "text-error border-2 border-error text-start",
+          });
+        }
+      })
+      .addCase(banMember.rejected, (state, action) => {
+        state.status = "failed";
+        state.error = action.error.message;
+        toast({
+          variant: "default",
+          title: "Player Ban Rejected",
+          description: state.error,
+          className: "text-error border-2 border-error text-start",
+        });
+      });
   },
 });
 
@@ -254,9 +327,8 @@ export const getTeamByTeamName = createAsyncThunk(
       const snap = await getDocs(queryRef);
       if (snap.empty) {
         return "Team Doesn't Exist!";
-
       }
-      const teamData = {...snap.docs[0].data(),id:snap.docs[0].id} as Team;
+      const teamData = { ...snap.docs[0].data(), id: snap.docs[0].id } as Team;
 
       const members = await getTeamMembers(teamData.id);
       const updatedMembers = await Promise.all(
@@ -437,7 +509,7 @@ export const createTeam = createAsyncThunk(
         });
 
         // get doc
-        let members:Member[] = []
+        let members: Member[] = [];
         const teamInfo = await getDoc(docRef);
         if (teamInfo.exists()) {
           console.log("teamInfo", teamInfo.data());
@@ -447,7 +519,7 @@ export const createTeam = createAsyncThunk(
           members.map(async (member) => {
             member.userInfo = (await getMemberInfo(member.uid)) as User;
           });
-          const teamData = {...teamInfo.data(), id: teamId} as Team
+          const teamData = { ...teamInfo.data(), id: teamId } as Team;
 
           const data = {
             members: members as Member[],
@@ -477,7 +549,7 @@ export const createTeam = createAsyncThunk(
 
 export const updateTeam = createAsyncThunk(
   "team/updateTeam",
-  async ({team,id}: {id:string,team:UpdateTeamDataType}) => {
+  async ({ team, id }: { id: string; team: UpdateTeamDataType }) => {
     try {
       // check authentication
       if (!auth.currentUser) {
@@ -561,7 +633,7 @@ export const updateTeam = createAsyncThunk(
         members.map(async (member) => {
           member.userInfo = (await getMemberInfo(member.uid)) as User;
         });
-        const teamData = {...teamInfo.data(), id: id} as Team
+        const teamData = { ...teamInfo.data(), id: id } as Team;
 
         const data = {
           members: members,
@@ -597,7 +669,7 @@ export const getMemberTeamId = async (uid: string) => {
 };
 
 export const getMemberTeamName = async (uid: string) => {
-  try{
+  try {
     const colRef = collectionGroup(firestore, "members");
     const queryRef = query(colRef, where("uid", "==", uid));
     const snap = await getDocs(queryRef);
@@ -613,7 +685,7 @@ export const getMemberTeamName = async (uid: string) => {
     console.log(error);
     return null;
   }
-}
+};
 
 export const isValidTeamId = async (teamId: string) => {
   try {
@@ -628,7 +700,102 @@ export const isValidTeamId = async (teamId: string) => {
     console.log(error);
     return false;
   }
-}
+};
+
+export const removePlayerFromMembers = async (
+  teamId: string,
+  uid: string,
+  type: "ban" | "kick"
+) => {
+  try {
+    // check if the user.uid is the coach of teamId
+    const authUID = auth.currentUser?.uid;
+    if (!authUID) {
+      return "User not authenticated!";
+    }
+    // check if uid is the coach of the team
+    if (authUID === uid) {
+      return `You can't ${type} yourself!`;
+    }
+    const docRef = doc(firestore, "teams", teamId);
+    const mebRef = doc(docRef, "members", authUID);
+    const docSnap = await getDoc(mebRef);
+    if (!docSnap.exists()) {
+      return "You are not the coach of this team!";
+    } else {
+      const data = docSnap.data() as Member;
+      if (data.role !== "coach") {
+        return "You are not the coach of this team!";
+      }
+    }
+
+    // check if the uid in team
+    const teamrRef = doc(firestore, "teams", teamId);
+    const memberRef = doc(teamrRef, "members", uid);
+
+    const memberSnap = await getDoc(memberRef);
+    if (!memberSnap.exists()) {
+      return "Player not in the team!";
+    } else {
+      if (memberSnap.data().role === "coach") {
+        return `You can't ${type} the coach!`;
+      }
+    }
+
+    await deleteDoc(memberRef);
+    return true;
+  } catch (error) {
+    console.log(error);
+    return `Player ${type} Failed!`;
+  }
+};
+
+export const kickMember = createAsyncThunk(
+  "team/kickMember",
+  async ({ uid, teamId }: { uid: string; teamId: string }) => {
+    try {
+      const result = await removePlayerFromMembers(teamId, uid, "kick");
+      return result;
+    } catch (error) {
+      console.log(error);
+      return "Player Kick Failed!";
+    }
+  }
+);
+
+export const banMember = createAsyncThunk(
+  "team/banMember",
+  async ({ uid, teamId }: { uid: string; teamId: string }) => {
+    try {
+      const result = await removePlayerFromMembers(teamId, uid, "ban");
+      if (result === true) {
+        const teamRef = doc(firestore, "teams", teamId);
+        // update blackList add uid to blackList array in team
+        const docSnap = await getDoc(teamRef);
+        if (!docSnap.exists()) {
+          return "Team not found!";
+        }
+        const data = docSnap.data() as Team;
+        const blackList = data.blackList;
+        if (!blackList) {
+          return "BlackList not found!";
+        }
+        if (blackList.includes(uid)) {
+          return "Player Already Banned!";
+        }
+        await updateDoc(teamRef, {
+          blacklist: arrayUnion(uid),
+        });
+        return true;
+      } else {
+        return result;
+      }
+    } catch (error) {
+      console.log(error);
+      return "Player Ban Failed!";
+    }
+  }
+);
 
 export const { setTeam, clearTeam, setError, setLoading } = teamSlice.actions;
 export default teamSlice.reducer;
