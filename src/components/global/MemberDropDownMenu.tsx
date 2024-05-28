@@ -10,14 +10,28 @@ import {
   DropdownMenuShortcut,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { useDispatch } from "react-redux";
+import { AppDispatch } from "@/state/store";
+import { kickMember,banMember } from "@/state/team/teamSlice";
 
 export function MemberDropDownMenu({
   role,
-  isAdmin
+  isAdmin,
+  teamId,
+  uid,
 }: {
   role: "user" | "coach" | "member";
   isAdmin: boolean;
+  teamId: string;
+  uid: string;
 }) {
+  const dispatch = useDispatch<AppDispatch>();
+  const handleKickAciton = async () => {
+    dispatch(kickMember({ teamId, uid }));
+  };
+  const handleBanAciton = async () => {
+    dispatch(banMember({ teamId, uid }))
+  };
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild className="cursor-pointer">
@@ -52,14 +66,14 @@ export function MemberDropDownMenu({
             <span>Info</span>
             <DropdownMenuShortcut>details</DropdownMenuShortcut>
           </DropdownMenuItem>
-          {role === "coach" && isAdmin && (
+          {role === "coach" && !isAdmin && (
             <DropdownMenuGroup>
-              <DropdownMenuItem>
+              <DropdownMenuItem onClick={handleKickAciton}>
                 <Ban className="mr-2 h-4 w-4" />
                 <span>Kick</span>
                 <DropdownMenuShortcut>remove</DropdownMenuShortcut>
               </DropdownMenuItem>
-              <DropdownMenuItem>
+              <DropdownMenuItem onClick={handleBanAciton}>
                 <Ban className="mr-2 h-4 w-4" />
                 <span>Ban</span>
                 <DropdownMenuShortcut>blacklist</DropdownMenuShortcut>
