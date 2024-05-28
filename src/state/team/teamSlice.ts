@@ -615,5 +615,20 @@ export const getMemberTeamName = async (uid: string) => {
   }
 }
 
+export const isValidTeamId = async (teamId: string) => {
+  try {
+    const docRef = doc(firestore, "teams", teamId);
+    const docSnap = await getDoc(docRef);
+    if (docSnap.exists()) {
+      return true;
+    } else {
+      return false;
+    }
+  } catch (error) {
+    console.log(error);
+    return false;
+  }
+}
+
 export const { setTeam, clearTeam, setError, setLoading } = teamSlice.actions;
 export default teamSlice.reducer;

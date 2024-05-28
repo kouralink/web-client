@@ -11,8 +11,8 @@ import {
 import { firestore, auth } from "@/services/firebase";
 import { toast } from "@/components/ui/use-toast";
 import { store } from "../store";
-import { getMemberTeaName } from "../team/teamSlice";
 import { isItAlreadyInATeam } from "../auth/authSlice";
+import { getMemberTeamId, isValidTeamId } from "../team/teamSlice";
 
 interface NotificationState {
   notifications: Notification[];
@@ -41,7 +41,7 @@ const notificationSlice = createSlice({
 
         if (typeof action.payload === "object" && action.payload !== null) {
           state.notifications = action.payload.notis as Notification[];
-        }
+        } 
 
         state.isLoading = false;
       })
@@ -53,17 +53,25 @@ const notificationSlice = createSlice({
       .addCase(sendRequestToJoinTeam.pending, (state) => {
         state.isLoading = true;
         state.error = null;
+        toast({
+          variant: "default",
+          title: "Sending request",
+          description: "Sending request to join team",
+        });
       })
       .addCase(sendRequestToJoinTeam.fulfilled, (state, action) => {
         state.error = null;
+        state.isLoading = false;
 
         if (action.payload === true) {
           toast({
+            variant: "default",
             title: "Request sended",
             description: "Request to join team sended successfully",
           });
         } else {
           state.error = action.payload;
+          
 
           toast({
             title: "Request failed",
@@ -72,7 +80,6 @@ const notificationSlice = createSlice({
           });
         }
 
-        state.isLoading = false;
       })
       .addCase(sendRequestToJoinTeam.rejected, (state, action) => {
         state.error = action.error.message;
@@ -134,7 +141,7 @@ export const GetRecievedNotifications = createAsyncThunk(
   }
 );
 
-const getCoachTeamName = async () => {
+const getCoachTeamId = async () => {
   try {
     const userUid = auth.currentUser?.uid;
     if (!userUid) {
@@ -147,11 +154,11 @@ const getCoachTeamName = async () => {
     }
 
     // get teamName where the coach is userUid
-    const teamName = await getMemberTeaName(userUid);
-    if (!teamName) {
+    const teamId = await getMemberTeamId(userUid);
+    if (!teamId) {
       return { error: "Error getting coach team name" };
     }
-    return teamName;
+    return teamId;
   } catch (error) {
     return { error: "Error getting coach team name" };
   }
@@ -194,34 +201,49 @@ export const sendRequestToJoinTeam = createAsyncThunk(
   "notification/sendRequestToJoinTeam",
   async (notificationInfo: { to: string }) => {
     try {
-      // get uid
-      // get user username
-      // test if account type is player
-      // check if user already in a team
-      // test if there is already a not read notification with same to_id and from_id in last 24 hours
-      // send notification
-      const from_uid = auth.currentUser?.uid;
+      console.log('1')
+      console.log(notificationInfo.to)
+      // check if notificationInfo.to is valid team id
+      const isValidTID:boolean = await isValidTeamId(notificationInfo.to);
+      if (!isValidTID) {
 
+        return "Error team id is not valid";
+      }
+      console.log('2')
+
+      // get uid
+      const from_uid = auth.currentUser?.uid;
       if (!from_uid) {
         return "Error getting current user";
       }
+      console.log('3')
+      // test if account type is player
       const accountType = store.getState().auth.user?.accountType;
       if (accountType !== "player") {
+        // toast({
+        //   title: "Error",
+        //   description: "Account type is not player",
+        //   variant: "destructive",
+        // })
+
         return "Error account type is not player";
       }
+      console.log('4')
 
+      // get user username
       const username = store.getState().auth.user?.username;
-
       if (!username) {
         return "Error getting current user username";
       }
-
+      
+      // check if user already in a team
       const isItInTeam = await isItAlreadyInATeam(from_uid);
 
       if (isItInTeam) {
         return "Error user already in a team";
       }
 
+      // test if there is already a not read notification with same to_id and from_id in last 24 hours
       const isAlreadySend = await isAlreadySendNotification(
         from_uid,
         notificationInfo.to
@@ -229,7 +251,8 @@ export const sendRequestToJoinTeam = createAsyncThunk(
       if (isAlreadySend) {
         return "You Have already send a request to join this team in last 24 hours";
       }
-
+      
+      // send notification
       const notificationCollection = collection(firestore, "notifications");
 
       const notificationDoc = await addDoc(notificationCollection, {
@@ -256,10 +279,10 @@ export const inviteToTeam = createAsyncThunk(
   "notification/inviteToTeam",
   async (notificationInfo: { to: string }) => {
     try {
-      const teamName = await getCoachTeamName();
+      const teamId = await getCoachTeamId();
 
-      if (typeof teamName === "object" && teamName.error) {
-        return teamName.error;
+      if (typeof teamId === "object" && teamId.error) {
+        return teamId.error;
       }
 
       const notificationCollection = collection(firestore, "notifications");
@@ -267,8 +290,8 @@ export const inviteToTeam = createAsyncThunk(
       const notificationDoc = await addDoc(notificationCollection, {
         to_id: notificationInfo.to,
         title: "Invite to team",
-        message: `You invited to joint Team ${teamName}`,
-        from_id: teamName,
+        message: `You invited to joint Team ${teamId}`,
+        from_id: teamId,
         read: false,
         createdAt: Timestamp.now(),
         type: "invite_to_team",
