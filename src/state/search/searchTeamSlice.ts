@@ -1,10 +1,10 @@
 import { Team } from "@/types/types";
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { getDocs,collection,where,query,limit} from "firebase/firestore";
+import { getDocs, collection, where, query, limit } from "firebase/firestore";
 import { firestore } from "@/services/firebase";
 
 interface SearchedTeam {
-  teamName: string;
+  id: string;
   team_info: Team;
 }
 
@@ -40,36 +40,35 @@ const searchTeamSlice = createSlice({
       state.isLoading = false;
       state.error = action.error.message;
     });
-  }
-  
+  },
 });
-
 
 export const searchByTeamName = createAsyncThunk(
   "search/searchByTeamName",
   async (teamname: string) => {
-   try{
-    const teamsCol = collection(firestore, "teams");
-    // where teamname like teamname limit 10
-    
-    const q = query(teamsCol, where('teamName', ">=", teamname), where('teamName', "<=", teamname + "\uf8ff"), limit(10));
-    const querySnapshot = await getDocs(q);
-    const teams:SearchedTeam[] = [];
-    querySnapshot.forEach((doc) => {
+    try {
+      const teamsCol = collection(firestore, "teams");
+      // where teamname like teamname limit 10
 
-      teams.push(
-        {
-          team_info:doc.data() as Team,
-          teamName: doc.id
-        } 
+      const q = query(
+        teamsCol,
+        where("teamName", ">=", teamname),
+        where("teamName", "<=", teamname + "\uf8ff"),
+        limit(10)
       );
-    });
-    return {teams:teams};
-   } catch (error) {
+      const querySnapshot = await getDocs(q);
+      const teams: SearchedTeam[] = [];
+      querySnapshot.forEach((doc) => {
+        teams.push({
+          team_info: doc.data() as Team,
+          id: doc.id,
+        });
+      });
+      return { teams: teams };
+    } catch (error) {
       throw new Error("Error fetching teams");
-   }
+    }
   }
 );
-
 
 export default searchTeamSlice.reducer;
