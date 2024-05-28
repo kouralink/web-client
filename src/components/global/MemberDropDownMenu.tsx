@@ -13,8 +13,10 @@ import {
 
 export function MemberDropDownMenu({
   role,
+  isAdmin
 }: {
   role: "user" | "coach" | "member";
+  isAdmin: boolean;
 }) {
   return (
     <DropdownMenu>
@@ -43,24 +45,24 @@ export function MemberDropDownMenu({
           <DropdownMenuItem>
             <User className="mr-2 h-4 w-4" />
             <span>Profile</span>
-            <DropdownMenuShortcut></DropdownMenuShortcut>
+            <DropdownMenuShortcut>open</DropdownMenuShortcut>
           </DropdownMenuItem>
           <DropdownMenuItem>
             <Info className="mr-2 h-4 w-4" />
             <span>Info</span>
-            <DropdownMenuShortcut></DropdownMenuShortcut>
+            <DropdownMenuShortcut>details</DropdownMenuShortcut>
           </DropdownMenuItem>
-          {role === "coach" && (
+          {role === "coach" && isAdmin && (
             <DropdownMenuGroup>
               <DropdownMenuItem>
                 <Ban className="mr-2 h-4 w-4" />
                 <span>Kick</span>
-                <DropdownMenuShortcut>coach</DropdownMenuShortcut>
+                <DropdownMenuShortcut>remove</DropdownMenuShortcut>
               </DropdownMenuItem>
               <DropdownMenuItem>
                 <Ban className="mr-2 h-4 w-4" />
                 <span>Ban</span>
-                <DropdownMenuShortcut></DropdownMenuShortcut>
+                <DropdownMenuShortcut>blacklist</DropdownMenuShortcut>
               </DropdownMenuItem>
             </DropdownMenuGroup>
           )}

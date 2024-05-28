@@ -11,7 +11,7 @@ export interface Member {
   uid: string;
   joinedAt: string;
   team_id: string;
-  role: string;
+  role: "coach" | "member";
   userInfo: User | null;
 }
 export interface Team {
