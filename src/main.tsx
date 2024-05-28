@@ -51,6 +51,8 @@ import TournamentBrackets from "./pages/Tournament/TournamentBrackets.tsx";
 // 404
 import ErrorPage from "./pages/ErrorPage.tsx";
 import UserProfile from "./pages/profile/UserProfile.tsx";
+import UserSearchPage from "./pages/profile/UserSearchPage.tsx";
+import DefaultNavLayout from "./layouts/DefaultNavLayout.tsx";
 
 
 // private route
@@ -147,6 +149,7 @@ const router = createBrowserRouter(
           errorElement={<ErrorPage />}
         >
           <Route index element={<TeamSearchPage />} />
+          <Route path="search" element={<TeamSearchPage />} />
           <Route path="create" element={<CoachRoute> <CreateTeam /> </CoachRoute>} />
           <Route path="update/:paramteamname" element={<CoachRoute> <UpdateTeam /> </CoachRoute>} />
           <Route path="page/:paramteamname" element={<TeamPage />} />
@@ -167,7 +170,20 @@ const router = createBrowserRouter(
           <Route path="tournamentBrackets" element={<TournamentBrackets />} />
           <Route path="*" element={<ErrorPage />} />
         </Route>
+        <Route
+          path="users"
+          element={
+            <DefaultNavLayout/>
+          }
+          errorElement={<ErrorPage />}
+        >
+        <Route index element={<UserSearchPage />} />
+        <Route path="search" element={<UserSearchPage />} />
         <Route path="profile/:username" element={<UserProfile />} />
+
+        </Route>
+      
+        <Route path="profile/:username" element={<UserProfile />} />       
         <Route path="*" element={<ErrorPage />} />
       </Route>
     </Route>
