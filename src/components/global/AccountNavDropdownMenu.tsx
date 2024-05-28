@@ -51,7 +51,7 @@ export function AccountNavDropdownMenu() {
           {authUser?.username ? authUser?.username : "My"} Account
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
-        <DropdownMenuGroup><Link to={"/profile/me"}>
+        <DropdownMenuGroup><Link to={"/users/profile/me"}>
           <DropdownMenuItem>
             <User className="mr-2 h-4 w-4" />
             Profile
