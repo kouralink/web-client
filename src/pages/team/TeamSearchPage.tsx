@@ -1,6 +1,9 @@
 import { searchByTeamName } from '@/state/search/searchTeamSlice';
 import { AppDispatch, RootState } from '@/state/store';
 import { useDispatch, useSelector } from 'react-redux';
+import teams from '/teams.jpg'; // adjust the path as needed
+import { Input } from "@/components/ui/input"
+
 
 const TeamSearchPage: React.FC = () => {
     const dispatch = useDispatch<AppDispatch>();
@@ -12,16 +15,25 @@ const TeamSearchPage: React.FC = () => {
     };
 
     return (
-        <div>
-            <h1>Team Search Page</h1>
-            <input type="text" onChange={handleSearch} placeholder="Search teams..." />
+        <div className=' flex justify-between w-full h-full'>
+            <div className='w-1/2 h-screen'>
+            <h1 className='font-bold text-7xl py-10'><span className='text-green-700'>T</span>eams</h1>
+            <p className='text-gray-600 text-2xl w-1/2'>search and Join your team to collaborate with passionate individuals and enjoy a fulfilling experience together</p>
+            <div className='flex flex-col p-10'>
+            <Input type="text" onChange={handleSearch} placeholder="Search teams..." />
             <ul>
                 {searchResults.map((result, i) => {
                         return <li key={i}> Team: {result.teamName }</li>;
                 })}
             </ul>
+            </div>
+            </div>
+
+            <div style={{ backgroundImage: `url(${teams})` }} className='w-1/2 h-screen bg-cover bg-repeat bg'>
+            </div>
         </div>
     );
 };
 
 export default TeamSearchPage;
+
