@@ -2,7 +2,6 @@ import { searchByTeamName } from '@/state/search/searchTeamSlice';
 import { AppDispatch, RootState } from '@/state/store';
 import { useDispatch, useSelector } from 'react-redux';
 import { Input } from "@/components/ui/input"
-import { Link } from 'react-router-dom';
 import TeamSearchCard from "@/components/global/cards/TeamSearchCard";
 import TeamImg from '/teams.jpg';
 import { ScrollArea } from "@/components/ui/scroll-area"
@@ -38,9 +37,7 @@ const TeamSearchPage: React.FC = () => {
             <ul>
                 {searchResults.map((result) => {
                         return <div>
-                                <Link to={`/users/profile/${result.team_info.teamName}`}>
-                                    <TeamSearchCard result={result.team_info}/>
-                                </Link>
+                                <TeamSearchCard result={result.team_info}/>
                             </div>
                 })}
             </ul>
