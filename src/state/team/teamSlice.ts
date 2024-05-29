@@ -673,6 +673,10 @@ export const getMemberTeamName = async (uid: string) => {
     const colRef = collectionGroup(firestore, "members");
     const queryRef = query(colRef, where("uid", "==", uid));
     const snap = await getDocs(queryRef);
+    // check if the user is in a team
+    if (snap.empty) {
+      return null;
+    }
     const docRef = doc(firestore, "teams", snap.docs[0].data().team_id);
     const docSnap = await getDoc(docRef);
     if (docSnap.exists()) {

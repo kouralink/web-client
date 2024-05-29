@@ -14,14 +14,26 @@ import { store } from "../store";
 import { isItAlreadyInATeam } from "../auth/authSlice";
 import { getMemberTeamId, isValidTeamId } from "../team/teamSlice";
 
+
+
 interface NotificationState {
   notifications: Notification[];
+  teamNotifications:{
+    notifications: Notification[];
+    isLoading:boolean;
+    error: string | null | undefined;
+  };
   isLoading: boolean;
   error: string | null | undefined;
 }
 
 const initialState: NotificationState = {
   notifications: [],
+  teamNotifications:{
+    notifications: [],
+    isLoading:false,
+    error:null
+  },
   isLoading: false,
   error: null,
 };
@@ -32,20 +44,32 @@ const notificationSlice = createSlice({
   reducers: {},
   extraReducers: (builder) => {
     builder
-      .addCase(GetRecievedNotifications.pending, (state) => {
+      .addCase(getRecievedNotifications.pending, (state) => {
         state.isLoading = true;
         state.error = null;
       })
-      .addCase(GetRecievedNotifications.fulfilled, (state, action) => {
+      .addCase(getRecievedNotifications.fulfilled, (state, action) => {
         state.error = null;
 
-        if (typeof action.payload === "object" && action.payload !== null) {
+        if (action.payload.notis) {
           state.notifications = action.payload.notis as Notification[];
-        } 
+          // toast({
+          //   title: "Notifications loaded",
+          //   description: "Notifications loaded successfully",
+          // });
+        } else {
+          state.error = action.payload.error;
+          // toast({
+          //   title: "Notifications failed",
+          //   description: action.payload.error,
+          //   variant: "destructive",
+          // });
+        }
+
 
         state.isLoading = false;
       })
-      .addCase(GetRecievedNotifications.rejected, (state, action) => {
+      .addCase(getRecievedNotifications.rejected, (state, action) => {
         state.error = action.error.message;
         state.isLoading = false;
       });
@@ -114,32 +138,35 @@ const notificationSlice = createSlice({
         state.error = action.error.message;
         state.isLoading = false;
       });
+    builder.addCase(getTeamRequestNotifications.pending, (state) => {
+      state.teamNotifications.isLoading = true;
+      state.teamNotifications.error = null;
+    }).addCase(getTeamRequestNotifications.fulfilled, (state, action) => {
+      state.teamNotifications.error = null;
+      state.teamNotifications.isLoading = false;
+
+      if (action.payload.notis) {
+        state.teamNotifications.notifications = action.payload.notis as Notification[];
+        // toast({
+        //   title: "Notifications loaded",
+        //   description: "Notifications loaded successfully",
+        // });
+      } else {
+        state.teamNotifications.error = action.payload.error;
+        // toast({
+        //   title: "Notifications failed",
+        //   description: action.payload.error,
+        //   variant: "destructive",
+        // });
+      }
+    }).addCase(getTeamRequestNotifications.rejected, (state, action) => {
+      state.teamNotifications.error = action.error.message;
+      state.teamNotifications.isLoading = false;
+    });
   },
 });
 
-export const GetRecievedNotifications = createAsyncThunk(
-  "notification/getRecievedNotifications",
-  async (uid: string) => {
-    try {
-      const notificationsCollection = collection(firestore, "notifications");
-      const notificationsQuery = query(
-        notificationsCollection,
-        where("to_id", "==", uid)
-      );
-      const notificationsSnapshot = await getDocs(notificationsQuery);
-      const notifications: Notification[] = [];
-      notificationsSnapshot.forEach((doc) => {
-        notifications.push({
-          ...doc.data(),
-          id: doc.id,
-        } as Notification);
-      });
-      return { notis: notifications };
-    } catch (error) {
-      throw new Error("Error getting recieved notifications");
-    }
-  }
-);
+
 
 const getCoachTeamId = async () => {
   try {
@@ -156,13 +183,87 @@ const getCoachTeamId = async () => {
     // get teamName where the coach is userUid
     const teamId = await getMemberTeamId(userUid);
     if (!teamId) {
-      return { error: "Error getting coach team name" };
+      return { error: "Error getting coach team id" };
     }
     return teamId;
   } catch (error) {
     return { error: "Error getting coach team name" };
   }
 };
+
+export const getTeamRequestNotifications = createAsyncThunk("notification/getTeamRequestNotifications",
+async () => {
+  try {
+    const teamId = await getCoachTeamId();
+    if (teamId.error) {
+      return { error: teamId.error };
+    }
+
+    const notificationsCollection = collection(firestore, "notifications");
+    const notificationsQuery = query(
+      notificationsCollection,
+      where("to_id", "==", teamId),
+      where("type", "==", "request_to_join_team"),
+      where("action", "==", null)
+    );
+    const notificationsSnapshot = await getDocs(notificationsQuery);
+    const notifications: Notification[] = [];
+    notificationsSnapshot.forEach((doc) => {
+      notifications.push({
+        ...doc.data(),
+        id: doc.id,
+      } as Notification);
+    });
+    if (notifications.length === 0) {
+      return { error: "No notifications found" };
+    }
+    return { notis: notifications };
+  } catch (error) {
+    return { error: "Error getting team request notifications" };
+  }
+});
+
+export const getRecievedNotifications = createAsyncThunk(
+  "notification/getRecievedNotifications",
+  async () => {
+    try {
+      // get uid
+      const uid = auth.currentUser?.uid
+      if(!uid) {
+        return { error: "Error getting current user" };
+      }
+      console.log("1")
+
+      const notificationsCollection = collection(firestore, "notifications");
+      const notificationsQuery = query(
+        notificationsCollection,
+        where("to_id", "==", uid),
+        where("action", "==", null),
+      );
+      console.log("2")
+      const notificationsSnapshot = await getDocs(notificationsQuery);
+      console.log("3")
+      const notifications: Notification[] = [];
+      notificationsSnapshot.forEach((doc) => {
+        notifications.push({
+          ...doc.data(),
+          id: doc.id,
+        } as Notification);
+      });
+
+      
+
+      console.log("4")
+      if (notifications.length === 0) {
+        return { error: "No notifications found" };
+      }
+      
+      return { notis: notifications };
+    } catch (error) {
+      throw new Error("Error getting recieved notifications");
+    }
+  }
+);
 
 const isAlreadySendNotification = async (from_id: string, to_id: string) => {
   try {
@@ -254,11 +355,11 @@ export const sendRequestToJoinTeam = createAsyncThunk(
       
       // send notification
       const notificationCollection = collection(firestore, "notifications");
-
+      const from_username = store.getState().auth.user?.username;
       const notificationDoc = await addDoc(notificationCollection, {
         to_id: notificationInfo.to,
         title: "Request to join team",
-        message: "I want to join your team",
+        message: `${from_username} want to join Your Team`,
         from_id: from_uid,
         action: null,
         createdAt: Timestamp.now(),

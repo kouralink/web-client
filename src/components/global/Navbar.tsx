@@ -6,7 +6,7 @@ import { ModeToggle } from "../mode-toggle";
 import SingInUpButtons from "./SingInUpButtons";
 import { AccountNavDropdownMenu } from "./AccountNavDropdownMenu";
 // import { CreateTeamPopUp } from "./CreateTeam";
-import Notification from "./cards/Notification";
+import NotificationASideSheet from "./NotificationASideSheet";
 
 interface NavbarProps {
   navHeight?: number;
@@ -76,7 +76,7 @@ const Navbar: React.FC<NavbarProps> = ({ navHeight = 4 }) => {
           >
             Users
           </NavLink>
-          
+
           <NavLink
             className="px-4 py-2  text-sm font-semibold bg-transparent rounded-lg dark:bg-transparent dark:hover:bg-gray-600 dark:focus:bg-gray-600 dark:focus:text-white dark:hover:text-white dark:text-gray-200 md:mt-0  hover:text-gray-900 focus:text-gray-900 hover:bg-gray-200 focus:bg-gray-200 focus:outline-none focus:shadow-outline"
             to="/tournament"
@@ -96,7 +96,7 @@ const Navbar: React.FC<NavbarProps> = ({ navHeight = 4 }) => {
             Contact
           </NavLink>
 
-          <Notification/>
+          <NotificationASideSheet />
 
           {/* <div className="relative" onMouseLeave={() => setDropdownOpen(false)}>
             <button
