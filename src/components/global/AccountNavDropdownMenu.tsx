@@ -35,10 +35,9 @@ export function AccountNavDropdownMenu() {
   const accountType = authUser?.accountType;
   const uid = auth?.uid;
   const [teamName, setTeamName] = useState<string | null>(null);
-  
 
   useEffect(() => {
-    if ( uid && (accountType === "coach" || accountType === "player")) {
+    if (uid && (accountType === "coach" || accountType === "player")) {
       getMemberTeamName(uid).then((teamName) => {
         if (!teamName) {
           console.log("Error getting coach team name");
@@ -48,10 +47,9 @@ export function AccountNavDropdownMenu() {
       });
     }
   }, [accountType, uid]);
-  
-  
+
   return (
-    <DropdownMenu >
+    <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Avatar className="w-10 h-10">
           <AvatarImage
@@ -60,57 +58,61 @@ export function AccountNavDropdownMenu() {
             className="object-cover"
           />
           <AvatarFallback>
-            {authUser?.username
-              ? authUser?.username.charAt(0)
-              : "N"}
+            {authUser?.username ? authUser?.username.charAt(0) : "N"}
           </AvatarFallback>
         </Avatar>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-56">
         <DropdownMenuLabel>
-          {authUser?.username ? authUser?.username : "My"} Account
+          {authUser?.username ? authUser?.username : "My"} Account <span className="capitalize">({
+            authUser?.accountType
+          })</span>
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
-        <DropdownMenuGroup><Link to={"/users/profile/me"}>
-          <DropdownMenuItem>
-            <User className="mr-2 h-4 w-4" />
-            Profile
-            <DropdownMenuShortcut>⇧⌘P</DropdownMenuShortcut>
-          </DropdownMenuItem></Link>
+        <DropdownMenuGroup>
+          <Link to={"/users/profile/me"}>
+            <DropdownMenuItem>
+              <User className="mr-2 h-4 w-4" />
+              Profile
+              <DropdownMenuShortcut>⇧⌘P</DropdownMenuShortcut>
+            </DropdownMenuItem>
+          </Link>
           <Link to={"/settings"}>
-          <DropdownMenuItem>
-            <Settings className="mr-2 h-4 w-4" />
-            Settings
-            <DropdownMenuShortcut>⌘S</DropdownMenuShortcut>
-          </DropdownMenuItem>
+            <DropdownMenuItem>
+              <Settings className="mr-2 h-4 w-4" />
+              Settings
+              <DropdownMenuShortcut>⌘S</DropdownMenuShortcut>
+            </DropdownMenuItem>
           </Link>
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
-          { teamName &&
-
+          {teamName && (
             <Link to={`/team/page/${teamName}`}>
-
-          <DropdownMenuItem>
-            <Users className="mr-2 h-4 w-4" />
-            <span>Team</span>
-          </DropdownMenuItem>
-          </Link>
-        }
-          <Link to={"/team/create"}>
-          <DropdownMenuItem  >
-            <Plus className="mr-2 h-4 w-4" />
-            <span>Create Team</span>
-            <DropdownMenuShortcut>⌘+T</DropdownMenuShortcut>
-          </DropdownMenuItem>
-          </Link>
+              <DropdownMenuItem>
+                <Users className="mr-2 h-4 w-4" />
+                <span>Team</span>
+              </DropdownMenuItem>
+            </Link>
+          )}
+          {authUser?.accountType === "coach" && (
+            <Link to={"/team/create"}>
+              <DropdownMenuItem>
+                <Plus className="mr-2 h-4 w-4" />
+                <span>Create Team</span>
+                <DropdownMenuShortcut>⌘+T</DropdownMenuShortcut>
+              </DropdownMenuItem>
+            </Link>
+          )}
           <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
-            <RefreshCcw  className="mr-2 h-4 w-4" />
-            <span><ChangeAccountType /></span>
+            <RefreshCcw className="mr-2 h-4 w-4" />
+            <span>
+              <ChangeAccountType />
+            </span>
             <DropdownMenuShortcut>⌘+C</DropdownMenuShortcut>
           </DropdownMenuItem>
         </DropdownMenuGroup>
-        
+
         <DropdownMenuSeparator />
         <Link to="/">
           {authLoading ? (
