@@ -33,12 +33,12 @@
 - [x] Add Notifications to notification aside
 - [x] shout some default users and teams in search page.
 - [x] hidde create Team btn when the user is not a coach
-- [ ] leave team for Members
+- [x] leave team for Members
+- [ ] add Alert confirmation for the actions  ban , leave, kick, change coach
 - [ ] create Notificaiton Accept and View and Decline actions
 - [ ] Notification Triggers
 - [ ] Members Join & Leave Triggers
-- [ ] add Alert confirmation for the actions like ban , leave, kick
-- [ ] Leave Team For Coach (set Coach the older member)
+- [ ] change coach (set Coach one of the members)
 - [ ] Member can't join team if was in blacklist
 - [ ] add Ban List to team page for make possible to remove someone from black list 
 - [ ] team details => show hidden team info 
@@ -47,7 +47,10 @@
 - [ ] new match redux state and thunks (require match challenge notification)
 - [ ] match triggers (update on notification update trigger to include match_chalenege notificaiton type)
 
-
+## triggers
+- [ ] change account type when  change coach for new coach and the old one
+- [ ] Notification update
+- [ ] on Member joined or leaved a team
 
 ## firebase rules should add:
 - teams:
