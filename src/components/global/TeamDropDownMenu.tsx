@@ -23,6 +23,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "@/state/store";
 import { sendRequestToJoinTeam } from "@/state/notification/notificationSlice";
 import {SearchTeamProfile} from "./SearchTeamProfile";
+import { leaveTeam } from "@/state/team/teamSlice";
 
 
 export function TeamDropDownMenu({
@@ -38,6 +39,12 @@ export function TeamDropDownMenu({
     console.log("Request to join 1");
     await dispatch(sendRequestToJoinTeam({ to: teamId }));
   };
+
+  const handleLeaveTeam = async () => {
+    console.log("Leave team");
+    await dispatch(leaveTeam(teamId))
+  };
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild className="cursor-pointer">
@@ -91,7 +98,7 @@ export function TeamDropDownMenu({
         )}
         {role === "member" && (
           <DropdownMenuGroup>
-            <DropdownMenuItem>
+            <DropdownMenuItem onClick={handleLeaveTeam}>
               <LogOut className="mr-2 h-4 w-4" />
               <span>Leave team</span>
               <DropdownMenuShortcut></DropdownMenuShortcut>
