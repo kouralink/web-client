@@ -32,23 +32,27 @@ export interface TeamState {
   error: string | null | undefined;
 }
 
+
+
+// ------------- team Match State -------------
 export interface TeamMatchState {
   teamId: string;
   teamLogo: string;
   teamName: string;
-  teamScore: number;
+  teamScore: number | null;
 }
 
-export interface MatchState {
+export interface Match {
+  id: string;
   team1: TeamMatchState;
   team2: TeamMatchState;
-  referee: string;
-  matchDate: string;
-  matchTime: string;
-  matchLocation: string;
-  matchStatus: string;
+  referee_id: string|null;
+  matchStartDate: Timestamp|null;
+  matchLocation: string|null;
+  matchStatus: "pending"|"finish"|"cancled";
+  type:"tournement"|"classic_match"
+  
 }
-
 export interface MemberState {
   username: string;
   logo: string;
@@ -106,5 +110,7 @@ export interface Notification {
     | "request_to_join_tournement"
     | "match_chalenge"
     | "invite_to_team"
-    | "invite_to_tournement";
+    | "invite_to_tournement"
+    
+    ;
 }
