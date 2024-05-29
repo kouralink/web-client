@@ -31,8 +31,8 @@
     
 - [x] Create Notifiaction UI
 - [x] Add Notifications to notification aside
-- [ ] shout some default users and teams in search page.
-- [ ] hidde create Team btn when the user is not a coach
+- [x] shout some default users and teams in search page.
+- [x] hidde create Team btn when the user is not a coach
 - [ ] leave team for Members
 - [ ] create Notificaiton Accept and View and Decline actions
 - [ ] Notification Triggers
