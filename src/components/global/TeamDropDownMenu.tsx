@@ -18,13 +18,24 @@ import {
   DropdownMenuShortcut,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+
 import { Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "@/state/store";
 import { sendRequestToJoinTeam } from "@/state/notification/notificationSlice";
-import {SearchTeamProfile} from "./SearchTeamProfile";
+import { SearchTeamProfile } from "./SearchTeamProfile";
 import { leaveTeam } from "@/state/team/teamSlice";
-
 
 export function TeamDropDownMenu({
   teamname,
@@ -42,7 +53,11 @@ export function TeamDropDownMenu({
 
   const handleLeaveTeam = async () => {
     console.log("Leave team");
-    await dispatch(leaveTeam(teamId))
+    await dispatch(leaveTeam(teamId));
+  };
+
+  const handleChangeCoach = async () => {
+    console.log("Change Coach");
   };
 
   return (
@@ -78,7 +93,9 @@ export function TeamDropDownMenu({
 
             <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
               <UserPlus className="mr-2 h-4 w-4" />
-              <span><SearchTeamProfile /></span>
+              <span>
+                <SearchTeamProfile />
+              </span>
               <DropdownMenuShortcut></DropdownMenuShortcut>
             </DropdownMenuItem>
 
@@ -89,20 +106,71 @@ export function TeamDropDownMenu({
                 <DropdownMenuShortcut></DropdownMenuShortcut>
               </DropdownMenuItem>
             </Link>
-            <DropdownMenuItem>
-              <ArrowLeftRight className="mr-2 h-4 w-4" />
-              <span>Change coach</span>
-              <DropdownMenuShortcut></DropdownMenuShortcut>
-            </DropdownMenuItem>
+            <AlertDialog>
+              <AlertDialogTrigger className="w-full">
+                {" "}
+                <DropdownMenuItem
+                  onSelect={(e) => {
+                    e.preventDefault();
+                  }}
+                >
+                  <ArrowLeftRight className="mr-2 h-4 w-4" />
+
+                  <span>Change coach</span>
+                  <DropdownMenuShortcut></DropdownMenuShortcut>
+                </DropdownMenuItem>
+              </AlertDialogTrigger>
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                  <AlertDialogDescription>
+                    This action cannot be undone, and will give your premissions
+                    as coach of this team to another member.
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel>Cancel</AlertDialogCancel>
+                  <AlertDialogAction onClick={handleChangeCoach}>
+                    Continue
+                  </AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
           </DropdownMenuGroup>
         )}
         {role === "member" && (
           <DropdownMenuGroup>
-            <DropdownMenuItem onClick={handleLeaveTeam}>
-              <LogOut className="mr-2 h-4 w-4" />
-              <span>Leave team</span>
-              <DropdownMenuShortcut></DropdownMenuShortcut>
-            </DropdownMenuItem>
+            <AlertDialog>
+              <AlertDialogTrigger className="w-full">
+                {" "}
+                <DropdownMenuItem
+                  onSelect={(e) => {
+                    e.preventDefault();
+                  }}
+                >
+                  <LogOut className="mr-2 h-4 w-4" />
+
+                  <span>Leave team</span>
+                  <DropdownMenuShortcut></DropdownMenuShortcut>
+                </DropdownMenuItem>
+              </AlertDialogTrigger>
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                  <AlertDialogDescription>
+                    This action cannot be undone, You will leave this team until
+                    coach of team add you again.
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel>Cancel</AlertDialogCancel>
+                  <AlertDialogAction onClick={handleLeaveTeam}>
+                    Continue
+                  </AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
+            
           </DropdownMenuGroup>
         )}
         {role === "user" && (
