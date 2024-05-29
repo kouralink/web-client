@@ -22,6 +22,8 @@ import { Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "@/state/store";
 import { sendRequestToJoinTeam } from "@/state/notification/notificationSlice";
+import {SearchTeamProfile} from "./SearchTeamProfile";
+
 
 export function TeamDropDownMenu({
   teamname,
@@ -66,11 +68,13 @@ export function TeamDropDownMenu({
               <span>New Match</span>
               <DropdownMenuShortcut></DropdownMenuShortcut>
             </DropdownMenuItem>
-            <DropdownMenuItem>
+
+            <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
               <UserPlus className="mr-2 h-4 w-4" />
-              <span>Invite Player</span>
+              <span><SearchTeamProfile /></span>
               <DropdownMenuShortcut></DropdownMenuShortcut>
             </DropdownMenuItem>
+
             <Link to={`/team/update/${teamname}`}>
               <DropdownMenuItem>
                 <PenLine className="mr-2 h-4 w-4" />

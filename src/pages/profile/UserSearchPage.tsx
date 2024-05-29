@@ -5,7 +5,6 @@ import { Input } from "@/components/ui/input"
 import UsersImg from '/feautreContent/im5.png';
 import UserSearchCard from "@/components/global/cards/UserSearchCard";
 import { ScrollArea } from "@/components/ui/scroll-area"
-import { Link } from 'react-router-dom';
 
 const UserSearchPage: React.FC = () => {
     const dispatch = useDispatch<AppDispatch>();
@@ -40,9 +39,7 @@ const UserSearchPage: React.FC = () => {
 
                 {searchResults.map((result) => {
                             return <div>
-                                <Link to={`/users/profile/${result.user_info.username}`}>
                                     <UserSearchCard result={result.user_info}/>
-                                </Link>
                                 </div>;
                     })}
             </div>
