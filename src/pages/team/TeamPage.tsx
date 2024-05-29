@@ -63,7 +63,7 @@ export const TeamPage = () => {
               {coach ? (
                 <MemberCard member={coach} key={coach.uid} role={role}/>
               ) : (
-                <p className="text-gray-500">No coach yet</p>
+                <p className="text-gray-500">Coach Not Found</p>
               )}
             </div>
           </div>
