@@ -53,6 +53,17 @@ export interface Match {
   type:"tournement"|"classic_match"
   
 }
+
+// this interface is old and it well replaced with above one when update matchrecordcardIteam component
+export interface MatchState {
+  team1: TeamMatchState;
+  team2: TeamMatchState;
+  referee: string;
+  matchDate: string;
+  matchTime: string;
+  matchLocation: string;
+  matchStatus: string;
+}
 export interface MemberState {
   username: string;
   logo: string;
