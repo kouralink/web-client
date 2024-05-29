@@ -6,7 +6,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 const MatchRecordCardIteam: React.FC<MatchState> = (props) => {
   return (
     <Card
-      className={["flex  w-[600px] rounded-lg  justify-between items-center py-2 px-8 text-card-foreground ", props.team1.teamScore >= props.team2.teamScore ? props.team1.teamScore == props.team2.teamScore ? "bg-yellow-100 dark:bg-yellow-800":"bg-green-100 dark:bg-green-800" : "bg-red-100 dark:bg-red-800"].join(" ")}
+      className={["flex  w-[600px] rounded-lg  justify-between items-center py-2 px-8 text-card-foreground ", (props.team1.teamScore !== null && props.team2.teamScore !== null) && props.team1.teamScore >= props.team2.teamScore ? props.team1.teamScore == props.team2.teamScore ? "bg-yellow-100 dark:bg-yellow-800":"bg-green-100 dark:bg-green-800" : "bg-red-100 dark:bg-red-800"].join(" ")}
     >
       <CardHeader className="flex flex-row w-full items-center justify-between gap-4 m-0 p-0 ">
         <div className="flex flex-col items-center gap-2">
