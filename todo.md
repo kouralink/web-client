@@ -34,15 +34,15 @@
 - [x] shout some default users and teams in search page.
 - [x] hidde create Team btn when the user is not a coach
 - [x] leave team for Members
-- [ ] add Alert confirmation for the actions  ban , leave, kick, change coach
-- [ ] create Notificaiton Accept and View and Decline actions
+- [x] add Alert confirmation for the actions  ban , leave, kick, change coach
+- [x] create Notificaiton Accept and View and Decline actions
 - [ ] Notification Triggers
 - [ ] Members Join & Leave Triggers
 - [ ] change coach (set Coach one of the members)
 - [ ] Member can't join team if was in blacklist
 - [ ] add Ban List to team page for make possible to remove someone from black list 
-- [ ] team details => show hidden team info 
-- [ ] member details => show hidden member info
+- [x] team details => show hidden team info 
+- [x] member details => show hidden member info
 - [ ] create new match form
 - [ ] new match redux state and thunks (require match challenge notification)
 - [ ] match triggers (update on notification update trigger to include match_chalenege notificaiton type)
@@ -57,6 +57,7 @@
     - for edit/invite/acceptRequests on team the uid of editor should be the coach
 - notifications:
     - check if the sender is right one (for example the coach of team is only one who can send request to join team)
+    - only the to_id can change the action of notification
 - users:
     - check if uid === uid of user that want to edit his data
 
@@ -77,6 +78,9 @@
 @@Abdo-Nsila => tournament optimize brackets component
 @@Wahmane-Hamza => team search  page
 @@Merieme => Rapport (3 Chapitres)
-    
+
+## @@Wahmane-Hamza tasks:
+- [ ] create project text for video
+- [ ] create project video
 
 
