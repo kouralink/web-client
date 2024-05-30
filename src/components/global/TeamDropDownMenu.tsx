@@ -8,6 +8,12 @@ import {
 } from "lucide-react";
 
 import {
+  Dialog,
+  DialogContent,
+  DialogTrigger,
+} from "@/components/ui/dialog"
+
+import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuGroup,
@@ -36,6 +42,8 @@ import { sendRequestToJoinTeam } from "@/state/notification/notificationSlice";
 import { SearchTeamProfile } from "./SearchTeamProfile";
 import { leaveTeam } from "@/state/team/teamSlice";
 import {InfoTeamProfileCard} from "@/components/global/cards/InfoTeamProfileCard"
+import { Separator } from "@/components/ui/separator";
+import { Timestamp } from 'firebase/firestore';
 
 export function TeamDropDownMenu({
   teamname,
@@ -61,6 +69,7 @@ export function TeamDropDownMenu({
   };
 
   const team = useSelector((state: RootState) => state.team.team);
+  const timestamp = new Timestamp(team.createdAt.seconds || 0, team.createdAt.nanoseconds || 0);
 
   return (
     <DropdownMenu>
@@ -185,11 +194,26 @@ export function TeamDropDownMenu({
           </DropdownMenuGroup>
         )}
 
-        <DropdownMenuGroup>
-        <DropdownMenuItem>
-          <InfoTeamProfileCard description={team.description} createdBy={team.createdBy} createdAt={team.createdAt}/>
-        </DropdownMenuItem>
-        </DropdownMenuGroup>
+
+        <Dialog>
+          <DialogTrigger asChild className="w-full">        
+            <DropdownMenuItem onSelect={(e) => {e.preventDefault();}}>
+              <InfoTeamProfileCard description={team.description} createdBy={team.createdBy} createdAt={team.createdAt}/>
+            </DropdownMenuItem>
+          </DialogTrigger>
+          <DialogContent className="sm:max-w-[425px]">
+            <div>
+              <h1 className="text-xl font-bold mb-2 p-5">Information</h1>
+              <Separator className="border-r-2"/>
+              {team.description != undefined &&<p className="break-words w-[350px] flex flex-col p-3"> <span className="font-bold">Description</span> {team.description}</p>}
+              <Separator />
+              {team.createdBy != undefined &&<p className="flex flex-col p-3"><span className="font-bold">Create By</span> {team.createdBy}</p>}
+              <Separator />
+              {team.createdAt != undefined &&<p className="flex flex-col p-3"><span className="font-bold">Create At</span> {timestamp.toDate().toDateString()? timestamp.toDate().toDateString() : "add birthday in settings"}</p>}
+            </div>
+          </DialogContent>
+        </Dialog>
+        
       </DropdownMenuContent>
     </DropdownMenu>
   );
