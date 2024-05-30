@@ -1,5 +1,13 @@
 import { Ban, User } from "lucide-react";
 
+
+import {
+  Dialog,
+  DialogContent,
+  DialogTrigger,
+} from "@/components/ui/dialog"
+
+
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -28,6 +36,8 @@ import { kickMember, banMember } from "@/state/team/teamSlice";
 import {InfoMemberProfileCard} from "@/components/global/cards/InfoMemberProfileCard"
 import { Link } from "react-router-dom";
 import { User as userType} from "@/types/types";
+import { Timestamp } from 'firebase/firestore';
+import { Separator } from "@/components/ui/separator";
 
 export function MemberDropDownMenu({
   role,
@@ -52,6 +62,8 @@ export function MemberDropDownMenu({
   const handleBanAciton = async () => {
     dispatch(banMember({ teamId, uid }));
   };
+
+  const timestamp = new Timestamp(userInfo?.joinDate?.seconds || 0, userInfo?.joinDate?.nanoseconds || 0);
 
   return (
     <DropdownMenu>
@@ -84,9 +96,28 @@ export function MemberDropDownMenu({
             <DropdownMenuShortcut>open</DropdownMenuShortcut>
           </DropdownMenuItem>
           </Link>
-          <DropdownMenuItem>
-            {userInfo && <InfoMemberProfileCard firstName={userInfo?.firstName} lastName={userInfo?.lastName} bio={userInfo?.bio} joinDate={userInfo?.joinDate} gender={userInfo?.gender}/>}
-          </DropdownMenuItem>
+  
+          <Dialog>
+            <DialogTrigger asChild className="w-full">        
+                <DropdownMenuItem onSelect={(e) => {e.preventDefault();}}>
+                  {userInfo && <InfoMemberProfileCard firstName={userInfo?.firstName} lastName={userInfo?.lastName} bio={userInfo?.bio} joinDate={userInfo?.joinDate} gender={userInfo?.gender}/>}
+                </DropdownMenuItem>
+            </DialogTrigger>
+            <DialogContent className="sm:max-w-[425px]">
+              <div>
+                <h1 className="text-xl font-bold mb-2 p-5">Information</h1>
+                <Separator className="border-r-2"/>
+                {userInfo?.firstName && userInfo?.lastName && <h1 className="break-words flex flex-col p-3"><span className="font-bold">Name</span> {userInfo?.firstName} {userInfo?.lastName}</h1>}
+                <Separator className="border-r-2"/>
+                {userInfo?.bio != undefined && <p className="break-words w-[350] flex flex-col p-3"> <span className="font-bold">Bio</span> {userInfo?.bio}</p>}
+                <Separator />
+                {userInfo?.gender != undefined && <p className="flex flex-col p-3"><span className="font-bold">Gender</span> {userInfo?.gender}</p>}
+                <Separator />
+                {userInfo?.joinDate != undefined &&<p className="flex flex-col p-3"><span className="font-bold">Create At</span> {timestamp.toDate().toDateString()? timestamp.toDate().toDateString() : "add birthday in settings"}</p>}
+                
+                </div>
+            </DialogContent>
+          </Dialog>
 
           {role === "coach" && !isAdmin && (
             <DropdownMenuGroup>
