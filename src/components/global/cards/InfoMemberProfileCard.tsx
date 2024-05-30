@@ -38,7 +38,7 @@ export function InfoMemberProfileCard(
         <div>
             <h1 className="text-xl font-bold mb-2">Information</h1>
             <Separator className="border-r-2"/>
-            {firstName != undefined || lastName != undefined && <h1 className="break-words flex flex-col"><span className="font-bold">Name</span> {firstName} {lastName}</h1>}
+            {firstName != undefined && lastName != undefined && <h1 className="break-words flex flex-col"><span className="font-bold">Name</span> {firstName} {lastName}</h1>}
             <Separator className="border-r-2"/>
             {bio != undefined && <p className="break-words flex flex-col"> <span className="font-bold">Bio</span> {bio}</p>}
             <Separator />
