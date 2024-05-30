@@ -36,17 +36,20 @@
 - [x] leave team for Members
 - [x] add Alert confirmation for the actions  ban , leave, kick, change coach
 - [x] create Notificaiton Accept and View and Decline actions
-- [ ] invite to team notification (give caoch possible to invite someone)
-- [ ] Notification Triggers
+- [x] invite to team notification (give caoch possible to invite someone)
+- [x] action type decline should be update in invite to team notification (redux notificatio state)
+- [x] Notification Triggers (request to join team , invite to team)
+- [x] team details => show hidden team info 
+- [x] member details => show hidden member info
+- [x] navbar active link
 - [ ] Members Join & Leave Triggers
 - [ ] change coach (set Coach one of the members)
 - [ ] Member can't join team if was in blacklist
 - [ ] add Ban List to team page for make possible to remove someone from black list 
-- [x] team details => show hidden team info 
-- [x] member details => show hidden member info
 - [ ] create new match form
 - [ ] new match redux state and thunks (require match challenge notification)
 - [ ] match triggers (update on notification update trigger to include match_chalenege notificaiton type)
+- [ ] Notification Triggers (match challenge)
 
 ## triggers
 - [ ] change account type when  change coach for new coach and the old one
