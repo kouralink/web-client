@@ -42,7 +42,7 @@ export function MemberDropDownMenu({
   teamId: string;
   uid: string;
   username: string;
-  userInfo: userType;
+  userInfo: userType | null;
 }) {
   const dispatch = useDispatch<AppDispatch>();
   const handleKickAciton = async () => {
@@ -85,7 +85,7 @@ export function MemberDropDownMenu({
           </DropdownMenuItem>
           </Link>
           <DropdownMenuItem>
-            <InfoMemberProfileCard firstName={userInfo.firstName} lastName={userInfo.lastName} bio={userInfo.bio} joinDate={userInfo.joinDate} gender={userInfo.gender}/>
+            {userInfo && <InfoMemberProfileCard firstName={userInfo?.firstName} lastName={userInfo?.lastName} bio={userInfo?.bio} joinDate={userInfo?.joinDate} gender={userInfo?.gender}/>}
           </DropdownMenuItem>
 
           {role === "coach" && !isAdmin && (
