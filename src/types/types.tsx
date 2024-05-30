@@ -102,11 +102,12 @@ export interface UserState {
   error: string | null | undefined;
 }
 
-export interface NotificationAction {
-  actionType: "accept" | "decline" | "view" | null;
-  actionUrl: string;
-}
+export type Action = "accept" | "decline" | "view" ;
+// export interface NotificationAction {
+//   actionType: Action | null;
+// }
 
+export type NotificationType = "info" | "request_to_join_team" | "request_to_join_tournement" | "match_chalenge" | "invite_to_team" | "invite_to_tournement";
 export interface Notification {
   id: string;
   from_id: string;
@@ -114,14 +115,6 @@ export interface Notification {
   title: string;
   message: string;
   createdAt: Timestamp;
-  action: NotificationAction;
-  type:
-    | "info"
-    | "request_to_join_team"
-    | "request_to_join_tournement"
-    | "match_chalenge"
-    | "invite_to_team"
-    | "invite_to_tournement"
-    
-    ;
+  action: Action | null;
+  type: NotificationType;
 }
