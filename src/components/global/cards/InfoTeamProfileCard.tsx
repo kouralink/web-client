@@ -13,9 +13,9 @@ export function InfoTeamProfileCard({
     createdBy,
     createdAt,
   }: {
-    description: string;
-    createdBy: string;
-    createdAt: {seconds: number, nanoseconds: number};
+    description: string | undefined;
+    createdBy: string | undefined;
+    createdAt: Timestamp | undefined;
   }){
     const timestamp = new Timestamp(createdAt?.seconds || 0, createdAt?.nanoseconds || 0);
 
@@ -32,11 +32,11 @@ export function InfoTeamProfileCard({
         <div>
             <h1 className="text-xl font-bold mb-2">Information</h1>
             <Separator className="border-r-2"/>
-            <p className="break-words flex flex-col"> <span className="font-bold">Description</span> {description}</p>
+            {description != undefined &&<p className="break-words flex flex-col"> <span className="font-bold">Description</span> {description}</p>}
             <Separator />
-            <p className="flex flex-col"><span className="font-bold">Create By</span> {createdBy}</p>
+            {createdBy != undefined &&<p className="flex flex-col"><span className="font-bold">Create By</span> {createdBy}</p>}
             <Separator />
-            <p className="flex flex-col"><span className="font-bold">Create At</span> {timestamp.toDate().toDateString()? timestamp.toDate().toDateString() : "add birthday in settings"}</p>
+            {createdAt != undefined &&<p className="flex flex-col"><span className="font-bold">Create At</span> {timestamp.toDate().toDateString()? timestamp.toDate().toDateString() : "add birthday in settings"}</p>}
             
         </div>
       </HoverCardContent>
