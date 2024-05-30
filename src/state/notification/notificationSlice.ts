@@ -205,10 +205,12 @@ const notificationSlice = createSlice({
 
 const getCoachTeamId = async () => {
   try {
+    // is authinticated
     const userUid = auth.currentUser?.uid;
     if (!userUid) {
       return { error: "Error getting current user" };
     }
+    // test if account type is coach
     const accountType = store.getState().auth.user?.accountType;
     if (accountType !== "coach") {
       console.log("Error account type is not coach");
@@ -442,31 +444,6 @@ export const inviteToTeam = createAsyncThunk(
   }
 );
 
-// export const sendInfoNotification = createAsyncThunk(
-//   "notification/sendInfoNotification",
-//   async (notificationInfo: { to: string; title: string; message: string }) => {
-//     try {
-//       const notificationCollection = collection(firestore, "notifications");
-
-//       const notificationDoc = await addDoc(notificationCollection, {
-//         to_id: notificationInfo.to,
-//         title: notificationInfo.title,
-//         message: notificationInfo.message,
-//         from_id: auth.currentUser?.uid,
-//         action: null,
-//         createdAt: Timestamp.now(),
-//         type: "info",
-//       });
-//       // return true is sended succesfully in not return false
-//       if (notificationDoc.id) {
-//         return true;
-//       }
-//       return "Error sending request to join team";
-//     } catch (error) {
-//       throw new Error("Error sending request to join team");
-//     }
-//   }
-// );
 const updateNotificationActionToTakedAction = async (
   notificationId: string,
   takedAction: Action
@@ -492,7 +469,6 @@ export const updateNotificationAction = createAsyncThunk(
         return "Error getting current user";
       }
       // get notification info
-
       const notificationRef = doc(firestore, "notifications", ntf.id);
       const notificationDoc = await getDoc(notificationRef);
       if (!notificationDoc.exists()) {
@@ -513,6 +489,8 @@ export const updateNotificationAction = createAsyncThunk(
         console.log("this actions not supported yet");
         return "this actions not supported yet";
       }
+
+
       // check if to_id == uid for type info and invite to team
       if (["info", "invite_to_team"].includes(notificationInfo.type)) {
         if (uid !== notificationInfo.to_id) {
@@ -521,12 +499,12 @@ export const updateNotificationAction = createAsyncThunk(
           // check in notificationInfo.type === invite_to_team and action === accept if it the user account type shoulld be player and not already in a team
           if (notificationInfo.type === "invite_to_team") {
             const accountType = store.getState().auth.user?.accountType;
-            if (accountType !== "player") {
+            if (accountType !== "player" && ntf.action === "accept") {
               return "Account type is not player";
             }
             const isItInTeam = await isItAlreadyInATeam(uid);
-            if (isItInTeam) {
-              return "You are already in a team, leave the team first to join this team";
+            if (isItInTeam && ntf.action === "accept") {
+              return "You are already in a team, leave the team first to accept the invite and join new team.";
             }
             const updated = await updateNotificationActionToTakedAction(
               ntf.id,
