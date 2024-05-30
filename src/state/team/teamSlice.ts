@@ -17,12 +17,17 @@ import {
   arrayUnion,
 } from "firebase/firestore";
 
+
+
 import { Member, Team, TeamState, User } from "../../types/types";
 import { CreateTeamFormValues } from "@/pages/team/CreateTeam";
 import { getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
 import { toast } from "@/components/ui/use-toast";
 import { isItAlreadyInATeam } from "../auth/authSlice";
 import { UpdateTeamDataType } from "@/pages/team/UpdateTeam";
+import { httpsCallable } from "firebase/functions";
+import { functions } from "@/services/firebase";
+
 
 const initialState: TeamState = {
   team: {
@@ -916,7 +921,7 @@ export const changeCoach = createAsyncThunk(
       const memberRef = doc(teamRef, "members", authUID);
       const memberSnap = await getDoc(memberRef);
       if (!memberSnap.exists()) {
-        return "Player not in the team!";
+        return "You are not a member of this team";
       }
       // check if the user is the coach of team
       const data = memberSnap.data() as Member;
@@ -927,21 +932,25 @@ export const changeCoach = createAsyncThunk(
       const newCoachRef = doc(teamRef, "members", uid);
       const newCoachSnap = await getDoc(newCoachRef);
       if (!newCoachSnap.exists()) {
-        return "Player not in the team!";
+        return "Member not in the team";
       }
       // check if the uid is not the coach of team
       const newCoachData = newCoachSnap.data() as Member;
       if (newCoachData.role === "coach") {
-        return "Player is already the coach!";
+        return "Member is already the coach!";
       }
-      // update the role of the uid to coach
-      await updateDoc(newCoachRef, {
-        role: "coach",
-      });
-      // update the role of the authUID to member
-      await updateDoc(memberRef, {
-        role: "member",
-      });
+      try {
+        const changeCoachCloudFunction = httpsCallable(functions, "changeCoach");
+
+        const result = await changeCoachCloudFunction({ coachid: authUID, memberid: uid, teamid: teamId });
+        if ((result?.data as { success: boolean })?.success){
+          return true
+        }
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      } catch (error: any) {
+        return error.message
+      }
+      
       return true;
     } catch (error) {
       console.log(error);
