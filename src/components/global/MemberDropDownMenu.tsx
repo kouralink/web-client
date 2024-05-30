@@ -1,4 +1,4 @@
-import { Ban, Info, User } from "lucide-react";
+import { Ban, User } from "lucide-react";
 
 import {
   DropdownMenu,
@@ -25,6 +25,9 @@ import {
 import { useDispatch } from "react-redux";
 import { AppDispatch } from "@/state/store";
 import { kickMember, banMember } from "@/state/team/teamSlice";
+import {InfoMemberProfileCard} from "@/components/global/cards/InfoMemberProfileCard"
+import { Link } from "react-router-dom";
+import { User as userType} from "@/types/types";
 
 export function MemberDropDownMenu({
   role,
@@ -32,12 +35,14 @@ export function MemberDropDownMenu({
   teamId,
   uid,
   username,
+  userInfo,
 }: {
   role: "user" | "coach" | "member";
   isAdmin: boolean;
   teamId: string;
   uid: string;
   username: string;
+  userInfo: userType;
 }) {
   const dispatch = useDispatch<AppDispatch>();
   const handleKickAciton = async () => {
@@ -47,6 +52,7 @@ export function MemberDropDownMenu({
   const handleBanAciton = async () => {
     dispatch(banMember({ teamId, uid }));
   };
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild className="cursor-pointer">
@@ -71,16 +77,17 @@ export function MemberDropDownMenu({
         <DropdownMenuLabel>Member Menu</DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
+          <Link to={`/users/profile/${username}`}>
           <DropdownMenuItem>
             <User className="mr-2 h-4 w-4" />
             <span>Profile</span>
             <DropdownMenuShortcut>open</DropdownMenuShortcut>
           </DropdownMenuItem>
+          </Link>
           <DropdownMenuItem>
-            <Info className="mr-2 h-4 w-4" />
-            <span>Info</span>
-            <DropdownMenuShortcut>details</DropdownMenuShortcut>
+            <InfoMemberProfileCard firstName={userInfo.firstName} lastName={userInfo.lastName} bio={userInfo.bio} joinDate={userInfo.joinDate} gender={userInfo.gender}/>
           </DropdownMenuItem>
+
           {role === "coach" && !isAdmin && (
             <DropdownMenuGroup>
               <AlertDialog >
