@@ -44,6 +44,7 @@ import { leaveTeam } from "@/state/team/teamSlice";
 import {InfoTeamProfileCard} from "@/components/global/cards/InfoTeamProfileCard"
 import { Separator } from "@/components/ui/separator";
 import { Timestamp } from 'firebase/firestore';
+import { ChangeCoach } from "./ChangeCoachMembersList";
 
 export function TeamDropDownMenu({
   teamname,
@@ -64,9 +65,7 @@ export function TeamDropDownMenu({
     await dispatch(leaveTeam(teamId));
   };
 
-  const handleChangeCoach = async () => {
-    console.log("Change Coach");
-  };
+  
 
   const team = useSelector((state: RootState) => state.team.team);
   const timestamp = new Timestamp(team.createdAt.seconds || 0, team.createdAt.nanoseconds || 0);
@@ -117,8 +116,8 @@ export function TeamDropDownMenu({
                 <DropdownMenuShortcut></DropdownMenuShortcut>
               </DropdownMenuItem>
             </Link>
-            <AlertDialog>
-              <AlertDialogTrigger className="w-full">
+            {/* <AlertDialog >
+              <AlertDialogTrigger className="w-full"> */}
                 {" "}
                 <DropdownMenuItem
                   onSelect={(e) => {
@@ -127,11 +126,11 @@ export function TeamDropDownMenu({
                 >
                   <ArrowLeftRight className="mr-2 h-4 w-4" />
 
-                  <span>Change coach</span>
+                  <span><ChangeCoach  /></span>
                   <DropdownMenuShortcut></DropdownMenuShortcut>
                 </DropdownMenuItem>
-              </AlertDialogTrigger>
-              <AlertDialogContent>
+              {/* </AlertDialogTrigger>
+              <AlertDialogContent >
                 <AlertDialogHeader>
                   <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
                   <AlertDialogDescription>
@@ -141,12 +140,16 @@ export function TeamDropDownMenu({
                 </AlertDialogHeader>
                 <AlertDialogFooter>
                   <AlertDialogCancel>Cancel</AlertDialogCancel>
-                  <AlertDialogAction onClick={handleChangeCoach}>
-                    Continue
+                  <AlertDialogAction onClick={(e) => {
+                    e.preventDefault();
+                    // colse dialog
+                    
+                  }}  >
+                  <ChangeCoach  />
                   </AlertDialogAction>
                 </AlertDialogFooter>
               </AlertDialogContent>
-            </AlertDialog>
+            </AlertDialog> */}
           </DropdownMenuGroup>
         )}
         {role === "member" && (
