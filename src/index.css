@@ -69,3 +69,13 @@
     @apply bg-background text-foreground;
   }
 }
+@layer utilities {
+  
+  .active {
+    @apply  !text-gray-900 !bg-gray-200 !rounded-lg dark:!bg-gray-700 dark:!text-gray-200;  ;
+  }
+  
+}
+
+/* bg-transparent rounded-lg dark:bg-transparent   */
+/* text-gray-900 bg-gray-200 rounded-lg dark:bg-gray-700  */
