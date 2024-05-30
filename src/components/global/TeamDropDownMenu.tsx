@@ -1,7 +1,6 @@
 import {
   ArrowLeftRight,
   BadgePlus,
-  Info,
   LogOut,
   PenLine,
   Send,
@@ -36,6 +35,7 @@ import { AppDispatch, RootState } from "@/state/store";
 import { sendRequestToJoinTeam } from "@/state/notification/notificationSlice";
 import { SearchTeamProfile } from "./SearchTeamProfile";
 import { leaveTeam } from "@/state/team/teamSlice";
+import {InfoTeamProfileCard} from "@/components/global/cards/InfoTeamProfileCard"
 
 export function TeamDropDownMenu({
   teamname,
@@ -59,6 +59,8 @@ export function TeamDropDownMenu({
   const handleChangeCoach = async () => {
     console.log("Change Coach");
   };
+
+  const team = useSelector((state: RootState) => state.team.team);
 
   return (
     <DropdownMenu>
@@ -184,11 +186,9 @@ export function TeamDropDownMenu({
         )}
 
         <DropdownMenuGroup>
-          <DropdownMenuItem>
-            <Info className="mr-2 h-4 w-4" />
-            <span>Details</span>
-            <DropdownMenuShortcut>info</DropdownMenuShortcut>
-          </DropdownMenuItem>
+        <DropdownMenuItem>
+          <InfoTeamProfileCard description={team.description} createdBy={team.createdBy} createdAt={team.createdAt}/>
+        </DropdownMenuItem>
         </DropdownMenuGroup>
       </DropdownMenuContent>
     </DropdownMenu>
