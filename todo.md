@@ -42,8 +42,9 @@
 - [x] team details => show hidden team info 
 - [x] member details => show hidden member info
 - [x] navbar active link
-- [ ] Members Join & Leave Triggers
-- [ ] change coach (set Coach one of the members)
+- [x] Members Join & Leave Triggers
+- [x] change coach (set Coach one of the members)
+- [x] create cloud function for change coach
 - [ ] Member can't join team if was in blacklist
 - [ ] add Ban List to team page for make possible to remove someone from black list 
 - [ ] create new match form
@@ -57,7 +58,12 @@
     - [x] Request to join team
     - [x] Invite to team
     - [ ] match challenge
-- [ ] on Member joined or leaved a team
+- [x] on Member joined or leaved a team
+- [ ] is not possible to ajout or leave team for coach it's need to change coach first and set one of members or delete team
+- [ ] if coach left the team (some how) the oldest member will be the coach if no members found the team will be deleted
+- [x] on role if member change to coach update the user account type to coach too
+- [x] on role if coach change to member update the user account type to member too
+
 
 ## firebase rules should add:
 - teams:
