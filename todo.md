@@ -36,6 +36,7 @@
 - [x] leave team for Members
 - [x] add Alert confirmation for the actions  ban , leave, kick, change coach
 - [x] create Notificaiton Accept and View and Decline actions
+- [ ] invite to team notification (give caoch possible to invite someone)
 - [ ] Notification Triggers
 - [ ] Members Join & Leave Triggers
 - [ ] change coach (set Coach one of the members)
@@ -49,7 +50,10 @@
 
 ## triggers
 - [ ] change account type when  change coach for new coach and the old one
-- [ ] Notification update
+- [ ] Notification accepted
+    - [x] Request to join team
+    - [x] Invite to team
+    - [ ] match challenge
 - [ ] on Member joined or leaved a team
 
 ## firebase rules should add:

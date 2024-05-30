@@ -516,8 +516,28 @@ export const updateNotificationAction = createAsyncThunk(
       // check if to_id == uid for type info and invite to team
       if (["info", "invite_to_team"].includes(notificationInfo.type)) {
         if (uid !== notificationInfo.to_id) {
-          return "Error updating notification action";
+          return "This Notification is not for you";
         } else {
+          // check in notificationInfo.type === invite_to_team and action === accept if it the user account type shoulld be player and not already in a team
+          if (notificationInfo.type === "invite_to_team") {
+            const accountType = store.getState().auth.user?.accountType;
+            if (accountType !== "player") {
+              return "Account type is not player";
+            }
+            const isItInTeam = await isItAlreadyInATeam(uid);
+            if (isItInTeam) {
+              return "You are already in a team, leave the team first to join this team";
+            }
+            const updated = await updateNotificationActionToTakedAction(
+              ntf.id,
+              ntf.action
+            );
+            if (updated === true) {
+              return true;
+            } else {
+              return updated;
+            }
+          }
           const updated = await updateNotificationActionToTakedAction(
             ntf.id,
             ntf.action
