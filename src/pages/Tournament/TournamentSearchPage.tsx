@@ -2,6 +2,7 @@ import React from 'react';
 import TournamentCard from './TournamentCard';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
+import { Link } from 'react-router-dom';
 
 export interface TournamentCardProps {
     id: string;
@@ -25,7 +26,9 @@ const TournamentSearchPage: React.FC = () => {
                     <h3 className="text-4xl font-bold text-primary">Tournaments</h3>
                 </div>
                 <div className="h-full flex flex-col justify-center gap-2">
-                    <Button className="w-full" variant="default">Create Tournament</Button>
+                    <Button className="w-full" variant="default" asChild>
+                        <Link to={"/tournament/CreateTournement"}>Create Tournament</Link>
+                    </Button>
                 </div>
             </Card>
             <div className='w-full h-full flex flex-col justify-center items-center gap-5'>
