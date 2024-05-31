@@ -14,46 +14,49 @@ export interface Team {
   createdBy: string;
 }
 
-
 export interface Participant {
   id: number;
   team: Team;
 }
 
-
-// ------------- team Match State -------------
-export interface TeamMatchState {
-  teamId: string;
-  teamScore: number;
-}
-
 // ------------- Match Result Used in component display not in generation of data -------------
 export type MatchResult = {
   [teamId: string]: {
-    result: 'win' | 'lose' | 'draw';
-    variant: 'default' | 'destructive' | 'secondary';
+    result: "win" | "lose" | "draw";
+    variant: "default" | "destructive" | "secondary";
   };
 };
+// ------------- team Match State ------------- teamScore: number;
+export interface TeamMatchState {
+  teamId: string;
+  teamLogo: string;
+  teamName: string;
+  teamScore: number | null;
+}
 
 // ------------- Tournament Match State -------------
+export interface Match {
+  id: string;
+  team1: TeamMatchState;
+  team2: TeamMatchState;
+  referee_id: string | null;
+  matchStartDate: Timestamp | null;
+  matchLocation: string | null;
+  matchStatus: "pending" | "finish" | "cancled";
+  type: "tournement" | "classic_match";
+}
+
 export interface tournamentMatch {
   id: string;
   matchNumber: number;
-  team1: TeamMatchState;
-  team2: TeamMatchState;
-  referee_id: string;
-  matchStartDate: Timestamp;
-  matchLocation: string;
-  matchStatus: string;
+  match_id: string;
 }
-
 
 // ------------- Tournament Stages State -------------
 export interface TournamentStages {
   stage_id: string;
   matches: tournamentMatch[];
 }
-
 
 // ------------- Tournament State -------------
 export interface tournament {
@@ -69,9 +72,6 @@ export interface tournament {
   participants: Participant[];
   stages: TournamentStages[];
 }
-
-
-
 
 //! ---------------------------- Demo Data --------------------------------
 // const fakeTeams: Team[] = [
@@ -94,7 +94,6 @@ export interface tournament {
 //     createdBy: "user2",
 //   }
 // ]
-
 
 // const fakeMatches: tournamentMatch[] = [
 //   {
@@ -183,12 +182,3 @@ export interface tournament {
 //     }
 //   ]
 // }
-
-
-
-
-
-
-
-
-
