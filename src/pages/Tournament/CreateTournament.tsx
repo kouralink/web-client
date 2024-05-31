@@ -53,6 +53,7 @@ const createTournamentSchema = z.object({
     .max(30, {
       message: "Tournament name must not be longer than 30 characters.",
     }),
+  as:z.any();
   teamBio: z.string().max(160,{
     message: "Tournament bio must be less then 160 characters.",
   }).min(4, {
