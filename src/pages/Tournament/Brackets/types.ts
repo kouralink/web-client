@@ -19,6 +19,12 @@ export interface Participant {
   team: Team;
 }
 
+// ------------- team Match State -------------
+export interface TeamMatchState {
+  teamId: string;
+  teamScore: number;
+}
+
 // ------------- Match Result Used in component display not in generation of data -------------
 export type MatchResult = {
   [teamId: string]: {
@@ -26,30 +32,17 @@ export type MatchResult = {
     variant: "default" | "destructive" | "secondary";
   };
 };
-// ------------- team Match State ------------- teamScore: number;
-export interface TeamMatchState {
-  teamId: string;
-  teamLogo: string;
-  teamName: string;
-  teamScore: number | null;
-}
 
 // ------------- Tournament Match State -------------
-export interface Match {
-  id: string;
-  team1: TeamMatchState;
-  team2: TeamMatchState;
-  referee_id: string | null;
-  matchStartDate: Timestamp | null;
-  matchLocation: string | null;
-  matchStatus: "pending" | "finish" | "cancled";
-  type: "tournement" | "classic_match";
-}
-
 export interface tournamentMatch {
   id: string;
   matchNumber: number;
-  match_id: string;
+  team1: TeamMatchState;
+  team2: TeamMatchState;
+  referee_id: string;
+  matchStartDate: Timestamp;
+  matchLocation: string;
+  matchStatus: string;
 }
 
 // ------------- Tournament Stages State -------------
