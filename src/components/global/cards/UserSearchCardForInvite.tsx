@@ -14,7 +14,6 @@ const UserSearchCardForInvite: React.FC<UserSearchCardForInviteProps> = ({ resul
   const dispatch = useDispatch<AppDispatch>();
   const handleInvie = async () => {
     console.log("Invite");
-    // TODO: get uid from props and send request to join team
     dispatch(inviteToTeam({ to: id }));
   };
   return (

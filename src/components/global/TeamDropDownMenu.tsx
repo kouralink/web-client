@@ -7,11 +7,7 @@ import {
   UserPlus,
 } from "lucide-react";
 
-import {
-  Dialog,
-  DialogContent,
-  DialogTrigger,
-} from "@/components/ui/dialog"
+import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 
 import {
   DropdownMenu,
@@ -41,10 +37,11 @@ import { AppDispatch, RootState } from "@/state/store";
 import { sendRequestToJoinTeam } from "@/state/notification/notificationSlice";
 import { SearchTeamProfile } from "./SearchTeamProfile";
 import { leaveTeam } from "@/state/team/teamSlice";
-import {InfoTeamProfileCard} from "@/components/global/cards/InfoTeamProfileCard"
+import { InfoTeamProfileCard } from "@/components/global/cards/InfoTeamProfileCard";
 import { Separator } from "@/components/ui/separator";
-import { Timestamp } from 'firebase/firestore';
+import { Timestamp } from "firebase/firestore";
 import { ChangeCoach } from "./ChangeCoachMembersList";
+import { SearchBlackListTeam } from "./SearchBlackListTeam";
 
 export function TeamDropDownMenu({
   teamname,
@@ -65,10 +62,11 @@ export function TeamDropDownMenu({
     await dispatch(leaveTeam(teamId));
   };
 
-  
-
   const team = useSelector((state: RootState) => state.team.team);
-  const timestamp = new Timestamp(team.createdAt.seconds || 0, team.createdAt.nanoseconds || 0);
+  const timestamp = new Timestamp(
+    team.createdAt.seconds || 0,
+    team.createdAt.nanoseconds || 0
+  );
 
   return (
     <DropdownMenu>
@@ -116,40 +114,25 @@ export function TeamDropDownMenu({
                 <DropdownMenuShortcut></DropdownMenuShortcut>
               </DropdownMenuItem>
             </Link>
-            {/* <AlertDialog >
-              <AlertDialogTrigger className="w-full"> */}
-                {" "}
-                <DropdownMenuItem
-                  onSelect={(e) => {
-                    e.preventDefault();
-                  }}
-                >
-                  <ArrowLeftRight className="mr-2 h-4 w-4" />
+              <DropdownMenuItem onSelect={(e) => {
+                e.preventDefault();
+              }} >
+                <PenLine className="mr-2 h-4 w-4" />
+                <span><SearchBlackListTeam /></span>
+                <DropdownMenuShortcut>Baned users</DropdownMenuShortcut>
+              </DropdownMenuItem>
+            <DropdownMenuItem
+              onSelect={(e) => {
+                e.preventDefault();
+              }}
+            >
+              <ArrowLeftRight className="mr-2 h-4 w-4" />
 
-                  <span><ChangeCoach  /></span>
-                  <DropdownMenuShortcut></DropdownMenuShortcut>
-                </DropdownMenuItem>
-              {/* </AlertDialogTrigger>
-              <AlertDialogContent >
-                <AlertDialogHeader>
-                  <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
-                  <AlertDialogDescription>
-                    This action cannot be undone, and will give your premissions
-                    as coach of this team to another member.
-                  </AlertDialogDescription>
-                </AlertDialogHeader>
-                <AlertDialogFooter>
-                  <AlertDialogCancel>Cancel</AlertDialogCancel>
-                  <AlertDialogAction onClick={(e) => {
-                    e.preventDefault();
-                    // colse dialog
-                    
-                  }}  >
-                  <ChangeCoach  />
-                  </AlertDialogAction>
-                </AlertDialogFooter>
-              </AlertDialogContent>
-            </AlertDialog> */}
+              <span>
+                <ChangeCoach />
+              </span>
+              <DropdownMenuShortcut></DropdownMenuShortcut>
+            </DropdownMenuItem>
           </DropdownMenuGroup>
         )}
         {role === "member" && (
@@ -184,7 +167,6 @@ export function TeamDropDownMenu({
                 </AlertDialogFooter>
               </AlertDialogContent>
             </AlertDialog>
-            
           </DropdownMenuGroup>
         )}
         {role === "user" && (
@@ -197,26 +179,49 @@ export function TeamDropDownMenu({
           </DropdownMenuGroup>
         )}
 
-
         <Dialog>
-          <DialogTrigger asChild className="w-full">        
-            <DropdownMenuItem onSelect={(e) => {e.preventDefault();}}>
-              <InfoTeamProfileCard description={team.description} createdBy={team.createdBy} createdAt={team.createdAt}/>
+          <DialogTrigger asChild className="w-full">
+            <DropdownMenuItem
+              onSelect={(e) => {
+                e.preventDefault();
+              }}
+            >
+              <InfoTeamProfileCard
+                description={team.description}
+                createdBy={team.createdBy}
+                createdAt={team.createdAt}
+              />
             </DropdownMenuItem>
           </DialogTrigger>
           <DialogContent className="sm:max-w-[425px]">
             <div>
               <h1 className="text-xl font-bold mb-2 p-5">Information</h1>
-              <Separator className="border-r-2"/>
-              {team.description != undefined &&<p className="break-words w-[350px] flex flex-col p-3"> <span className="font-bold">Description</span> {team.description}</p>}
+              <Separator className="border-r-2" />
+              {team.description != undefined && (
+                <p className="break-words w-[350px] flex flex-col p-3">
+                  {" "}
+                  <span className="font-bold">Description</span>{" "}
+                  {team.description}
+                </p>
+              )}
               <Separator />
-              {team.createdBy != undefined &&<p className="flex flex-col p-3"><span className="font-bold">Create By</span> {team.createdBy}</p>}
+              {team.createdBy != undefined && (
+                <p className="flex flex-col p-3">
+                  <span className="font-bold">Create By</span> {team.createdBy}
+                </p>
+              )}
               <Separator />
-              {team.createdAt != undefined &&<p className="flex flex-col p-3"><span className="font-bold">Create At</span> {timestamp.toDate().toDateString()? timestamp.toDate().toDateString() : "add birthday in settings"}</p>}
+              {team.createdAt != undefined && (
+                <p className="flex flex-col p-3">
+                  <span className="font-bold">Create At</span>{" "}
+                  {timestamp.toDate().toDateString()
+                    ? timestamp.toDate().toDateString()
+                    : "add birthday in settings"}
+                </p>
+              )}
             </div>
           </DialogContent>
         </Dialog>
-        
       </DropdownMenuContent>
     </DropdownMenu>
   );

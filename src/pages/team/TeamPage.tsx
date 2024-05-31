@@ -1,5 +1,8 @@
 import { AppDispatch, RootState } from "@/state/store";
-import { getTeamByTeamName } from "@/state/team/teamSlice";
+import {
+  getTeamByTeamName,
+  updateBlackListInfos,
+} from "@/state/team/teamSlice";
 import { MatchState } from "@/types/types";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -17,13 +20,25 @@ export const TeamPage = () => {
   const members = useSelector((state: RootState) => state.team.members);
   const error = useSelector((state: RootState) => state.team.error);
   const navigate = useNavigate();
+  const accountType = useSelector(
+    (state: RootState) => state.auth.user?.accountType
+  );
   const userId = useSelector((state: RootState) => state.auth?.uid);
 
-  const [role, setRole] = useState<"coach"|"member"|"user">("user");
+  const [role, setRole] = useState<"coach" | "member" | "user">("user");
 
   const [coach, setCoach] = useState(
     members.find((member) => member.role === "coach")
   );
+
+  // update black list
+  useEffect(() => {
+    console.log("updateing black list")
+    if (accountType === "coach") {
+      dispatch(updateBlackListInfos());
+    }
+  }, [dispatch, team.blackList, accountType]);
+
   useEffect(() => {
     if (userId === coach?.uid) {
       setRole("coach");
@@ -61,7 +76,7 @@ export const TeamPage = () => {
             <h2>Coach</h2>
             <div className=" ml-4">
               {coach ? (
-                <MemberCard member={coach} key={coach.uid} role={role}/>
+                <MemberCard member={coach} key={coach.uid} role={role} />
               ) : (
                 <p className="text-gray-500">Coach Not Found</p>
               )}
@@ -72,7 +87,9 @@ export const TeamPage = () => {
             <div className=" ml-4">
               {members.map((member) => {
                 if (member.role !== "coach") {
-                  return <MemberCard key={member.uid} member={member} role={role} />;
+                  return (
+                    <MemberCard key={member.uid} member={member} role={role} />
+                  );
                 }
               })}
               {/* if the members len = 1 write no members yet message */}

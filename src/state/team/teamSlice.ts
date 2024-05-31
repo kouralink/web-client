@@ -17,8 +17,6 @@ import {
   arrayUnion,
 } from "firebase/firestore";
 
-
-
 import { Member, Team, TeamState, User } from "../../types/types";
 import { CreateTeamFormValues } from "@/pages/team/CreateTeam";
 import { getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
@@ -27,7 +25,7 @@ import { isItAlreadyInATeam } from "../auth/authSlice";
 import { UpdateTeamDataType } from "@/pages/team/UpdateTeam";
 import { httpsCallable } from "firebase/functions";
 import { functions } from "@/services/firebase";
-
+import { store } from "../store";
 
 const initialState: TeamState = {
   team: {
@@ -41,6 +39,7 @@ const initialState: TeamState = {
     createdBy: "",
   },
   members: [],
+  blackListInfos: [],
   status: "idle",
   error: null,
 };
@@ -338,6 +337,56 @@ const teamSlice = createSlice({
         toast({
           variant: "default",
           title: "Change Coach Rejected",
+          description: state.error,
+          className: "text-error border-2 border-error text-start",
+        });
+      });
+    builder
+      .addCase(updateBlackListInfos.pending, (state) => {
+        state.status = "loading";
+        state.error = null;
+      })
+      .addCase(updateBlackListInfos.fulfilled, (state, action) => {
+        state.status = "idle";
+        state.error = null;
+        state.blackListInfos = action.payload;
+      })
+      .addCase(updateBlackListInfos.rejected, (state, action) => {
+        state.status = "failed";
+        state.error = action.error.message;
+      });
+    builder
+      .addCase(dispandUserFromTeamBlackList.pending, (state) => {
+        state.status = "loading";
+        state.error = null;
+      })
+      .addCase(dispandUserFromTeamBlackList.fulfilled, (state, action) => {
+        state.status = "idle";
+        state.error = null;
+        if ( typeof action.payload === 'object' &&  action.payload.blackList !== null ) {
+          state.team.blackList = action.payload.blackList
+          toast({
+            variant: "default",
+            title: "Player Dispanded",
+            description: "Player dispanded successfully!",
+            className: "text-primary border-2 border-primary text-start",
+          });
+        } else {
+          state.error = action.payload as string;
+          toast({
+            variant: "default",
+            title: "Player Dispand Failed",
+            description: state.error,
+            className: "text-error border-2 border-error text-start",
+          });
+        }
+      })
+      .addCase(dispandUserFromTeamBlackList.rejected, (state, action) => {
+        state.status = "failed";
+        state.error = action.error.message;
+        toast({
+          variant: "default",
+          title: "Player Dispand Rejected",
           description: state.error,
           className: "text-error border-2 border-error text-start",
         });
@@ -863,7 +912,7 @@ export const banMember = createAsyncThunk(
           return "Player Already Banned!";
         }
         await updateDoc(teamRef, {
-          blacklist: arrayUnion(uid),
+          blackList: arrayUnion(uid),
         });
         return true;
       } else {
@@ -940,21 +989,101 @@ export const changeCoach = createAsyncThunk(
         return "Member is already the coach!";
       }
       try {
-        const changeCoachCloudFunction = httpsCallable(functions, "changeCoach");
+        const changeCoachCloudFunction = httpsCallable(
+          functions,
+          "changeCoach"
+        );
 
-        const result = await changeCoachCloudFunction({ coachid: authUID, memberid: uid, teamid: teamId });
-        if ((result?.data as { success: boolean })?.success){
-          return true
+        const result = await changeCoachCloudFunction({
+          coachid: authUID,
+          memberid: uid,
+          teamid: teamId,
+        });
+        if ((result?.data as { success: boolean })?.success) {
+          return true;
         }
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
       } catch (error: any) {
-        return error.message
+        return error.message;
       }
-      
+
       return true;
     } catch (error) {
       console.log(error);
       return "Change Coach Failed!";
+    }
+  }
+);
+
+export const updateBlackListInfos = createAsyncThunk(
+  "team/updateBlackListInfos",
+  async () => {
+    try {
+      const blackList = store.getState().team.team.blackList;
+      if (!blackList) {
+        return [];
+      }
+      const blackListInfos: { user_info: User; uid: string }[] = [];
+      await Promise.all(
+        blackList.map(async (uid) => {
+          const userRef = doc(firestore, "users", uid);
+          const userSnap = await getDoc(userRef);
+          if (userSnap.exists()) {
+            const user_info = userSnap.data() as User;
+            blackListInfos.push({ user_info: user_info, uid: userSnap.id });
+          }
+        })
+      );
+      return blackListInfos;
+    } catch (error) {
+      console.log(error);
+      return [];
+    }
+  }
+);
+
+export const dispandUserFromTeamBlackList = createAsyncThunk(
+  "team/dispandUserFromTeamBlackList",
+  async ({ uid }: { uid: string;}) => {
+    try {
+      // check is login
+      const authUID = auth.currentUser?.uid;
+      if (!authUID) {
+        return "User not authenticated!";
+      }      
+      const teamId = store.getState().team.team.id
+      const teamRef = doc(firestore, "teams", teamId);
+      const docSnap = await getDoc(teamRef);
+      if (!docSnap.exists()) {
+        return "Team not found!";
+      }
+      const data = docSnap.data() as Team;
+      // check if authUID is the team
+      const memberRef = doc(teamRef, "members", authUID);
+      const memberSnap = await getDoc(memberRef);
+      if (!memberSnap.exists()) {
+        return "You are not a member of this team";
+      }
+      // check if the authUID is the coach of the team
+      if ((memberSnap.data() as Member).role !== "coach"){
+        return "Your not the coach of the team"
+      }
+
+      const blackList = data.blackList;
+      if (!blackList) {
+        return "BlackList not found!";
+      }
+      if (!blackList.includes(uid)) {
+        return "Player not in the blackList!";
+      }
+      const newBlackList = blackList.filter((bid)=>bid !== uid)
+      await updateDoc(teamRef, {
+        blackList: newBlackList,
+      });
+      return {blackList:newBlackList};
+    } catch (error) {
+      console.log(error);
+      return "Player Dispand Failed!";
     }
   }
 );
