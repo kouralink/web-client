@@ -48,6 +48,7 @@ import TournamentLayout from "./layouts/TournamentLayout.tsx";
 import TournamentSearchPage from "./pages/Tournament/TournamentSearchPage.tsx";
 import { TournamentPage } from "./pages/Tournament/TournamentPage.tsx";
 import TournamentBrackets from "./pages/Tournament/TournamentBrackets.tsx";
+import CreateTournament from "./pages/Tournament/CreateTournament.tsx";
 // 404
 import ErrorPage from "./pages/ErrorPage.tsx";
 import UserProfile from "./pages/profile/UserProfile.tsx";
@@ -166,10 +167,11 @@ const router = createBrowserRouter(
           errorElement={<ErrorPage />}
         >
           <Route index element={<TournamentSearchPage />} />
-          <Route path=":tournamentId" element={<TournamentPage />} />
+          <Route path="CreateTournement" element={<TournamentManagerRoute><CreateTournament /></TournamentManagerRoute> } />
           <Route path="tournamentBrackets" element={<TournamentBrackets />} />
+          <Route path=":tournamentId" element={<TournamentPage />} />
           <Route path="*" element={<ErrorPage />} />
-        </Route>
+        </Route>        
         <Route
           path="users"
           element={
