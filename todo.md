@@ -24,7 +24,7 @@
     - [x] request to join team
     - [x] invite to team
     - [x] info notifiaction
-    - [ ] Change coach 
+    - [ ] Change coach to members
     - [ ] match Challenge
     - [ ] request to join tournament
     - [ ] invite to tournament
@@ -45,34 +45,46 @@
 - [x] Members Join & Leave Triggers
 - [x] change coach (set Coach one of the members)
 - [x] create cloud function for change coach
+- [x] add Ban List to team page for make possible to remove someone from black list 
+- [ ] update team state after every change like ban kick leave ...
 - [ ] Member can't join team if was in blacklist
-- [ ] add Ban List to team page for make possible to remove someone from black list 
+    - [ ] update could functions trigger
+    - [ ] update redux actions check (
+        [ ] invite to team check / 
+        [ ] request accept check / 
+        [ ] send request to join team check)
+
 - [ ] create new match form
 - [ ] new match redux state and thunks (require match challenge notification)
 - [ ] match triggers (update on notification update trigger to include match_chalenege notificaiton type)
-- [ ] Notification Triggers (match challenge)
+- [ ] create zod form validation for register and login
+- [ ] check username is unique in the lower case state
 
 ## triggers
-- [ ] change account type when  change coach for new coach and the old one
 - [ ] Notification accepted
     - [x] Request to join team
     - [x] Invite to team
     - [ ] match challenge
 - [x] on Member joined or leaved a team
-- [ ] is not possible to ajout or leave team for coach it's need to change coach first and set one of members or delete team
-- [ ] if coach left the team (some how) the oldest member will be the coach if no members found the team will be deleted
 - [x] on role if member change to coach update the user account type to coach too
 - [x] on role if coach change to member update the user account type to member too
+- [ ] Notification Triggers (match challenge)
+- [ ] change account type when  change coach for new coach and the old one
+- [ ] is not possible to ajout or leave team for coach it's need to change coach first and set one of members or delete team
+- [ ] if coach left the team (some how) the oldest member will be the coach if no members found the team will be deleted
+- [ ] notification of coach change should be sent to all members
 
 
 ## firebase rules should add:
 - teams:
     - for edit/invite/acceptRequests on team the uid of editor should be the coach
+    - team name should be unique (upper lower case)
 - notifications:
     - check if the sender is right one (for example the coach of team is only one who can send request to join team)
     - only the to_id can change the action of notification
 - users:
     - check if uid === uid of user that want to edit his data
+    - username should be unique chack(lower upper case)
 
 
     
@@ -93,7 +105,10 @@
 @@Merieme => Rapport (3 Chapitres)
 
 ## @@Wahmane-Hamza tasks:
+- [x] Intro
 - [ ] create project text for video
 - [ ] create project video
 
-
+## @@Merieme tasks:
+- [x] Raport 50%
+- [ ] Raport 100%

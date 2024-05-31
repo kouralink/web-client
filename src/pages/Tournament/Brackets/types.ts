@@ -14,12 +14,10 @@ export interface Team {
   createdBy: string;
 }
 
-
 export interface Participant {
   id: number;
   team: Team;
 }
-
 
 // ------------- team Match State -------------
 export interface TeamMatchState {
@@ -30,8 +28,8 @@ export interface TeamMatchState {
 // ------------- Match Result Used in component display not in generation of data -------------
 export type MatchResult = {
   [teamId: string]: {
-    result: 'win' | 'lose' | 'draw';
-    variant: 'default' | 'destructive' | 'secondary';
+    result: "win" | "lose" | "draw";
+    variant: "default" | "destructive" | "secondary";
   };
 };
 
@@ -47,13 +45,11 @@ export interface tournamentMatch {
   matchStatus: string;
 }
 
-
 // ------------- Tournament Stages State -------------
 export interface TournamentStages {
   stage_id: string;
   matches: tournamentMatch[];
 }
-
 
 // ------------- Tournament State -------------
 export interface tournament {
@@ -69,9 +65,6 @@ export interface tournament {
   participants: Participant[];
   stages: TournamentStages[];
 }
-
-
-
 
 //! ---------------------------- Demo Data --------------------------------
 // const fakeTeams: Team[] = [
@@ -94,7 +87,6 @@ export interface tournament {
 //     createdBy: "user2",
 //   }
 // ]
-
 
 // const fakeMatches: tournamentMatch[] = [
 //   {
@@ -183,12 +175,3 @@ export interface tournament {
 //     }
 //   ]
 // }
-
-
-
-
-
-
-
-
-

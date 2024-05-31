@@ -36,12 +36,13 @@ export function ProfileInfoDopDownMenu() {
         <DropdownMenuLabel>Profile</DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
-        <DropdownMenuItem>
-            <Bolt className="mr-2 h-4 w-4" />
-                <Link to="/settings">Edit Profile</Link>
-            <DropdownMenuShortcut></DropdownMenuShortcut>
-          </DropdownMenuItem>
-
+          <Link to="/settings">
+            <DropdownMenuItem>
+              <Bolt className="mr-2 h-4 w-4" />
+              Edit Profile
+              <DropdownMenuShortcut></DropdownMenuShortcut>
+            </DropdownMenuItem>
+          </Link>
         </DropdownMenuGroup>
       </DropdownMenuContent>
     </DropdownMenu>

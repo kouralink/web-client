@@ -1,20 +1,20 @@
 import { Separator } from "@/components/ui/separator";
 import { User } from "@/types/types";
 import { Button } from "@/components/ui/button";
-import { inviteToTeam } from "@/state/notification/notificationSlice";
 import { useDispatch } from "react-redux";
 import { AppDispatch } from "@/state/store";
+import { dispandUserFromTeamBlackList } from "@/state/team/teamSlice";
 
-interface UserSearchCardForInviteProps {
+interface BlackListSearchMemberCardProps {
   result: User;
   id:string
 }
 
-const UserSearchCardForInvite: React.FC<UserSearchCardForInviteProps> = ({ result,id }) => {
+const BlackListSearchMemberCard: React.FC<BlackListSearchMemberCardProps> = ({ result,id }) => {
   const dispatch = useDispatch<AppDispatch>();
-  const handleInvie = async () => {
-    console.log("Invite");
-    dispatch(inviteToTeam({ to: id }));
+  const handleDisband = async () => {
+    console.log("Disband",id);
+    dispatch(dispandUserFromTeamBlackList({ uid:id}));
   };
   return (
     <div>
@@ -33,11 +33,11 @@ const UserSearchCardForInvite: React.FC<UserSearchCardForInviteProps> = ({ resul
               ({result.username})
             </h1>
           </div>
-          <Button onClick={handleInvie}>Invite</Button>
+          <Button onClick={handleDisband}>Disband</Button>
         </div>
       <Separator />
     </div>
   );
 };
 
-export default UserSearchCardForInvite;
+export default BlackListSearchMemberCard;
