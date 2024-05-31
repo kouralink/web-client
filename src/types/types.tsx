@@ -28,6 +28,7 @@ export interface Team {
 export interface TeamState {
   team: Team;
   members: Member[];
+  blackListInfos: {user_info:User,uid:string}[];
   status: "idle" | "loading" | "failed";
   error: string | null | undefined;
 }
