@@ -21,6 +21,8 @@ import { ThemeProvider } from "@/components/theme-provider";
 // Layouts
 import RootLyout from "./layouts/RootLyout.tsx";
 import AuthLayout from "./layouts/AuthLyout.tsx";
+import DefaultNavLayout from "./layouts/DefaultNavLayout.tsx";
+import DefaultNavFooterLayout from "./layouts/DefaultNavFooterLayout.tsx";
 
 // Pages
 // Root
@@ -42,20 +44,22 @@ import TeamSearchPage from "./pages/team/TeamSearchPage.tsx";
 import CreateTeam from "./pages/team/CreateTeam.tsx";
 import UpdateTeam from "./pages/team/UpdateTeam.tsx";
 
-
 // Tounaments
 import TournamentLayout from "./layouts/TournamentLayout.tsx";
 import TournamentSearchPage from "./pages/Tournament/TournamentSearchPage.tsx";
 import { TournamentPage } from "./pages/Tournament/TournamentPage.tsx";
 import TournamentBrackets from "./pages/Tournament/TournamentBrackets.tsx";
 import CreateTournament from "./pages/Tournament/CreateTournament.tsx";
-// 404
-import ErrorPage from "./pages/ErrorPage.tsx";
+// users
 import UserProfile from "./pages/profile/UserProfile.tsx";
 import UserSearchPage from "./pages/profile/UserSearchPage.tsx";
-import DefaultNavLayout from "./layouts/DefaultNavLayout.tsx";
+
+// other
 import About from "./pages/About.tsx";
 import Contact from "./pages/Contact.tsx";
+
+// 404
+import ErrorPage from "./pages/ErrorPage.tsx";
 
 // private route
 export const PrivateRoute = ({ children }: { children: React.ReactNode }) => {
@@ -76,7 +80,11 @@ export const TournamentManagerRoute = ({
   children: React.ReactNode;
 }) => {
   const user = store.getState().auth.user;
-  return user?.accountType === "tournement_manager" ? children : <Navigate to="/" />;
+  return user?.accountType === "tournement_manager" ? (
+    children
+  ) : (
+    <Navigate to="/" />
+  );
 };
 
 // account type refree route
@@ -84,7 +92,6 @@ export const RefreeRoute = ({ children }: { children: React.ReactNode }) => {
   const user = store.getState().auth.user;
   return user?.accountType === "refree" ? children : <Navigate to="/" />;
 };
-
 
 // redirect if logged in
 export const RedirectIfLoggedIn = ({
@@ -103,7 +110,6 @@ const router = createBrowserRouter(
       // loader={rootLoader}
       // action={rootAction}
       errorElement={<ErrorPage />}
-
     >
       <Route element={<RootLyout />} errorElement={<ErrorPage />}>
         <Route index element={<App />} />
@@ -152,8 +158,24 @@ const router = createBrowserRouter(
         >
           <Route index element={<TeamSearchPage />} />
           <Route path="search" element={<TeamSearchPage />} />
-          <Route path="create" element={<CoachRoute> <CreateTeam /> </CoachRoute>} />
-          <Route path="update/:paramteamname" element={<CoachRoute> <UpdateTeam /> </CoachRoute>} />
+          <Route
+            path="create"
+            element={
+              <CoachRoute>
+                {" "}
+                <CreateTeam />{" "}
+              </CoachRoute>
+            }
+          />
+          <Route
+            path="update/:paramteamname"
+            element={
+              <CoachRoute>
+                {" "}
+                <UpdateTeam />{" "}
+              </CoachRoute>
+            }
+          />
           <Route path="page/:paramteamname" element={<TeamPage />} />
           <Route path="*" element={<ErrorPage />} />
         </Route>
@@ -168,25 +190,31 @@ const router = createBrowserRouter(
           errorElement={<ErrorPage />}
         >
           <Route index element={<TournamentSearchPage />} />
-          <Route path="CreateTournement" element={<TournamentManagerRoute><CreateTournament /></TournamentManagerRoute> } />
+          <Route
+            path="CreateTournement"
+            element={
+              <TournamentManagerRoute>
+                <CreateTournament />
+              </TournamentManagerRoute>
+            }
+          />
           <Route path="tournamentBrackets" element={<TournamentBrackets />} />
           <Route path=":tournamentId" element={<TournamentPage />} />
           <Route path="*" element={<ErrorPage />} />
-        </Route>        
+        </Route>
         <Route
           path="users"
-          element={
-            <DefaultNavLayout/>
-          }
+          element={<DefaultNavLayout />}
           errorElement={<ErrorPage />}
         >
-        <Route index element={<UserSearchPage />} />
-        <Route path="search" element={<UserSearchPage />} />
-        <Route path="profile/:username" element={<UserProfile />} />
-
+          <Route index element={<UserSearchPage />} />
+          <Route path="search" element={<UserSearchPage />} />
+          <Route path="profile/:username" element={<UserProfile />} />
         </Route>
-        <Route path="about" element={<About />} />
-        <Route path="contact" element={<Contact />} />
+        <Route path="*" element={<DefaultNavFooterLayout />}>
+          <Route path="about" element={<About />} />
+          <Route path="contact" element={<Contact />} />
+        </Route>
         {/* <Route path="profile/:username" element={<UserProfile />} />        */}
         <Route path="*" element={<ErrorPage />} />
       </Route>
