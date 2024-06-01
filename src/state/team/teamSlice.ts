@@ -67,12 +67,12 @@ const teamSlice = createSlice({
   extraReducers: (builder) => {
     builder
       .addCase(createTeam.pending, (state) => {
-        console.log("pending");
+        // console.log("pending");
         state.status = "loading";
         state.error = null;
       })
       .addCase(createTeam.fulfilled, (state, action) => {
-        console.log("fulfilled");
+        // console.log("fulfilled");
         state.status = "idle";
         state.error = null;
         if (typeof action.payload === "object" && action.payload !== null) {
@@ -98,9 +98,9 @@ const teamSlice = createSlice({
         }
       })
       .addCase(createTeam.rejected, (state, action) => {
-        console.log("rejected");
+        // console.log("rejected");
         state.status = "failed";
-        console.log(action.error);
+        // console.log(action.error);
         state.error = action.error.message;
         toast({
           variant: "default",
@@ -411,7 +411,7 @@ const getMemberInfo = async (uid: string) => {
       return null;
     }
   } catch (error) {
-    console.log(error);
+    // console.log(error);
     return null;
   }
 };
@@ -428,7 +428,7 @@ const isItUniqueTeamName = async (teamName: string) => {
       return false;
     }
   } catch (error) {
-    console.log(error);
+    // console.log(error);
     return false;
   }
 };
@@ -444,7 +444,7 @@ const getTeamMembers = async (docID: string) => {
     });
     return members;
   } catch (error) {
-    console.log("Members Error", error);
+    // console.log("Members Error", error);
     return [];
   }
 };
@@ -494,7 +494,7 @@ export const refreshTeamMembers = createAsyncThunk(
       });
       return members as Member[];
     } catch (error) {
-      console.log(error);
+      // console.log(error);
       return [];
     }
   }
@@ -507,7 +507,7 @@ export const createTeam = createAsyncThunk(
       if (!auth.currentUser) {
         return "This action requires authentication please login first";
       }
-      console.log(1);
+      // console.log(1);
       // check accountType
       const userRef = doc(firestore, "users", auth.currentUser.uid);
       const userSnap = await getDoc(userRef);
@@ -525,77 +525,22 @@ export const createTeam = createAsyncThunk(
         return "User not found";
       }
 
-      console.log(2);
+      // console.log(2);
 
       const isUnique = await isItUniqueTeamName(team.teamName);
       if (isUnique) {
         // upload image
-        const storageRef = ref(storage, `Avatars/${team.teamName}`);
-        // const uploadTask =  uploadBytesResumable(storageRef, team.logo as Blob);
-        // let logoUrl = "";
-
-        // uploadTask.on(
-        //   "state_changed",
-        //   (snapshot) => {
-        //     // Progress
-        //     const progress =
-        //       (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-        //     toast({
-        //       variant: "default",
-        //       title: "Upload progress",
-        //       description: "Upload is " + progress.toFixed(2) + "% done",
-        //       className:
-        //         "text-secondary-foreground border-2 border-secondary-foreground text-start",
-        //     });
-        //     switch (snapshot.state) {
-        //       case "paused":
-        //         teamSlice.actions.setLoading("idle");
-        //         console.log("Upload is paused");
-        //         break;
-        //       case "running":
-        //         teamSlice.actions.setLoading("loading");
-
-        //         console.log("Upload is running");
-        //         break;
-        //     }
-        //   },
-        //   () => {
-        //     // Error
-        //     toast({
-        //       variant: "default",
-        //       title: "Upload Image Failed!3",
-        //       description: "Upload failed! Please try again.",
-        //       className: "text-error border-2 border-error text-start",
-        //     });
-        //   },
-        //   () => {
-        //     // Complete
-        //     getDownloadURL(uploadTask.snapshot.ref).then(
-        //       async (downloadURL) => {
-        //         console.log("File available at", downloadURL);
-        //         logoUrl = downloadURL as string;
-        //         toast({
-        //           variant: "default",
-        //           title: "Upload Image",
-        //           description: "Image uploaded successfully!",
-        //           className: "text-primary border-2 border-primary text-start",
-        //         });
-        //         teamSlice.actions.setLoading("idle");
-        //       }
-        //     );
-        //   }
-        // );
+        const storageRef = ref(storage, `Team/Logos/${team.teamName}`);
 
         const snapshot = await uploadBytesResumable(
           storageRef,
           team.logo as Blob
         );
-        console.log(3);
+        // console.log(3);
 
         let logoUrl = "";
         try {
           logoUrl = await getDownloadURL(snapshot.ref);
-          console.log(logoUrl);
           toast({
             variant: "default",
             title: "Upload Image",
@@ -603,7 +548,7 @@ export const createTeam = createAsyncThunk(
             className: "text-primary border-2 border-primary text-start",
           });
         } catch (error) {
-          console.log(error);
+          // console.log(error);
           return "Get Download URL Failed!";
         }
 
@@ -643,7 +588,7 @@ export const createTeam = createAsyncThunk(
         let members: Member[] = [];
         const teamInfo = await getDoc(docRef);
         if (teamInfo.exists()) {
-          console.log("teamInfo", teamInfo.data());
+          // console.log("teamInfo", teamInfo.data());
           // get members
 
           members = await getTeamMembers(teamId);
@@ -662,7 +607,7 @@ export const createTeam = createAsyncThunk(
           return "Team Doesn't created!";
         }
       } else {
-        console.log("Team Name Not Unique");
+        // console.log("Team Name Not Unique");
         toast({
           variant: "default",
           title: "Team Name Not Unique",
@@ -686,7 +631,7 @@ export const updateTeam = createAsyncThunk(
       if (!auth.currentUser) {
         return "This action requires authentication please login first";
       }
-      console.log(1);
+      // console.log(1);
       // check accountType
       const userRef = doc(firestore, "users", auth.currentUser.uid);
       const userSnap = await getDoc(userRef);
@@ -700,39 +645,37 @@ export const updateTeam = createAsyncThunk(
       }
 
       // check if team name is unique
+      const newTeamData: {
+        teamLogo?: string;
+        teamName?: string;
+        description?: string;
+      } = {};
+      if (team.description) {
+        newTeamData.description = team.description;
+      }
 
-      console.log(2);
+      // console.log(2);
       if (team.teamName) {
         const isUnique = await isItUniqueTeamName(team.teamName);
         if (!isUnique) {
           return "Team Name Not Unique";
         }
-        // const oldDocRef = doc(firestore, "teams", team.oldTeamName);
-        // const oldDocSnap = await getDoc(oldDocRef);
-        // delete old doc that with old doc name
-        // if (oldDocSnap.exists()) {
-        //   oldData = oldDocSnap.data() as Team;
-        //   await deleteDoc(oldDocRef)
-        //     .then(() => {
-        //       console.log("Document deleted succesfully");
-        //     })
-        //     .catch((error) => {
-        //       console.error("Error removing document: ", error);
-        //     });
-        // }
+        newTeamData.teamName = team.teamName;
       }
+      let logoUrl = "";
+
       if (team.teamLogo) {
-        const storageRef = ref(storage, `Avatars/${team.teamName}`);
+        const storageRef = ref(storage, `Team/Logo/${team.teamName}`);
         const snapshot = await uploadBytesResumable(
           storageRef,
           team.teamLogo as Blob
         );
-        console.log(3);
+        // console.log(3);
 
-        let logoUrl = "";
         try {
           logoUrl = await getDownloadURL(snapshot.ref);
           console.log(logoUrl);
+          newTeamData.teamLogo = logoUrl;
           toast({
             variant: "default",
             title: "Upload Image",
@@ -740,7 +683,7 @@ export const updateTeam = createAsyncThunk(
             className: "text-primary border-2 border-primary text-start",
           });
         } catch (error) {
-          console.log(error);
+          // console.log(error);
           return "Get Download URL Failed!";
         }
       }
@@ -750,20 +693,28 @@ export const updateTeam = createAsyncThunk(
         docRef,
         {
           updatedAt: Timestamp.now(),
-          ...team,
+          ...newTeamData,
         },
         { merge: true }
       );
 
       const teamInfo = await getDoc(docRef);
       if (teamInfo.exists()) {
-        console.log("teamInfo", teamInfo.data());
+        // console.log("teamInfo", teamInfo.data());
         // get members
 
         const members = await getTeamMembers(id);
-        members.map(async (member) => {
-          member.userInfo = (await getMemberInfo(member.uid)) as User;
-        });
+
+        // members.map(async (member) => {
+        //   member.userInfo = (await getMemberInfo(member.uid)) as User;
+        // });
+        // promise all
+        await Promise.all(
+          members.map(async (member) => {
+            member.userInfo = (await getMemberInfo(member.uid)) as User;
+            return member;
+          })
+        );
         const teamData = { ...teamInfo.data(), id: id } as Team;
 
         const data = {
@@ -777,6 +728,7 @@ export const updateTeam = createAsyncThunk(
       }
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
+      // console.log(error)
       throw new Error(error.response.data as string);
     }
   }
@@ -793,8 +745,8 @@ export const getMemberTeamId = async (uid: string) => {
     }
     return snap.docs[0].data().team_id;
   } catch (error) {
-    console.log("nul 3");
-    console.log(error);
+    // console.log("nul 3");
+    // console.log(error);
     return null;
   }
 };
@@ -816,8 +768,8 @@ export const getMemberTeamName = async (uid: string) => {
       return null;
     }
   } catch (error) {
-    console.log("nul 3");
-    console.log(error);
+    // console.log("nul 3");
+    // console.log(error);
     return null;
   }
 };
@@ -832,7 +784,7 @@ export const isValidTeamId = async (teamId: string) => {
       return false;
     }
   } catch (error) {
-    console.log(error);
+    // console.log(error);
     return false;
   }
 };
@@ -880,7 +832,7 @@ export const removePlayerFromMembers = async (
     await deleteDoc(memberRef);
     return true;
   } catch (error) {
-    console.log(error);
+    // console.log(error);
     return `Player ${type} Failed!`;
   }
 };
@@ -895,7 +847,7 @@ export const kickMember = createAsyncThunk(
       }
       return result;
     } catch (error) {
-      console.log(error);
+      // console.log(error);
       return "Player Kick Failed!";
     }
   }
@@ -929,7 +881,7 @@ export const banMember = createAsyncThunk(
         return result;
       }
     } catch (error) {
-      console.log(error);
+      // console.log(error);
       return "Player Ban Failed!";
     }
   }
@@ -958,10 +910,12 @@ export const leaveTeam = createAsyncThunk(
       }
       // remove the user from the team
       await deleteDoc(memberRef);
-      await store.dispatch(getTeamByTeamName(store.getState().team.team.teamName))
+      await store.dispatch(
+        getTeamByTeamName(store.getState().team.team.teamName)
+      );
       return true;
     } catch (error) {
-      console.log(error);
+      // console.log(error);
       return "Leave Team Failed!";
     }
   }
@@ -1011,7 +965,9 @@ export const changeCoach = createAsyncThunk(
           teamid: teamId,
         });
         if ((result?.data as { success: boolean })?.success) {
-          await store.dispatch(getTeamByTeamName(store.getState().team.team.teamName))
+          await store.dispatch(
+            getTeamByTeamName(store.getState().team.team.teamName)
+          );
           return true;
         }
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -1021,7 +977,7 @@ export const changeCoach = createAsyncThunk(
 
       return true;
     } catch (error) {
-      console.log(error);
+      // console.log(error);
       return "Change Coach Failed!";
     }
   }
@@ -1048,7 +1004,7 @@ export const updateBlackListInfos = createAsyncThunk(
       );
       return blackListInfos;
     } catch (error) {
-      console.log(error);
+      // console.log(error);
       return [];
     }
   }
@@ -1094,7 +1050,7 @@ export const dispandUserFromTeamBlackList = createAsyncThunk(
       });
       return { blackList: newBlackList };
     } catch (error) {
-      console.log(error);
+      // console.log(error);
       return "Player Dispand Failed!";
     }
   }
