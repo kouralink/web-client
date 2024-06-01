@@ -209,7 +209,9 @@ const teamSlice = createSlice({
       .addCase(kickMember.fulfilled, (state, action) => {
         state.status = "idle";
         state.error = null;
-        if (action.payload === true) {
+        if (typeof action.payload === "object" && action.payload?.uid) {
+          const uid: string = action.payload.uid;
+          state.members = state.members.filter((member) => member.uid !== uid);
           toast({
             variant: "default",
             title: "Player Kicked",
@@ -244,7 +246,9 @@ const teamSlice = createSlice({
       .addCase(banMember.fulfilled, (state, action) => {
         state.status = "idle";
         state.error = null;
-        if (action.payload === true) {
+        if (typeof action.payload === "object" && action.payload?.uid) {
+          const uid: string = action.payload.uid;
+          state.members = state.members.filter((member) => member.uid !== uid);
           toast({
             variant: "default",
             title: "Player Banned",
@@ -363,8 +367,11 @@ const teamSlice = createSlice({
       .addCase(dispandUserFromTeamBlackList.fulfilled, (state, action) => {
         state.status = "idle";
         state.error = null;
-        if ( typeof action.payload === 'object' &&  action.payload.blackList !== null ) {
-          state.team.blackList = action.payload.blackList
+        if (
+          typeof action.payload === "object" &&
+          action.payload.blackList !== null
+        ) {
+          state.team.blackList = action.payload.blackList;
           toast({
             variant: "default",
             title: "Player Dispanded",
@@ -883,6 +890,9 @@ export const kickMember = createAsyncThunk(
   async ({ uid, teamId }: { uid: string; teamId: string }) => {
     try {
       const result = await removePlayerFromMembers(teamId, uid, "kick");
+      if (result === true) {
+        return { uid: uid };
+      }
       return result;
     } catch (error) {
       console.log(error);
@@ -914,7 +924,7 @@ export const banMember = createAsyncThunk(
         await updateDoc(teamRef, {
           blackList: arrayUnion(uid),
         });
-        return true;
+        return { uid: uid };
       } else {
         return result;
       }
@@ -948,6 +958,7 @@ export const leaveTeam = createAsyncThunk(
       }
       // remove the user from the team
       await deleteDoc(memberRef);
+      await store.dispatch(getTeamByTeamName(store.getState().team.team.teamName))
       return true;
     } catch (error) {
       console.log(error);
@@ -1000,6 +1011,7 @@ export const changeCoach = createAsyncThunk(
           teamid: teamId,
         });
         if ((result?.data as { success: boolean })?.success) {
+          await store.dispatch(getTeamByTeamName(store.getState().team.team.teamName))
           return true;
         }
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -1044,14 +1056,14 @@ export const updateBlackListInfos = createAsyncThunk(
 
 export const dispandUserFromTeamBlackList = createAsyncThunk(
   "team/dispandUserFromTeamBlackList",
-  async ({ uid }: { uid: string;}) => {
+  async ({ uid }: { uid: string }) => {
     try {
       // check is login
       const authUID = auth.currentUser?.uid;
       if (!authUID) {
         return "User not authenticated!";
-      }      
-      const teamId = store.getState().team.team.id
+      }
+      const teamId = store.getState().team.team.id;
       const teamRef = doc(firestore, "teams", teamId);
       const docSnap = await getDoc(teamRef);
       if (!docSnap.exists()) {
@@ -1065,8 +1077,8 @@ export const dispandUserFromTeamBlackList = createAsyncThunk(
         return "You are not a member of this team";
       }
       // check if the authUID is the coach of the team
-      if ((memberSnap.data() as Member).role !== "coach"){
-        return "Your not the coach of the team"
+      if ((memberSnap.data() as Member).role !== "coach") {
+        return "Your not the coach of the team";
       }
 
       const blackList = data.blackList;
@@ -1076,11 +1088,11 @@ export const dispandUserFromTeamBlackList = createAsyncThunk(
       if (!blackList.includes(uid)) {
         return "Player not in the blackList!";
       }
-      const newBlackList = blackList.filter((bid)=>bid !== uid)
+      const newBlackList = blackList.filter((bid) => bid !== uid);
       await updateDoc(teamRef, {
         blackList: newBlackList,
       });
-      return {blackList:newBlackList};
+      return { blackList: newBlackList };
     } catch (error) {
       console.log(error);
       return "Player Dispand Failed!";
