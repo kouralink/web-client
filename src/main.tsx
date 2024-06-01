@@ -54,7 +54,8 @@ import ErrorPage from "./pages/ErrorPage.tsx";
 import UserProfile from "./pages/profile/UserProfile.tsx";
 import UserSearchPage from "./pages/profile/UserSearchPage.tsx";
 import DefaultNavLayout from "./layouts/DefaultNavLayout.tsx";
-
+import About from "./pages/About.tsx";
+import Contact from "./pages/Contact.tsx";
 
 // private route
 export const PrivateRoute = ({ children }: { children: React.ReactNode }) => {
@@ -184,7 +185,8 @@ const router = createBrowserRouter(
         <Route path="profile/:username" element={<UserProfile />} />
 
         </Route>
-      
+        <Route path="about" element={<About />} />
+        <Route path="contact" element={<Contact />} />
         {/* <Route path="profile/:username" element={<UserProfile />} />        */}
         <Route path="*" element={<ErrorPage />} />
       </Route>
