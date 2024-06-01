@@ -118,29 +118,6 @@ export const TeamPage = () => {
   );
 };
 
-// const testMember: MemberState[] = [
-//   {
-//     username: "User 1",
-//     logo: "https://via.placeholder.com/150",
-//     uid: "1",
-//   },
-//   {
-//     username: "User 2",
-//     logo: "https://via.placeholder.com/150",
-//     uid: "2",
-//   },
-//   {
-//     username: "User 3",
-//     logo: "https://via.placeholder.com/150",
-//     uid: "3",
-//   },
-//   {
-//     username: "User 4",
-//     logo: "https://via.placeholder.com/150",
-//     uid: "4",
-//   },
-// ];
-
 const testTeamMatchHistory: MatchState[] = [
   {
     team1: {

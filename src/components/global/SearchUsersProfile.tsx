@@ -14,7 +14,7 @@ import { useEffect, useState } from "react";
 
 
 
-export function SearchTeamProfile() {
+export default function SearchUsersProfile() {
   const [searchValue,setSearchValue] = useState<string>("")
   
   const searchResults = useSelector(

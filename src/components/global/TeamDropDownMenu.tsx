@@ -36,13 +36,14 @@ import { Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "@/state/store";
 import { sendRequestToJoinTeam } from "@/state/notification/notificationSlice";
-import { SearchTeamProfile } from "./SearchTeamProfile";
+import SearchUsersProfile from "./SearchUsersProfile";
 import { leaveTeam } from "@/state/team/teamSlice";
 import { InfoTeamProfileCard } from "@/components/global/cards/InfoTeamProfileCard";
 import { Separator } from "@/components/ui/separator";
 import { Timestamp } from "firebase/firestore";
 import { ChangeCoach } from "./ChangeCoachMembersList";
 import { SearchBlackListTeam } from "./SearchBlackListTeam";
+import SearchTeamsForNewMatch from "./SearchTeamsForNewMatch";
 
 export function TeamDropDownMenu({
   teamname,
@@ -94,16 +95,18 @@ export function TeamDropDownMenu({
         <DropdownMenuSeparator />
         {role === "coach" && (
           <DropdownMenuGroup>
-            <DropdownMenuItem>
+            <DropdownMenuItem  onSelect={(e) => {
+                e.preventDefault();
+              }}>
               <BadgePlus className="mr-2 h-4 w-4" />
-              <span>New Match</span>
+              <span><SearchTeamsForNewMatch /></span>
               <DropdownMenuShortcut></DropdownMenuShortcut>
             </DropdownMenuItem>
 
             <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
               <UserPlus className="mr-2 h-4 w-4" />
               <span>
-                <SearchTeamProfile />
+                <SearchUsersProfile />
               </span>
               <DropdownMenuShortcut></DropdownMenuShortcut>
             </DropdownMenuItem>
@@ -115,13 +118,17 @@ export function TeamDropDownMenu({
                 <DropdownMenuShortcut></DropdownMenuShortcut>
               </DropdownMenuItem>
             </Link>
-              <DropdownMenuItem onSelect={(e) => {
+            <DropdownMenuItem
+              onSelect={(e) => {
                 e.preventDefault();
-              }} >
-                <Ban  className="mr-2 h-4 w-4" />
-                <span><SearchBlackListTeam /></span>
-                <DropdownMenuShortcut>Baned users</DropdownMenuShortcut>
-              </DropdownMenuItem>
+              }}
+            >
+              <Ban className="mr-2 h-4 w-4" />
+              <span>
+                <SearchBlackListTeam />
+              </span>
+              <DropdownMenuShortcut>Baned users</DropdownMenuShortcut>
+            </DropdownMenuItem>
             <DropdownMenuItem
               onSelect={(e) => {
                 e.preventDefault();
