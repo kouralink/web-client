@@ -29,8 +29,8 @@ const UserSearchCardForInvite: React.FC<UserSearchCardForInviteProps> = ({ resul
             ) : (
               <div className="rounded-full bg-gray-300 w-24 h-24"></div>
             )}
-            <h1 className="flex flex-col p-5 font-bold ">
-              ({result.username})
+            <h1 className="flex flex-col p-5 font-bold">
+              {result.username}
             </h1>
           </div>
           <Button onClick={handleInvie}>Invite</Button>
