@@ -28,15 +28,22 @@ export interface Team {
 export interface TeamState {
   team: Team;
   members: Member[];
-  blackListInfos: {user_info:User,uid:string}[];
+  blackListInfos: { user_info: User; uid: string }[];
   status: "idle" | "loading" | "failed";
   error: string | null | undefined;
 }
 
-
-
-
+// -------------------------------------------------------------------------------------------
+// -------------------------------------------------------------------------------------------
+// -------------------------------------------------------------------------------------------
 // this interface is old and it well replaced with above one when update matchrecordcardIteam component
+// Warning : this interface is not used in the project
+export interface TeamMatchState {
+  teamId: string;
+  teamLogo: string;
+  teamName: string;
+  teamScore: number | null;
+}
 export interface MatchState {
   team1: TeamMatchState;
   team2: TeamMatchState;
@@ -46,6 +53,9 @@ export interface MatchState {
   matchLocation: string;
   matchStatus: string;
 }
+// -------------------------------------------------------------------------------------------
+// -------------------------------------------------------------------------------------------
+// -------------------------------------------------------------------------------------------
 export interface MemberState {
   username: string;
   logo: string;
@@ -84,12 +94,18 @@ export interface UserState {
   error: string | null | undefined;
 }
 
-export type Action = "accept" | "decline" | "view" ;
+export type Action = "accept" | "decline" | "view";
 // export interface NotificationAction {
 //   actionType: Action | null;
 // }
 
-export type NotificationType = "info" | "request_to_join_team" | "request_to_join_tournement" | "match_chalenge" | "invite_to_team" | "invite_to_tournement";
+export type NotificationType =
+  | "info"
+  | "request_to_join_team"
+  | "request_to_join_tournement"
+  | "match_chalenge"
+  | "invite_to_team"
+  | "invite_to_tournement";
 export interface Notification {
   id: string;
   from_id: string;
@@ -101,50 +117,49 @@ export interface Notification {
   type: NotificationType;
 }
 
-
-
-
 // ------------- team Match State -------------
-export interface TeamMatchState {
-  teamId: string;
-  teamLogo: string;
-  teamName: string;
-  teamScore: number | null;
+
+export interface TeamMatch {
+  id: string;
+  score: number | null;
+  isAgreed: boolean;
 }
+
+
 
 export interface Match {
   id: string;
-  team1: TeamMatchState;
-  team2: TeamMatchState;
-  referee_id: string|null;
-  matchStartDate: Timestamp|null;
-  matchLocation: string|null;
-  matchStatus: "pending"|"finish"|"cancled";
-  type:"tournement"|"classic_match"
-  
+  team1: TeamMatch;
+  team2: TeamMatch;
+  referee_id: string | null;
+  createdAt: Timestamp;
+  updatedAt: Timestamp;
+  startIn: Timestamp|null;
+  endedAt: Timestamp|null;
+  location: string | null;
+  status: "pending" | "finish" | "cancled";
+  type: "tournement" | "classic_match";
 }
 // tournament
 
- 
-  
-  // ------------- Tournament Stages State -------------
-  export interface TournamentStage {
-    stage_number: string;
-    matches: Match[];
-  }
-  
-  // ------------- Tournament State -------------
-  export interface tournament {
-    id: string;
-    tournamentName: string;
-    tournamentLogo: string;
-    description: string;
-    startDate: string;
-    endDate: string;
-    createdAt: Timestamp;
-    updatedAt: Timestamp;
-    createdBy: string;
-    participants: string[];
-    status: "pending" | "in-progress" | "finish" | "cancled";
-    stages: TournamentStage[];
-  }
+// ------------- Tournament Stages State -------------
+export interface TournamentStage {
+  stage_number: string;
+  matches: Match[];
+}
+
+// ------------- Tournament State -------------
+export interface tournament {
+  id: string;
+  tournamentName: string;
+  tournamentLogo: string;
+  description: string;
+  startDate: string;
+  endDate: string;
+  createdAt: Timestamp;
+  updatedAt: Timestamp;
+  createdBy: string;
+  participants: string[];
+  status: "pending" | "in-progress" | "finish" | "cancled";
+  stages: TournamentStage[];
+}

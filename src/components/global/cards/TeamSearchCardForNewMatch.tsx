@@ -1,8 +1,9 @@
 import { Separator } from "@/components/ui/separator";
 import { Button } from "@/components/ui/button";
 import { Team } from "@/types/types";
-// import { useDispatch } from "react-redux";
-// import { AppDispatch } from "@/state/store";
+import { useDispatch } from "react-redux";
+import { AppDispatch } from "@/state/store";
+import { sendChallengeRequest } from "@/state/notification/notificationSlice";
 
 interface TeamSearchCardForNewMatchProps {
   result: Team;
@@ -13,10 +14,10 @@ const TeamSearchCardForNewMatch: React.FC<TeamSearchCardForNewMatchProps> = ({
   result,
   id,
 }) => {
-  // const dispatch = useDispatch<AppDispatch>();
+  const dispatch = useDispatch<AppDispatch>();
   const handleChallenege = async () => {
     console.log("new Match", id);
-    // dispatch(({ to: id }));
+    dispatch(sendChallengeRequest({ to: id }));
   };
   return (
     <div>

@@ -25,7 +25,7 @@
     - [x] invite to team
     - [x] info notifiaction
     - [ ] Change coach to members
-    - [ ] match Challenge
+    - [x] match Challenge
     - [ ] request to join tournament
     - [ ] invite to tournament
     
@@ -57,26 +57,33 @@
         [x] invite to team check 
         [x] request accept check  
         [x] send request to join team check
-
+- [x] match challenge Request notification
 - [ ] create new match form
-- [ ] new match redux state and thunks (require match challenge notification)
+- [ ] new match redux state and thunks (require 
 - [ ] match triggers (update on notification update trigger to include match_chalenege notificaiton type)
 - [ ] create zod form validation for register and login
 - [ ] check username is unique in the lower case state
-- [ ] team not really deleted is just gived another field called deleted
-- 
+- [ ] if not members in team coach can delete the team but:
+    - [ ] team not really deleted is just called that because the team will be have no coach and team name will change to del
 
 ## triggers
 - [ ] Notification accepted
     - [x] Request to join team
     - [x] Invite to team
-    - [ ] match challenge
+    - [x] match challenge
+    - [ ] request to join tournament
+    - [ ] invite to tournament
 - [x] on Member joined or leaved a team
 - [x] on role if member change to coach update the user account type to coach too
 - [x] on role if coach change to member update the user account type to member too
 - [ ] Notification Triggers (match challenge)
-- [ ] change account type when  change coach for new coach and the old one
+- [x] change account type when  change coach for new coach and the old one
 - [ ] is not possible to ajout or leave team for coach it's need to change coach first and set one of members or delete team
+- [ ] match update
+    - [ ] on match start
+        - [ ] send notification to all members 
+    - [ ] on match end
+        - [ ] send notification to all members
 - [ ] if coach left the team (some how) the oldest member will be the coach if no members found the team will be deleted
 - [ ] notification of coach change should be sent to all members
 - [ ] trriger notification on invite refree to match can be aceepted if the refree have a match in same time
@@ -123,8 +130,12 @@
 
 
 ## logic later tasks
-- [ ] you can't invite member of team to team
 - [ ] username should base unique in lower case
 - [ ] team name should be unique in lower case
 - [ ] update the message of notification to contain info username or team name not userid
+
+
+
+## futures
+- [ ] relive a team (only for deleted team and can be done by only the createdBy user)
  
