@@ -1,6 +1,7 @@
 import {
   ArrowLeftRight,
   BadgePlus,
+  Ban,
   LogOut,
   PenLine,
   Send,
@@ -117,7 +118,7 @@ export function TeamDropDownMenu({
               <DropdownMenuItem onSelect={(e) => {
                 e.preventDefault();
               }} >
-                <PenLine className="mr-2 h-4 w-4" />
+                <Ban  className="mr-2 h-4 w-4" />
                 <span><SearchBlackListTeam /></span>
                 <DropdownMenuShortcut>Baned users</DropdownMenuShortcut>
               </DropdownMenuItem>

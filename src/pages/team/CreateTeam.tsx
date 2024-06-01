@@ -95,7 +95,7 @@ export default function CreateTeam() {
   useEffect(() => {
     if (error === '  0  ' && status !== "loading" && team.teamName) {
       // react router redirect
-      navigate(`/team/${team.teamName}`);
+      navigate(`/team/page/${team.teamName}`);
     }
   } , [error, navigate, team.teamName, status]);
 

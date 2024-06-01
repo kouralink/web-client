@@ -46,7 +46,11 @@
 - [x] change coach (set Coach one of the members)
 - [x] create cloud function for change coach
 - [x] add Ban List to team page for make possible to remove someone from black list 
-- [ ] update team state after every change like ban kick leave ...
+- [x] update team state after every change
+    - [x] ban:update members
+    - [x] kick:update memebrs
+    - [x] leave:update members
+    - [x] change coach update team 
 - [ ] Member can't join team if was in blacklist
     - [ ] update could functions trigger
     - [ ] update redux actions check (
@@ -59,6 +63,8 @@
 - [ ] match triggers (update on notification update trigger to include match_chalenege notificaiton type)
 - [ ] create zod form validation for register and login
 - [ ] check username is unique in the lower case state
+- [ ] team not really deleted is just gived another field called deleted
+- 
 
 ## triggers
 - [ ] Notification accepted
@@ -73,6 +79,7 @@
 - [ ] is not possible to ajout or leave team for coach it's need to change coach first and set one of members or delete team
 - [ ] if coach left the team (some how) the oldest member will be the coach if no members found the team will be deleted
 - [ ] notification of coach change should be sent to all members
+ [ ] 
 
 
 ## firebase rules should add:
@@ -112,3 +119,10 @@
 ## @@Merieme tasks:
 - [x] Raport 50%
 - [ ] Raport 100%
+
+
+## match tasks and rules and triggers
+
+- [ ] trriger notification on invite refree to match can be aceepted if the refree have a match in same time
+
+
