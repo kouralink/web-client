@@ -65,6 +65,7 @@
 - [ ] check username is unique in the lower case state
 - [ ] if not members in team coach can delete the team but:
     - [ ] team not really deleted is just called that because the team will be have no coach and team name will change to del
+- [ ] check if there any null notification of type match challenge or request to join team or invite to team that already sended in last 24h
 
 ## triggers
 - [ ] Notification accepted
@@ -87,6 +88,9 @@
 - [ ] if coach left the team (some how) the oldest member will be the coach if no members found the team will be deleted
 - [ ] notification of coach change should be sent to all members
 - [ ] trriger notification on invite refree to match can be aceepted if the refree have a match in same time
+
+## Triggers Next update add:
+    - [ ] check if there is a already pending request match challenge from same teams
 
 
 ## firebase rules should add:
