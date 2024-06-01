@@ -107,8 +107,6 @@ export interface Notification {
 // ------------- team Match State -------------
 export interface TeamMatchState {
   teamId: string;
-  teamLogo: string;
-  teamName: string;
   teamScore: number | null;
 }
 
