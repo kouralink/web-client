@@ -35,25 +35,6 @@ export interface TeamState {
 
 
 
-// ------------- team Match State -------------
-export interface TeamMatchState {
-  teamId: string;
-  teamLogo: string;
-  teamName: string;
-  teamScore: number | null;
-}
-
-export interface Match {
-  id: string;
-  team1: TeamMatchState;
-  team2: TeamMatchState;
-  referee_id: string|null;
-  matchStartDate: Timestamp|null;
-  matchLocation: string|null;
-  matchStatus: "pending"|"finish"|"cancled";
-  type:"tournement"|"classic_match"
-  
-}
 
 // this interface is old and it well replaced with above one when update matchrecordcardIteam component
 export interface MatchState {
@@ -119,3 +100,51 @@ export interface Notification {
   action: Action | null;
   type: NotificationType;
 }
+
+
+
+
+// ------------- team Match State -------------
+export interface TeamMatchState {
+  teamId: string;
+  teamLogo: string;
+  teamName: string;
+  teamScore: number | null;
+}
+
+export interface Match {
+  id: string;
+  team1: TeamMatchState;
+  team2: TeamMatchState;
+  referee_id: string|null;
+  matchStartDate: Timestamp|null;
+  matchLocation: string|null;
+  matchStatus: "pending"|"finish"|"cancled";
+  type:"tournement"|"classic_match"
+  
+}
+// tournament
+
+ 
+  
+  // ------------- Tournament Stages State -------------
+  export interface TournamentStage {
+    stage_number: string;
+    matches: Match[];
+  }
+  
+  // ------------- Tournament State -------------
+  export interface tournament {
+    id: string;
+    tournamentName: string;
+    tournamentLogo: string;
+    description: string;
+    startDate: string;
+    endDate: string;
+    createdAt: Timestamp;
+    updatedAt: Timestamp;
+    createdBy: string;
+    participants: string[];
+    status: "pending" | "in-progress" | "finish" | "cancled";
+    stages: TournamentStage[];
+  }
