@@ -1,4 +1,4 @@
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardDescription } from "@/components/ui/card";
 import SectionTitle from "@/components/global/SectionTitle";
 import { Link } from "react-router-dom";
 import "./About.css";
