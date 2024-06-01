@@ -53,10 +53,10 @@
     - [x] change coach update team 
 - [ ] Member can't join team if was in blacklist
     - [ ] update could functions trigger
-    - [ ] update redux actions check (
-        [ ] invite to team check / 
-        [ ] request accept check / 
-        [ ] send request to join team check)
+    - [x] update redux actions check 
+        [x] invite to team check 
+        [x] request accept check  
+        [x] send request to join team check
 
 - [ ] create new match form
 - [ ] new match redux state and thunks (require match challenge notification)
@@ -79,7 +79,7 @@
 - [ ] is not possible to ajout or leave team for coach it's need to change coach first and set one of members or delete team
 - [ ] if coach left the team (some how) the oldest member will be the coach if no members found the team will be deleted
 - [ ] notification of coach change should be sent to all members
- [ ] 
+- [ ] trriger notification on invite refree to match can be aceepted if the refree have a match in same time
 
 
 ## firebase rules should add:
@@ -121,8 +121,10 @@
 - [ ] Raport 100%
 
 
-## match tasks and rules and triggers
 
-- [ ] trriger notification on invite refree to match can be aceepted if the refree have a match in same time
-
-
+## logic later tasks
+- [ ] you can't invite member of team to team
+- [ ] username should base unique in lower case
+- [ ] team name should be unique in lower case
+- [ ] update the message of notification to contain info username or team name not userid
+ 

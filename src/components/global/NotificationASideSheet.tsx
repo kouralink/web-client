@@ -17,6 +17,7 @@ import {
 import { useEffect } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { cn } from "@/lib/utils";
+import { Separator } from "../ui/separator";
 
 const NotificationASideSheet = () => {
   const RecievedNotifications = useSelector(
@@ -38,8 +39,7 @@ const NotificationASideSheet = () => {
   useEffect(() => {
     if (!authUserUID) return;
     dispatch(getRecievedNotifications());
-    if(accoutType === "coach"){
-
+    if (accoutType === "coach") {
       dispatch(getTeamRequestNotifications());
     }
   }, [accoutType, authUserUID, dispatch]);
@@ -49,7 +49,7 @@ const NotificationASideSheet = () => {
       <SheetTrigger asChild>
         <Bell className="mt-2 rounded-lg hover:text-gray-900 focus:text-gray-900 hover:bg-gray-200 focus:bg-gray-200 focus:outline-none focus:shadow-outline" />
       </SheetTrigger>
-      <SheetContent>
+      <SheetContent className=" max-h-screen ">
         <SheetHeader className="py-10">
           <SheetTitle className="flex justify-between w-full flex-row-reverse">
             <span>
@@ -60,30 +60,39 @@ const NotificationASideSheet = () => {
             <span>Notification</span>
           </SheetTitle>
         </SheetHeader>
-        <Tabs defaultValue="user" className="w-full">
-          {
-            accoutType && !(accoutType === "user" || accoutType === "refree" || accoutType === "player") && 
-          <TabsList className={cn("grid w-full ", accoutType === "coach" && "grid-cols-2" )}>
-            <TabsTrigger value="user">User</TabsTrigger>
+        <Tabs defaultValue="user" className="h-full">
+          {accoutType &&
+            !(
+              accoutType === "user" ||
+              accoutType === "refree" ||
+              accoutType === "player"
+            ) && (
+              <TabsList
+                className={cn(
+                  "grid w-full ",
+                  accoutType === "coach" && "grid-cols-2"
+                )}
+              >
+                <TabsTrigger value="user">User</TabsTrigger>
 
-            {accoutType === "coach" && (
-              <TabsTrigger value="team">team</TabsTrigger>
+                {accoutType === "coach" && (
+                  <TabsTrigger value="team">team</TabsTrigger>
+                )}
+              </TabsList>
             )}
-          </TabsList>
-          }
-          <TabsContent value="user">
+          <TabsContent value="user" className="h-full">
             {error && <div>{error}</div>}
             {RecievedNotifications.length > 0 && (
-              <ScrollArea className="h-full w-full rounded-md border">
-                <div>
-                  <div className="space-y-1">
-                    {RecievedNotifications.map((notification) => (
-                      <div key={notification.id}>
-                        <NotificationCard {...notification} />
-                      </div>
-                    ))}
-                  </div>
-                </div>
+              <ScrollArea className="felx flex-col h-full  w-full rounded-md  border overflow-y-scroll gap-4">
+                {/* <div className="h-[300px]"> */}
+
+                {RecievedNotifications.map((notification) => (
+                  <>
+                    <NotificationCard {...notification} key={notification.id} />
+                    <Separator />
+                  </>
+                ))}
+                {/* </div> */}
               </ScrollArea>
             )}
           </TabsContent>

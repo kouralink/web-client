@@ -228,6 +228,26 @@ const getCoachTeamId = async () => {
   }
 };
 
+const isItInBlackList = async (teamId: string, uid: string) => {
+  try {
+    const teamRef = doc(firestore, "teams", teamId);
+    const teamDoc = await getDoc(teamRef);
+    if (!teamDoc.exists()) {
+      return { error: "Error getting team" };
+    }
+    const teamInfo = teamDoc.data();
+    if (!teamInfo) {
+      return { error: "Error getting team info" };
+    }
+    if (teamInfo.blackList.includes(uid)) {
+      return true;
+    }
+    return false;
+  } catch (error) {
+    return { error: "Error checking if user in black list" };
+  }
+}
+
 export const getTeamRequestNotifications = createAsyncThunk(
   "notification/getTeamRequestNotifications",
   async () => {
@@ -379,6 +399,13 @@ export const sendRequestToJoinTeam = createAsyncThunk(
       if (isItInTeam) {
         return "Error user already in a team";
       }
+      // check if the to_id is not in balck list of teamID
+      const isItInBlackListValue = await isItInBlackList(notificationInfo.to, from_uid);
+      if (typeof isItInBlackListValue === "object" && isItInBlackListValue.error) {
+        return isItInBlackListValue.error;
+      }else if (isItInBlackListValue === true) {
+        return "You have been black listed by this team";
+      }
 
       // test if there is already a notification with same to_id and from_id in last 24 hours
       const isAlreadySend = await isAlreadySendNotification(
@@ -417,11 +444,19 @@ export const inviteToTeam = createAsyncThunk(
   async (notificationInfo: { to: string }) => {
     try {
       const teamId = await getCoachTeamId();
-
+      
+      
       if (typeof teamId === "object" && teamId.error) {
         return teamId.error;
       }
-
+      // check if the to_id is not in balck list of teamID
+      const isItInBlackListValue = await isItInBlackList(teamId, notificationInfo.to);
+      if (typeof isItInBlackListValue === "object" && isItInBlackListValue.error) {
+        return isItInBlackListValue.error;
+      }else if (isItInBlackListValue === true) {
+        return "This user is in black list";
+      }
+      
       const notificationCollection = collection(firestore, "notifications");
 
       const notificationDoc = await addDoc(notificationCollection, {
@@ -506,6 +541,20 @@ export const updateNotificationAction = createAsyncThunk(
             if (isItInTeam && ntf.action === "accept") {
               return "You are already in a team, leave the team first to accept the invite and join new team.";
             }
+
+            // check if this player in black list 
+            const isItInBlackListValue = await isItInBlackList(notificationInfo.from_id, uid);
+            if (typeof isItInBlackListValue === "object" && isItInBlackListValue.error) {
+              return isItInBlackListValue.error;
+            }
+            if (isItInBlackListValue === true) {
+              await updateNotificationActionToTakedAction(
+                ntf.id,
+                "decline"
+              );
+              return "You have been black listed by this team";
+            }
+
             const updated = await updateNotificationActionToTakedAction(
               ntf.id,
               ntf.action
