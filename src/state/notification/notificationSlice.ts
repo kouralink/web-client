@@ -1,4 +1,4 @@
-import { Action, Notification } from "@/types/types";
+import { Action, Notification, Team } from "@/types/types";
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import {
   getDocs,
@@ -9,7 +9,7 @@ import {
   Timestamp,
   getDoc,
   doc,
-  updateDoc
+  updateDoc,
 } from "firebase/firestore";
 import { firestore, auth } from "@/services/firebase";
 import { toast } from "@/components/ui/use-toast";
@@ -154,7 +154,7 @@ const notificationSlice = createSlice({
           // });
         } else {
           state.teamNotifications.error = action.payload.error;
-          
+
           // toast({
           //   title: "Notifications failed",
           //   description: action.payload.error,
@@ -166,43 +166,82 @@ const notificationSlice = createSlice({
         state.teamNotifications.error = action.error.message;
         state.teamNotifications.isLoading = false;
       });
-    builder.addCase(updateNotificationAction.pending, (state) => {
-      state.isLoading = true;
-      state.error = null;
-    })
-    .addCase(updateNotificationAction.fulfilled, (state, action) => {
-      state.error = null;
-      state.isLoading = false;
-      if (action.payload === true) {
-        state.teamNotifications.notifications = state.teamNotifications.notifications.filter(
-          (notification) => notification.id !== action.meta.arg.id
-        );
+    builder
+      .addCase(updateNotificationAction.pending, (state) => {
+        state.isLoading = true;
+        state.error = null;
+      })
+      .addCase(updateNotificationAction.fulfilled, (state, action) => {
+        state.error = null;
+        state.isLoading = false;
+        if (action.payload === true) {
+          state.teamNotifications.notifications =
+            state.teamNotifications.notifications.filter(
+              (notification) => notification.id !== action.meta.arg.id
+            );
 
-        state.notifications = state.notifications.filter(
-          (notification) => notification.id !== action.meta.arg.id
-        );
-        console.log('done')
+          state.notifications = state.notifications.filter(
+            (notification) => notification.id !== action.meta.arg.id
+          );
+          console.log("done");
+          toast({
+            title: "Action updated",
+            description: "Action updated successfully",
+          });
+        } else {
+          state.error = action.payload;
+          toast({
+            title: "Action failed",
+            description: action.payload,
+            variant: "destructive",
+          });
+        }
+      })
+      .addCase(updateNotificationAction.rejected, (state, action) => {
+        state.error = action.error.message;
+        state.isLoading = false;
+      });
+    builder
+      .addCase(sendChallengeRequest.pending, (state) => {
+        state.isLoading = true;
+        state.error = null;
+      })
+      .addCase(sendChallengeRequest.fulfilled, (state, action) => {
+        state.error = null;
+        state.isLoading = false;
+
+        if (action.payload === true) {
+          toast({
+            title: "Challenge sended",
+            description: "Challenge request sended successfully",
+          });
+        } else {
+          state.error = action.payload;
+
+          toast({
+            title: "Challenge failed",
+            description: action.payload,
+            variant: "destructive",
+          });
+        }
+      })
+      .addCase(sendChallengeRequest.rejected, (state, action) => {
+        state.error = action.error.message;
+        state.isLoading = false;
         toast({
-          title: "Action updated",
-          description: "Action updated successfully",
-        });
-      } else {
-        state.error = action.payload;
-        toast({
-          title: "Action failed",
-          description: action.payload,
+          title: "Challenge failed",
+          description: action.error.message,
           variant: "destructive",
         });
-      }
-    })
-    .addCase(updateNotificationAction.rejected, (state, action) => {
-      state.error = action.error.message;
-      state.isLoading = false;
-    });
-
+      });
   },
 });
-
+/**
+ * getCoachTeamId function
+ * This function is used to get the team id where the the authinticated user is the coach of the team
+ * @returns {Promise<string>} teamId
+ *
+ */
 const getCoachTeamId = async () => {
   try {
     // is authinticated
@@ -246,7 +285,7 @@ const isItInBlackList = async (teamId: string, uid: string) => {
   } catch (error) {
     return { error: "Error checking if user in black list" };
   }
-}
+};
 
 export const getTeamRequestNotifications = createAsyncThunk(
   "notification/getTeamRequestNotifications",
@@ -400,10 +439,16 @@ export const sendRequestToJoinTeam = createAsyncThunk(
         return "Error user already in a team";
       }
       // check if the to_id is not in balck list of teamID
-      const isItInBlackListValue = await isItInBlackList(notificationInfo.to, from_uid);
-      if (typeof isItInBlackListValue === "object" && isItInBlackListValue.error) {
+      const isItInBlackListValue = await isItInBlackList(
+        notificationInfo.to,
+        from_uid
+      );
+      if (
+        typeof isItInBlackListValue === "object" &&
+        isItInBlackListValue.error
+      ) {
         return isItInBlackListValue.error;
-      }else if (isItInBlackListValue === true) {
+      } else if (isItInBlackListValue === true) {
         return "You have been black listed by this team";
       }
 
@@ -444,19 +489,24 @@ export const inviteToTeam = createAsyncThunk(
   async (notificationInfo: { to: string }) => {
     try {
       const teamId = await getCoachTeamId();
-      
-      
+
       if (typeof teamId === "object" && teamId.error) {
         return teamId.error;
       }
       // check if the to_id is not in balck list of teamID
-      const isItInBlackListValue = await isItInBlackList(teamId, notificationInfo.to);
-      if (typeof isItInBlackListValue === "object" && isItInBlackListValue.error) {
+      const isItInBlackListValue = await isItInBlackList(
+        teamId,
+        notificationInfo.to
+      );
+      if (
+        typeof isItInBlackListValue === "object" &&
+        isItInBlackListValue.error
+      ) {
         return isItInBlackListValue.error;
-      }else if (isItInBlackListValue === true) {
+      } else if (isItInBlackListValue === true) {
         return "This user is in black list";
       }
-      
+
       const notificationCollection = collection(firestore, "notifications");
 
       const notificationDoc = await addDoc(notificationCollection, {
@@ -525,7 +575,6 @@ export const updateNotificationAction = createAsyncThunk(
         return "this actions not supported yet";
       }
 
-
       // check if to_id == uid for type info and invite to team
       if (["info", "invite_to_team"].includes(notificationInfo.type)) {
         if (uid !== notificationInfo.to_id) {
@@ -542,16 +591,19 @@ export const updateNotificationAction = createAsyncThunk(
               return "You are already in a team, leave the team first to accept the invite and join new team.";
             }
 
-            // check if this player in black list 
-            const isItInBlackListValue = await isItInBlackList(notificationInfo.from_id, uid);
-            if (typeof isItInBlackListValue === "object" && isItInBlackListValue.error) {
+            // check if this player in black list
+            const isItInBlackListValue = await isItInBlackList(
+              notificationInfo.from_id,
+              uid
+            );
+            if (
+              typeof isItInBlackListValue === "object" &&
+              isItInBlackListValue.error
+            ) {
               return isItInBlackListValue.error;
             }
             if (isItInBlackListValue === true) {
-              await updateNotificationActionToTakedAction(
-                ntf.id,
-                "decline"
-              );
+              await updateNotificationActionToTakedAction(ntf.id, "decline");
               return "You have been black listed by this team";
             }
 
@@ -576,7 +628,7 @@ export const updateNotificationAction = createAsyncThunk(
           }
         }
       }
-      // for request to join team 
+      // for request to join team
       // check if the authUser is the coach of the team where the teamId === to_id
 
       if (notificationInfo.type === "request_to_join_team") {
@@ -598,9 +650,61 @@ export const updateNotificationAction = createAsyncThunk(
         }
       }
       return "Error updating notification action";
-      
     } catch (error) {
       throw new Error("Error updating notification action");
+    }
+  }
+);
+
+export const sendChallengeRequest = createAsyncThunk(
+  "notification/sendChallengeRequest",
+  async (notificationInfo: { to: string }) => {
+    try {
+      // to: is the team id where the team is the team that the user want to chalenge
+      const teamId = await getCoachTeamId();
+      if (typeof teamId === "object" && teamId.error) {
+        return teamId.error;
+      }
+      // check if the to id === teamId
+      if (teamId === notificationInfo.to) {
+        return "You can't challenge your own team";
+      }
+      // check if challenged team exists
+      const isValidTID: boolean = await isValidTeamId(notificationInfo.to);
+      if (!isValidTID) {
+        return "Error team id is not valid";
+      }
+      // get team1 data team1 is the challenger
+      const team1Ref = doc(firestore, "teams", teamId);
+      const team1Doc = await getDoc(team1Ref);
+      if (!team1Doc.exists()) {
+        return "Error getting team1";
+      }
+      const team1Info: Team = team1Doc.data() as Team;
+      if (!team1Info) {
+        return "Error getting team1 info";
+      }
+
+      // send notification
+      const notificationCollection = collection(firestore, "notifications");
+      const from_TeamName = team1Info.teamName;
+      const notificationDoc = await addDoc(notificationCollection, {
+        to_id: notificationInfo.to,
+        title: "Match Challenge",
+        message: `${from_TeamName} want to challenge Your Team`,
+        from_id: teamId,
+        action: null,
+        createdAt: Timestamp.now(),
+        type: "match_chalenge",
+      });
+
+      // return true is sended succesfully in not return false
+      if (notificationDoc.id) {
+        return true;
+      }
+      return "Error sending challenge request";
+    } catch (error) {
+      throw new Error("sending challenge request");
     }
   }
 );
