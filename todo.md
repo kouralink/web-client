@@ -75,12 +75,13 @@
 - [ ] check if there any null notification of type match challenge or request to join team or invite to team that already sended in last 24h
 - [ ] bag notification is not for u when i;m trying to "view" to info notification of team accept my challenge request
 - [ ] Redux for match:
-    - [ ] get match info
-    - [ ] get match team1 info
-    - [ ] get match team2 info
-    - [ ] get match team1 members info
-    - [ ] get match team2 members info
-    - [ ] get match refree info
+    - [x] get match info
+    - [x] get match team1 info
+    - [x] get match team2 info
+    - [x] get match team1 members info
+    - [x] get match team2 members info
+    - [x] get match refree info
+    - [x] link match slice with redux store
 
 ## triggers
 - [ ] Notification accepted
