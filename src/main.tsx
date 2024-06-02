@@ -53,6 +53,8 @@ import CreateTournament from "./pages/Tournament/CreateTournament.tsx";
 // users
 import UserProfile from "./pages/profile/UserProfile.tsx";
 import UserSearchPage from "./pages/profile/UserSearchPage.tsx";
+// Match
+import MatchPage from "./pages/match/MatchPage.tsx";
 
 // other
 import About from "./pages/About.tsx";
@@ -211,9 +213,17 @@ const router = createBrowserRouter(
           <Route path="search" element={<UserSearchPage />} />
           <Route path="profile/:username" element={<UserProfile />} />
         </Route>
-        <Route path="*" element={<DefaultNavFooterLayout />}>
+        <Route
+          path="matches"
+          element={<DefaultNavLayout />}
+          errorElement={<ErrorPage />}
+        >
+          <Route path="page/:matchId" element={<MatchPage />} />
+        </Route>
+        <Route path="/" element={<DefaultNavFooterLayout />}>
           <Route path="about" element={<About />} />
           <Route path="contact" element={<Contact />} />
+          <Route path="*" element={<ErrorPage />} />
         </Route>
         {/* <Route path="profile/:username" element={<UserProfile />} />        */}
         <Route path="*" element={<ErrorPage />} />
