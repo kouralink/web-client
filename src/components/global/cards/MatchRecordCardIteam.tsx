@@ -2,6 +2,7 @@ import React from "react";
 import { Match } from "@/types/types";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Link } from "react-router-dom";
 
 const MatchRecordCardIteam: React.FC<Match> = (props) => {
   return (
@@ -46,7 +47,7 @@ const MatchRecordCardIteam: React.FC<Match> = (props) => {
           <h2>{props.team2.name}</h2>
         </div>
       </CardHeader>
-      <CardContent className="flex items-center justify-center gap-4 m-0 p-0"></CardContent>
+      <CardContent className="flex items-center justify-center gap-4 m-0 p-0"><Link to={`/matches/page/${props.id}`}>Open</Link></CardContent>
     </Card>
   );
 };
