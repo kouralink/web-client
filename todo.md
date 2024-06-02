@@ -64,7 +64,7 @@
 - [x] show much history in team page
 - [x] create match routes
 - [x] understand the ui logic of edits is match
-- [ ] create match page for not coachs
+- [x] create match page for not coachs
 - [ ] create match page for coachs
 - [x] new match redux state and thunks
 - [ ] match setup before start
@@ -87,13 +87,18 @@
 - [ ] Match Details From Componenet
 - [ ] Match Header Component
     - [ ] Edit to possible edit (score) and action End match for refree
+- [ ] Show pending matchs in profile of refree
+- [ ] show team page card in members and coach profile
 
 ## Match rules (redux and triggers) take care about it
+- [ ] "IMPORANT" in triggers should work just for match type classic_match
 - [ ] you can't edit on a match if the match is already started
 - [ ] match can't be started until both coach aggree with info and refree accept info
 - [ ] if you canceled the match before start it's will be deleted, 
 - [ ] you can't leave it if it in progress 
 - [ ] if you leave match before match start it's will be called as draw
+- [ ] refree can't change account if it has a pending match
+- [ ] match started at + 2h duree should not have any another start in  match 
 
 ## triggers
 - [ ] Notification accepted
