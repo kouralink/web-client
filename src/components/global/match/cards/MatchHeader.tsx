@@ -10,7 +10,26 @@ interface MatchHeaderProps {
   status: "pending" | "finish" | "cancled";
 }
 
+interface statusSelectType {
+  variant: "outline" | "default" | "secondary"  ;
+  value: string;
+}
+
 const MatchHeader: React.FC<MatchHeaderProps> = (props) => {
+  const statusSelect = {
+    pending: {variant:"outline",value:"Pending"} as statusSelectType,
+    finish: {variant:"default",value:"Finished"}  as statusSelectType,
+    cancled: {variant:"secondary",value:"Cancled"}  as statusSelectType
+  };
+  const handelEdit = () => {
+    console.log("Edit");
+  }
+  const handelEnd = () => {
+    console.log("End");
+  }
+  const handelCancel = () => {
+    console.log("Cancel");
+  }
   return (
     <Card
       className={[
@@ -19,21 +38,23 @@ const MatchHeader: React.FC<MatchHeaderProps> = (props) => {
       ].join(" ")}
     >
       <CardHeader className="flex flex-row w-full items-center justify-between gap-4 m-0 p-0 ">
-        <div className="flex flex-col items-center justify-center">
-          <div className="text-2xl">
-            {props.score1}-{props.score2}
+        <div className="flex flex-col items-center justify-center w-full">
+          <div className="text-6xl flex gap-1 font-mono w-full items-center justify-center">
+            <span>{props.score1}</span>
+            <span>-</span>
+            <span> {props.score2}</span>
           </div>
-          <div className="text-muted-foreground text-sm">
-            Status:<Badge variant="outline">{props.status}</Badge>
+          <div className="text-muted-foreground text-sm flex gap-2">
+            <span>Status :</span><Badge variant={statusSelect[props.status].variant}>{statusSelect[props.status].value}</Badge>
           </div>
         </div>
       </CardHeader>
       <CardContent className="flex items-center justify-center gap-4 m-0 p-0">
         {props.isRefree && (
-          <div>
-            <Button>Edit Result</Button>
-            <Button>End Match</Button>
-            <Button>Cancel Match</Button>
+          <div className="flex gap-2 p-4">
+            <Button variant={"outline"} onClick={handelEdit}>Edit Result</Button>
+            <Button onClick={handelEnd}>Match has ended</Button>
+            <Button variant={"destructive"} onClick={handelCancel}>Match has canceled</Button>
           </div>
         )}
       </CardContent>
