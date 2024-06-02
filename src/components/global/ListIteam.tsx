@@ -1,7 +1,7 @@
 import Icon from './LucidIcon';
 import dynamicIconImports from 'lucide-react/dynamicIconImports';
 
-interface SettingsMenuItemProps {
+interface ListItemProps {
     iocn_name: keyof typeof dynamicIconImports;
     title: string;
     arrow?: boolean;
@@ -9,7 +9,7 @@ interface SettingsMenuItemProps {
 
 }
 
-const SettingsMenuItem: React.FC<SettingsMenuItemProps> = ({ iocn_name, title,arrow = true, arrow_icon= 'chevron-right' }) => {
+const ListItem: React.FC<ListItemProps> = ({ iocn_name, title,arrow = true, arrow_icon= 'chevron-right' }) => {
     return (
         <div className='flex justify-between w-full'>
             <div className='flex gap-2'>
@@ -21,4 +21,4 @@ const SettingsMenuItem: React.FC<SettingsMenuItemProps> = ({ iocn_name, title,ar
     );
 };
 
-export default SettingsMenuItem;
+export default ListItem;

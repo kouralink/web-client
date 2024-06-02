@@ -58,15 +58,42 @@
         [x] request accept check  
         [x] send request to join team check
 - [x] match challenge Request notification
-- [ ] create new match form
-- [ ] new match redux state and thunks
 - [x] match triggers (update on notification update trigger to include match_chalenege notificaiton type)
+- [x] create new match form
+- [x] create async thun for getting team matchs history
+- [x] show much history in team page
+- [x] create match routes
+- [x] understand the ui logic of edits is match
+- [ ] create match page for not coachs
+- [ ] create match page for coachs
+- [x] new match redux state and thunks
+- [ ] match setup before start
+- [ ] create validation data for match details edits
 - [ ] create zod form validation for register and login
 - [ ] check username is unique in the lower case state
 - [ ] if not members in team coach can delete the team but:
     - [ ] team not really deleted is just called that because the team will be have no coach and team name will change to del
 - [ ] check if there any null notification of type match challenge or request to join team or invite to team that already sended in last 24h
 - [ ] bag notification is not for u when i;m trying to "view" to info notification of team accept my challenge request
+- [x] Redux for match:
+    - [x] get match info
+    - [x] get match team1 info
+    - [x] get match team2 info
+    - [x] get match team1 members info
+    - [x] get match team2 members info
+    - [x] get match refree info
+    - [x] link match slice with redux store
+- [ ] Match Deatils Component
+- [ ] Match Details From Componenet
+- [ ] Match Header Component
+    - [ ] Edit to possible edit (score) and action End match for refree
+
+## Match rules (redux and triggers) take care about it
+- [ ] you can't edit on a match if the match is already started
+- [ ] match can't be started until both coach aggree with info and refree accept info
+- [ ] if you canceled the match before start it's will be deleted, 
+- [ ] you can't leave it if it in progress 
+- [ ] if you leave match before match start it's will be called as draw
 
 ## triggers
 - [ ] Notification accepted

@@ -15,9 +15,12 @@ import {
   deleteDoc,
   updateDoc,
   arrayUnion,
+  or,
+  orderBy,
+  limit,
 } from "firebase/firestore";
 
-import { Member, Team, TeamState, User } from "../../types/types";
+import { Match, Member, Team, TeamState, User } from "../../types/types";
 import { CreateTeamFormValues } from "@/pages/team/CreateTeam";
 import { getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
 import { toast } from "@/components/ui/use-toast";
@@ -40,6 +43,7 @@ const initialState: TeamState = {
   },
   members: [],
   blackListInfos: [],
+  MatchesHistory: [],
   status: "idle",
   error: null,
 };
@@ -397,6 +401,30 @@ const teamSlice = createSlice({
           description: state.error,
           className: "text-error border-2 border-error text-start",
         });
+      });
+    builder
+      .addCase(getTeamMatchesHistory.pending, (state) => {
+        state.status = "loading";
+        state.error = null;
+        console.log("getting matches history");
+      })
+      .addCase(getTeamMatchesHistory.fulfilled, (state, action) => {
+        state.status = "idle";
+        state.error = null;
+        if (
+          typeof action.payload === "object" &&
+          action.payload !== null &&
+          action.payload.matches
+        ) {
+          state.MatchesHistory = action.payload.matches;
+          console.log("matches has updated");
+        }
+        console.log("getting matches history another failed");
+      })
+      .addCase(getTeamMatchesHistory.rejected, (state, action) => {
+        console.log("getting matches history failed");
+        state.status = "failed";
+        state.error = action.error.message;
       });
   },
 });
@@ -1052,6 +1080,74 @@ export const dispandUserFromTeamBlackList = createAsyncThunk(
     } catch (error) {
       // console.log(error);
       return "Player Dispand Failed!";
+    }
+  }
+);
+
+const getTeamDataByTeamId = async (teamId: string) => {
+  try {
+    const docRef = doc(firestore, "teams", teamId);
+    const docSnap = await getDoc(docRef);
+    if (docSnap.exists()) {
+      return docSnap.data() as Team;
+    } else {
+      return null;
+    }
+  } catch (error) {
+    // console.log(error);
+    return null;
+  }
+};
+
+// get team matchs history
+export const getTeamMatchesHistory = createAsyncThunk(
+  "team/getTeamMatchesHistory",
+  async ({ teamId }: { teamId: string }) => {
+    try {
+      console.log("get:", 1);
+      const colRef = collection(firestore, "matches");
+      const queryRef = query(
+        colRef,
+        or(where("team1.id", "==", teamId), where("team2.id", "==", teamId)),
+        orderBy("createdAt", "desc"),
+        limit(10)
+      );
+      console.log("get: 2");
+      const snap = await getDocs(queryRef);
+      const matches: Match[] = [];
+      console.log("get: 3");
+      for (const doc of snap.docs) {
+        const thismatch = doc.data() as Match;
+        console.log("this match:",thismatch)
+        const team1_data = await getTeamDataByTeamId(thismatch.team1.id);
+        const team2_data = await getTeamDataByTeamId(thismatch.team2.id);
+
+        // get team1 data
+        if (team1_data) {
+          thismatch.team1 = {
+            ...thismatch.team1,
+            name: team1_data.teamName,
+            logo: team1_data.teamLogo,
+          };
+        }
+        // get team2 data
+        if (team2_data) {
+          thismatch.team2 = {
+            ...thismatch.team2,
+            name: team2_data.teamName,
+            logo: team2_data.teamLogo,
+          };
+        }
+        matches.push(thismatch);
+      }
+      if (matches.length === 0) {
+        console.log("no matches found");
+      }
+      console.log(matches);
+      return { matches };
+    } catch (error) {
+      console.log(error);
+      return { matches: [] };
     }
   }
 );
