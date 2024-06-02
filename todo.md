@@ -26,6 +26,7 @@
     - [x] info notifiaction
     - [x] Change coach to member
     - [x] match Challenge
+    - [ ] invite refree to match
     - [ ] request to join tournament
     - [ ] invite to tournament
     
@@ -65,16 +66,8 @@
 - [x] create match routes
 - [x] understand the ui logic of edits is match
 - [x] create match page for not coachs
-- [ ] create match page for coachs
+- [x] create match page for coachs
 - [x] new match redux state and thunks
-- [ ] match setup before start
-- [ ] create validation data for match details edits
-- [ ] create zod form validation for register and login
-- [ ] check username is unique in the lower case state
-- [ ] if not members in team coach can delete the team but:
-    - [ ] team not really deleted is just called that because the team will be have no coach and team name will change to del
-- [ ] check if there any null notification of type match challenge or request to join team or invite to team that already sended in last 24h
-- [ ] bag notification is not for u when i;m trying to "view" to info notification of team accept my challenge request
 - [x] Redux for match:
     - [x] get match info
     - [x] get match team1 info
@@ -83,6 +76,23 @@
     - [x] get match team2 members info
     - [x] get match refree info
     - [x] link match slice with redux store
+- [x] create validation data for match details edits
+- [ ] create refree search 
+    - [ ] redux (search refree) & invite refree action
+    - [ ] create search ui
+    - [ ] create trigger for refree accept / decline match challenge (on Decline set isAgreed to false)
+    - [ ] add field is refree accept request to match
+    - [ ] update match type
+- [ ] match status type "not started" "in progress" "cancelled" "ended" "pending"
+- [ ] update status check in created components
+
+- [ ] match setup before start
+- [ ] create zod form validation for register and login
+- [ ] check username is unique in the lower case state
+- [ ] if not members in team coach can delete the team but:
+    - [ ] team not really deleted is just called that because the team will be have no coach and team name will change to del
+- [ ] check if there any null notification of type match challenge or request to join team or invite to team that already sended in last 24h
+- [ ] bag notification is not for u when i;m trying to "view" to info notification of team accept my challenge request
 - [ ] Match Deatils Component
 - [ ] Match Details From Componenet
 - [ ] Match Header Component

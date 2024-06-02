@@ -3,12 +3,12 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+} from "@/components/ui/command";
 
 import {
   Form,
@@ -28,12 +28,22 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 
-
 import { Input } from "@/components/ui/input";
 
 import { Button } from "@/components/ui/button";
 import { toast } from "@/components/ui/use-toast";
 import { DateTimePicker } from "@/components/ui/datetime-picker";
+import { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { AppDispatch, RootState } from "@/state/store";
+import { searchByUserNameAndTypeAccount } from "@/state/search/searchUsersSlice";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { Check, ChevronsUpDown } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 // Corrected regular expression to match Google Maps location links
 const googleMapsLinkRegex =
@@ -52,13 +62,34 @@ const matchDetailsFormSchema = z.object({
 
 type MatchDetailsFormValues = z.infer<typeof matchDetailsFormSchema>;
 
-// This can come from your database or API.
+interface MatchDetailsFormProps {
+  refree_id: string | null;
+  location: string | null;
+  startin: Date | undefined;
+}
 
-export function MatchDetailsForm() {
-  //   const dispatch = useDispatch<AppDispatch>();
+export function MatchDetailsForm(props: MatchDetailsFormProps) {
+  const dispatch = useDispatch<AppDispatch>();
   const defaultValues: Partial<MatchDetailsFormValues> = {
     // get default value from authUser state
+    startin: props.startin || undefined,
+    location: props.location || undefined,
+    refree_id: props.refree_id || undefined,
   };
+  const searchResult = useSelector(
+    (state: RootState) => state.usersearch.searchResults
+  );
+  const [searchValue, setSearchValue] = useState("");
+  // const [refrees,setRefrees] = useState<User[]>([]);
+
+  useEffect(() => {
+    dispatch(
+      searchByUserNameAndTypeAccount({
+        username: searchValue,
+        typeAccount: "refree",
+      })
+    );
+  }, []);
 
   const form = useForm<MatchDetailsFormValues>({
     resolver: zodResolver(matchDetailsFormSchema),
@@ -88,24 +119,24 @@ export function MatchDetailsForm() {
       <CardContent className="flex flex-col gap-4">
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-          <FormField
-          control={form.control}
-          name="startin"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel htmlFor="datetime">Date time</FormLabel>
-              <FormControl>
-                <DateTimePicker
-                  granularity="second"
-                  jsDate={field.value}
-                  onJsDateChange={field.onChange}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        
+            <FormField
+              control={form.control}
+              name="startin"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel htmlFor="datetime">Date time</FormLabel>
+                  <FormControl>
+                    <DateTimePicker
+                      granularity="second"
+                      jsDate={field.value}
+                      onJsDateChange={field.onChange}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
             <FormField
               control={form.control}
               name="location"
@@ -126,23 +157,62 @@ export function MatchDetailsForm() {
               control={form.control}
               name="refree_id"
               render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Refree</FormLabel>
-                  <Select
-                    onValueChange={field.onChange}
-                    defaultValue={field.value}
-                  >
-                    <FormControl>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select the refree" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      <SelectItem value="123">someone</SelectItem>
-                    </SelectContent>
-                  </Select>
+                <FormItem className="flex flex-col">
+                  <FormLabel>Refrees</FormLabel>
+                  <Popover>
+                    <PopoverTrigger asChild>
+                      <FormControl>
+                        <Button
+                          variant="outline"
+                          role="combobox"
+                          className={cn(
+                            "w-[200px] justify-between",
+                            !field.value && "text-muted-foreground"
+                          )}
+                        >
+                          {field.value
+                            ? searchResult.find(
+                                (user) => user.uid === field.value
+                              )?.uid
+                            : "Select a Refree"}
+                          <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                        </Button>
+                      </FormControl>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-[200px] p-0">
+                      <Command>
+                        <CommandInput
+                          placeholder="Search Refree..."
+                          onValueChange={(v) => setSearchValue(v)}
+                          value={searchValue}
+                        />
+                        <CommandEmpty>No Refree found.</CommandEmpty>
+                        <CommandGroup>
+                          {searchResult.map((user) => (
+                            <CommandItem
+                              value={user.uid}
+                              key={user.uid}
+                              onSelect={() => {
+                                form.setValue("refree_id", user.uid);
+                              }}
+                            >
+                              <Check
+                                className={cn(
+                                  "mr-2 h-4 w-4",
+                                  user.uid === field.value
+                                    ? "opacity-100"
+                                    : "opacity-0"
+                                )}
+                              />
+                              {user.user_info.username}
+                            </CommandItem>
+                          ))}
+                        </CommandGroup>
+                      </Command>
+                    </PopoverContent>
+                  </Popover>
                   <FormDescription>
-                    This the refree who will set the match result.
+                    This is the that will set result of the much later
                   </FormDescription>
                   <FormMessage />
                 </FormItem>

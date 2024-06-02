@@ -19,8 +19,8 @@ const MatchInfoContainer: React.FC<MatchInfoContainerProps> = (props) => {
         score2={props.team2.score}
         status={props.status}
       />
-      { props.role === "coach" ? (
-        <MatchDetailsForm /> 
+      { props.role === "coach" && props.status === "pending" && !props.endedAt ? (
+        <MatchDetailsForm location={props.location} refree_id={props.referee_id} startin={props.startIn?.toDate()} /> 
       ) : (
         <MatchDetails {...props} refree={props.refree} />
       )}
