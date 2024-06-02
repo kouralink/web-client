@@ -29,10 +29,21 @@ const MatchRecordCardIteam: React.FC<Match> = (props) => {
           <div className="text-2xl">
             {props.team1.score}-{props.team2.score}
           </div>
-          <div className="text-sm ">Referee {props.referee_id}</div>
-          <div className="text-sm ">Staduim {props.location}</div>
+          {props.location ? (
+            <div className="text-sm ">
+              Location :{" "}
+              <a
+                href={props.location}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-sm text-sky-500"
+              >
+                Open
+              </a>
+            </div>
+          ) : (<span className="text-muted-foreground">Match not started yet</span>)}
           <div className="text-muted-foreground text-sm">
-            {props.startIn?.toDate().toString()}
+            {props.startIn?.toDate().toLocaleString()}
           </div>
         </div>
         <div className="flex flex-col items-center gap-2">
@@ -47,7 +58,9 @@ const MatchRecordCardIteam: React.FC<Match> = (props) => {
           <h2>{props.team2.name}</h2>
         </div>
       </CardHeader>
-      <CardContent className="flex items-center justify-center gap-4 m-0 p-0"><Link to={`/matches/page/${props.id}`}>Open</Link></CardContent>
+      <CardContent className="flex items-center justify-center gap-4 m-0 p-0">
+        <Link to={`/matches/page/${props.id}`}>Open</Link>
+      </CardContent>
     </Card>
   );
 };

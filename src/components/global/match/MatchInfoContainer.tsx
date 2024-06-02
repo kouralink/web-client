@@ -1,6 +1,7 @@
 import { MatchFirestore, User } from "@/types/types";
 import MatchHeader from "./cards/MatchHeader";
 import MatchDetails from "./cards/MatchDetails";
+import { MatchDetailsForm } from "./cards/MatchDetailsForm";
 
 type MatchInfoContainerProps = {
   isItRefree: boolean;
@@ -9,6 +10,7 @@ type MatchInfoContainerProps = {
 } & MatchFirestore;
 
 const MatchInfoContainer: React.FC<MatchInfoContainerProps> = (props) => {
+  console.log(props.role)
   return (
     <div className="flex flex-col gap-2 w-fit">
       <MatchHeader
@@ -17,7 +19,11 @@ const MatchInfoContainer: React.FC<MatchInfoContainerProps> = (props) => {
         score2={props.team2.score}
         status={props.status}
       />
-      <MatchDetails {...props} refree={props.refree} />
+      { props.role === "coach" ? (
+        <MatchDetailsForm /> 
+      ) : (
+        <MatchDetails {...props} refree={props.refree} />
+      )}
     </div>
   );
 };
