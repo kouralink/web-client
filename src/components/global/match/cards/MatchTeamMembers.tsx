@@ -1,6 +1,7 @@
 import { Member } from "@/types/types";
 import MatchMemberCard from "./MatchMemberCard";
 import { Card } from "@/components/ui/card";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 interface PropsState {
   members: Member[];
@@ -23,6 +24,7 @@ export default function MatchTeamMembers(props: PropsState) {
       <div className="flex flex-col gap-2">
         <h2>Members</h2>
         <div className=" ml-4">
+          <ScrollArea className="h-52">
           {props.members.map((member) => {
             if (member.role !== "coach") {
               return <MatchMemberCard key={member.uid} member={member} />;
@@ -31,6 +33,7 @@ export default function MatchTeamMembers(props: PropsState) {
           {props.members.length === 1 && (
             <p className="text-muted-foreground">No members yet</p>
           )}
+          </ScrollArea>
         </div>
       </div>
     </Card>
