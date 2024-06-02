@@ -24,7 +24,7 @@
     - [x] request to join team
     - [x] invite to team
     - [x] info notifiaction
-    - [ ] Change coach to members
+    - [x] Change coach to member
     - [x] match Challenge
     - [ ] request to join tournament
     - [ ] invite to tournament
@@ -51,21 +51,22 @@
     - [x] kick:update memebrs
     - [x] leave:update members
     - [x] change coach update team 
-- [ ] Member can't join team if was in blacklist
-    - [ ] update could functions trigger
+- [x] Member can't join team if was in blacklist
+    - [x] update could functions trigger
     - [x] update redux actions check 
         [x] invite to team check 
         [x] request accept check  
         [x] send request to join team check
 - [x] match challenge Request notification
 - [ ] create new match form
-- [ ] new match redux state and thunks (require 
-- [ ] match triggers (update on notification update trigger to include match_chalenege notificaiton type)
+- [ ] new match redux state and thunks
+- [x] match triggers (update on notification update trigger to include match_chalenege notificaiton type)
 - [ ] create zod form validation for register and login
 - [ ] check username is unique in the lower case state
 - [ ] if not members in team coach can delete the team but:
     - [ ] team not really deleted is just called that because the team will be have no coach and team name will change to del
 - [ ] check if there any null notification of type match challenge or request to join team or invite to team that already sended in last 24h
+- [ ] bag notification is not for u when i;m trying to "view" to info notification of team accept my challenge request
 
 ## triggers
 - [ ] Notification accepted
@@ -77,7 +78,7 @@
 - [x] on Member joined or leaved a team
 - [x] on role if member change to coach update the user account type to coach too
 - [x] on role if coach change to member update the user account type to member too
-- [ ] Notification Triggers (match challenge)
+- [x] Notification Triggers (match challenge)
 - [x] change account type when  change coach for new coach and the old one
 - [ ] is not possible to ajout or leave team for coach it's need to change coach first and set one of members or delete team
 - [ ] match update
@@ -86,8 +87,9 @@
     - [ ] on match end
         - [ ] send notification to all members
 - [ ] if coach left the team (some how) the oldest member will be the coach if no members found the team will be deleted
-- [ ] notification of coach change should be sent to all members
+- [x] notification of coach change should be sent to all members
 - [ ] trriger notification on invite refree to match can be aceepted if the refree have a match in same time
+- [x] team logos should upload to team logos folder
 
 ## Triggers Next update add:
     - [ ] check if there is a already pending request match challenge from same teams
