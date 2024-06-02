@@ -190,10 +190,10 @@ export const getMatchById = createAsyncThunk(
 
 export const getTeamsInfo = createAsyncThunk(
   "match/getTeamsInfo",
-  async (match: MatchFirestore) => {
+  async ({ id1, id2 }: { id1: string; id2: string }) => {
     try {
-      const team1Ref = doc(firestore, "teams", match.team1.id);
-      const team2Ref = doc(firestore, "teams", match.team2.id);
+      const team1Ref = doc(firestore, "teams", id1);
+      const team2Ref = doc(firestore, "teams", id2);
       const team1Snap = await getDoc(team1Ref);
       const team2Snap = await getDoc(team2Ref);
       if (team1Snap.exists() && team2Snap.exists()) {
@@ -212,18 +212,18 @@ export const getTeamsInfo = createAsyncThunk(
 
 export const getTeamsMembers = createAsyncThunk(
   "match/getTeamsMembers",
-  async (match: MatchFirestore) => {
+  async ({ id1, id2 }: { id1: string; id2: string }) => {
     try {
       const team1MembersRef = collection(
         firestore,
         "teams",
-        match.team1.id,
+        id1,
         "members"
       );
       const team2MembersRef = collection(
         firestore,
         "teams",
-        match.team2.id,
+        id2,
         "members"
       );
       const team1MembersSnap = await getDocs(team1MembersRef);
