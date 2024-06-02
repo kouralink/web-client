@@ -1,4 +1,4 @@
-import { Group, LogOut } from "lucide-react";
+import {  LogOut, Users } from "lucide-react";
 
 import {
   DropdownMenu,
@@ -44,7 +44,7 @@ export default function MatchTeamDropDownMenu({
         <DropdownMenuSeparator />
         {role === "coach" && (
           <DropdownMenuGroup>
-            <DropdownMenuItem className="text-red-500" asChild>
+            <DropdownMenuItem className="text-red-500">
               <LogOut className="mr-2 h-4 w-4" />
               {/* // TODO: add confirm dialog  */}
               <span>Leave Match</span>
@@ -55,7 +55,7 @@ export default function MatchTeamDropDownMenu({
         <DropdownMenuGroup>
           <DropdownMenuItem asChild>
             <Link to={`/team/page/${teamname}`}>
-              <Group className="mr-2 h-4 w-4" />
+              <Users className="mr-2 h-4 w-4" />
               <span>Team Page</span>
               <DropdownMenuShortcut></DropdownMenuShortcut>
             </Link>
