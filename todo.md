@@ -58,15 +58,29 @@
         [x] request accept check  
         [x] send request to join team check
 - [x] match challenge Request notification
-- [ ] create new match form
-- [ ] new match redux state and thunks
 - [x] match triggers (update on notification update trigger to include match_chalenege notificaiton type)
+- [x] create new match form
+- [ ] create async thun for getting team matchs history
+- [ ] show much history in team page
+- [ ] create match routes
+- [ ] understand the ui logic of edits is match
+- [ ] create match page for not coachs
+- [ ] create match page for coachs
+- [ ] new match redux state and thunks
+- [ ] match setup before start
 - [ ] create zod form validation for register and login
 - [ ] check username is unique in the lower case state
 - [ ] if not members in team coach can delete the team but:
     - [ ] team not really deleted is just called that because the team will be have no coach and team name will change to del
 - [ ] check if there any null notification of type match challenge or request to join team or invite to team that already sended in last 24h
 - [ ] bag notification is not for u when i;m trying to "view" to info notification of team accept my challenge request
+- [ ] Redux for match:
+    - [ ] get match info
+    - [ ] get match team1 info
+    - [ ] get match team2 info
+    - [ ] get match team1 members info
+    - [ ] get match team2 members info
+    - [ ] get match refree info
 
 ## triggers
 - [ ] Notification accepted
