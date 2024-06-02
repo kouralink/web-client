@@ -18,7 +18,7 @@
 }
 
 @media (max-width: 640px) {
-    .half-image img {
+    .profile-img {
         bottom: -25%;
         left: 0%;
         width: 120px;
