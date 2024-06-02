@@ -5,6 +5,7 @@ import userSlice from "./user/userSlice";
 import searchUsersSlice from "./search/searchUsersSlice";
 import searchTeamSlice from "./search/searchTeamSlice";
 import notificationSlice from "./notification/notificationSlice";
+import matchSlice from "./match/matchSlice";
 
 export const store = configureStore({
   reducer: {
@@ -14,6 +15,7 @@ export const store = configureStore({
     user: userSlice,
     teamsearch: searchTeamSlice,
     notification: notificationSlice,
+    match: matchSlice,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
