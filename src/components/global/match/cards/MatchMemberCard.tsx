@@ -11,7 +11,7 @@ type MatchMemberCardProps = {
 const MatchMemberCard: React.FC<MatchMemberCardProps> = (props) => {
   return (
     <Card
-      className={"flex w-[280px] rounded-lg p-2 justify-between items-center"}
+      className={"flex w-[280px] rounded-lg p-2 justify-between items-center gap-6"}
     >
       <CardHeader className="flex flex-row  items-center justify-center gap-4 m-0 p-0 ">
         <div className="flex  items-center gap-2">

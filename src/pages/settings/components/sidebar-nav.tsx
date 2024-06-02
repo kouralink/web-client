@@ -2,7 +2,7 @@
 import { cn } from "@/lib/utils"
 import { buttonVariants } from "@/components/ui/button"
 import { Link, useLocation } from "react-router-dom"
-import SettingsMenuItem from "@/components/global/SettingsMenuItem"
+import SettingsMenuItem from "@/components/global/ListIteam"
 import { sidebarNavItemType } from "@/types/types"
 
 interface SidebarNavProps extends React.HTMLAttributes<HTMLElement> {

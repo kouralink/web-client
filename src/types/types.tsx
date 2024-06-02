@@ -9,7 +9,7 @@ export type sidebarNavItemType = {
 
 export interface Member {
   uid: string;
-  joinedAt: string;
+  joinedAt: Timestamp;
   team_id: string;
   role: "coach" | "member";
   userInfo: User | null;

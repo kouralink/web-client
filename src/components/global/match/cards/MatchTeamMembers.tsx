@@ -10,7 +10,7 @@ interface PropsState {
 
 export default function MatchTeamMembers(props: PropsState) {
   return (
-    <Card className=" flex flex-col py-4 px-2 gap-4 h-fit">
+    <Card className=" flex flex-col py-4 px-2 gap-4 h-full">
       <div className="flex flex-col gap-2">
         <h2>Coach</h2>
         <div className=" ml-4">
@@ -24,7 +24,7 @@ export default function MatchTeamMembers(props: PropsState) {
       <div className="flex flex-col gap-2">
         <h2>Members</h2>
         <div className=" ml-4">
-          <ScrollArea className="h-52">
+          <ScrollArea className="min-h-52 h-full">
           {props.members.map((member) => {
             if (member.role !== "coach") {
               return <MatchMemberCard key={member.uid} member={member} />;

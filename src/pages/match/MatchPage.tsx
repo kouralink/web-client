@@ -1,3 +1,4 @@
+import MatchInfoContainer from "@/components/global/match/MatchInfoContainer";
 import MatchTeamContainer from "@/components/global/match/MatchTeamContainer";
 import { auth } from "@/services/firebase";
 import {
@@ -97,7 +98,7 @@ const MatchPage: React.FC = () => {
   }, [authUSERTYPE, coachOfTeam2?.uid]);
 
   return (
-    <div className="w-full">
+    <div className="w-full h-fit container">
       <div className="flex w-full justify-between">
         <MatchTeamContainer
           {...match.team1Info}
@@ -105,6 +106,18 @@ const MatchPage: React.FC = () => {
           teamMembers={match.team1Members}
           coach={coachOfTeam1}
         />
+
+        <MatchInfoContainer
+          role={
+            userRoleInTeam1 === "coach" || userRoleInTeam2 === "coach"
+              ? "coach"
+              : "user"
+          }
+          {...match.match}
+          isItRefree={auth.currentUser?.uid === match.match.referee_id}
+          refree={match.refree}
+        />
+
         <MatchTeamContainer
           {...match.team2Info}
           role={userRoleInTeam2}
