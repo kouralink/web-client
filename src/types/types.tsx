@@ -29,6 +29,7 @@ export interface TeamState {
   team: Team;
   members: Member[];
   blackListInfos: { user_info: User; uid: string }[];
+  MatchesHistory: Match[];
   status: "idle" | "loading" | "failed";
   error: string | null | undefined;
 }
@@ -119,18 +120,37 @@ export interface Notification {
 
 // ------------- team Match State -------------
 
+interface AddedToTeamMatch{
+  logo: string;
+  name:string;
+}
+
 export interface TeamMatch {
   id: string;
   score: number | null;
   isAgreed: boolean;
-}
+}  
 
 
-
-export interface Match {
+export interface MatchFirestore {
   id: string;
   team1: TeamMatch;
   team2: TeamMatch;
+  referee_id: string | null;
+  createdAt: Timestamp;
+  updatedAt: Timestamp;
+  startIn: Timestamp|null;
+  endedAt: Timestamp|null;
+  location: string | null;
+  status: "pending" | "finish" | "cancled";
+  type: "tournement" | "classic_match";
+
+}
+
+export interface Match {
+  id: string;
+  team1: TeamMatch & AddedToTeamMatch;
+  team2: TeamMatch & AddedToTeamMatch;
   referee_id: string | null;
   createdAt: Timestamp;
   updatedAt: Timestamp;
