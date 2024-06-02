@@ -1,10 +1,10 @@
-import { Team } from "@/types/types";
+import { Member, Team } from "@/types/types";
 import MatchTeamHeader from "./cards/MatchTeamHeader";
 import MatchTeamMembers from "./cards/MatchTeamMembers";
 
 type MatchTeamContainerProps = {
   role: "user" | "coach" | "member";
-} & Team;
+} & Team & {teamMembers: Member[]} & {coach: Member | null};
 
 const MatchTeamContainer: React.FC<MatchTeamContainerProps> = (props) => {
 
@@ -12,7 +12,7 @@ const MatchTeamContainer: React.FC<MatchTeamContainerProps> = (props) => {
   return (
     <div className="flex flex-col gap-2 w-fit">
         <MatchTeamHeader {...props} />
-        {/* <MatchTeamMembers   /> */}
+        <MatchTeamMembers members={props.teamMembers} coach={props.coach}  />
     </div>
   );
 };
