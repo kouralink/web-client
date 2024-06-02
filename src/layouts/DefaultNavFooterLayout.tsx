@@ -8,7 +8,7 @@ export default function DefaultNavFooterLayout() {
       <div>
         <Navbar navHeight={2} />
       </div>
-      <div className="px-2 w-full flex justify-center items-center"><Outlet/></div>
+      <div className="px-2 w-full flex justify-center items-center min-h-screen"><Outlet/></div>
       <div>
         <Footer />
       </div>
