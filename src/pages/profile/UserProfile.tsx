@@ -5,6 +5,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 import MyProfileCard from "@/components/global/cards/MyProfileCard"
 import './ProfileStyle.css';
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 
 
 export default function UserProfile() {
@@ -12,8 +13,8 @@ export default function UserProfile() {
   const authUser = useSelector((state: RootState) => state.auth.user);
 
   let { username } = useParams() as { username: string };
-  if (username == "me"){
-    if (authUser){
+  if (username == "me") {
+    if (authUser) {
       username = authUser.username;
     }
   }
@@ -24,16 +25,21 @@ export default function UserProfile() {
 
   return (
     <div>
-      
 
-            <div className="bg-green-700 h-60 w-svw  p-6 flex items-end half-image">
-              {userState.avatar?<img src={userState.avatar} alt="Profile" className="block mx-auto profile-img"/>:<div className="rounded-full bg-gray-300 w-[180px] h-[180px] profile-img"></div>                                                }
-                <p className="font-semibold text-white content">{userState.firstName} {userState.lastName}</p>    
-            </div>
 
-            <div className="my-24 md:flex md:items-end md:justify-center">
-              <MyProfileCard/>
-            </div>
+      <div className="bg-green-700 h-60 w-svw  p-6 flex justify-start items-end half-image">
+
+      <Avatar className="profile-img">
+        <AvatarImage src={userState.avatar} alt="@shadcn"/>
+        <AvatarFallback className="text-6xl">{userState.username.charAt(0).toUpperCase()}{userState.username.charAt(1).toUpperCase()}</AvatarFallback>
+      </Avatar>
+
+        <p className="font-semibold text-white content">{userState.firstName} {userState.lastName}</p>
+      </div>
+
+      <div className="my-24 md:flex md:items-end md:justify-center">
+        <MyProfileCard />
+      </div>
     </div>
   );
 }
