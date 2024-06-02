@@ -106,7 +106,7 @@ export default function UpdateTeam() {
         members.find((member) => member.role === "coach")?.uid === authUserUid;
       if (!isCoach) {
         //redirect to team page
-        navigate("/team/" + team.teamName);
+        navigate("/team/page/" + team.teamName);
       }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -115,7 +115,9 @@ export default function UpdateTeam() {
   useEffect(() => {
     if (error === "  1  " && status !== "loading" && team.teamName) {
       // react router redirect
-      navigate(`/team/${team.teamName}`);
+      // console.log('updated')
+
+      navigate(`/team/page/${team.teamName}`);
     }
   }, [error, navigate, team.teamName, status]);
   const form = useForm<CreateTeamFormValues>({
