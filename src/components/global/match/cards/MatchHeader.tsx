@@ -3,6 +3,38 @@ import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { MatchStatus } from "@/types/types";
+import { useDispatch } from "react-redux";
+import { AppDispatch } from "@/state/store";
+import {
+  cancelMatch,
+  editResult,
+  endMatch,
+  setInProgress,
+} from "@/state/match/matchSlice";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 
 interface MatchHeaderProps {
   isRefree: boolean;
@@ -34,14 +66,22 @@ const MatchHeader: React.FC<MatchHeaderProps> = (props) => {
       value: "In progress",
     } as statusSelectType,
   };
-  const handelEdit = () => {
-    console.log("Edit");
+  const dispatch = useDispatch<AppDispatch>();
+  const handelEdit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const formData = Object.fromEntries(new FormData(e.currentTarget));
+    const n1 = parseInt(formData.score1 as string);
+    const n2 = parseInt(formData.score2 as string);
+    dispatch(editResult({ team1: n1, team2: n2 }));
   };
   const handelEnd = () => {
-    console.log("End");
+    dispatch(endMatch());
   };
   const handelCancel = () => {
-    console.log("Cancel");
+    dispatch(cancelMatch());
+  };
+  const handelInProgress = () => {
+    dispatch(setInProgress());
   };
   return (
     <Card
@@ -70,20 +110,124 @@ const MatchHeader: React.FC<MatchHeaderProps> = (props) => {
           (props.status === "pending" || props.status === "in_progress") && (
             <div className="flex gap-2 p-4">
               {props.status === "pending" ? (
-                <Button variant={"default"} onClick={handelEdit}>
-                  set In Progress
-                </Button>
+                <AlertDialog>
+                  <AlertDialogTrigger asChild>
+                    <Button variant={"default"}>set In Progress</Button>
+                  </AlertDialogTrigger>
+                  <AlertDialogContent>
+                    <AlertDialogHeader>
+                      <AlertDialogTitle>
+                        Are you absolutely sure?
+                      </AlertDialogTitle>
+                      <AlertDialogDescription>
+                        That's Mean the match has started.
+                      </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                      <AlertDialogCancel>Cancel</AlertDialogCancel>
+                      <AlertDialogAction onClick={handelInProgress}>
+                        Continue
+                      </AlertDialogAction>
+                    </AlertDialogFooter>
+                  </AlertDialogContent>
+                </AlertDialog>
               ) : (
                 <>
-                  <Button variant={"outline"} onClick={handelEdit}>
-                    Edit Result
-                  </Button>
-                  <Button onClick={handelEnd}>Match has ended</Button>
+                  <Dialog>
+                    <DialogTrigger asChild>
+                      <Button variant="outline">Edit Result</Button>
+                    </DialogTrigger>
+                    <DialogContent className="sm:max-w-[425px]">
+                      <DialogHeader>
+                        <DialogTitle>Edit Result</DialogTitle>
+                        <DialogDescription>
+                          Edit Result Of match
+                        </DialogDescription>
+                      </DialogHeader>
+                      <form onSubmit={handelEdit}>
+                        <div className="grid gap-4 py-4">
+                          <div className="grid grid-cols-4 items-center gap-4">
+                            <Label htmlFor="score1" className="text-right">
+                              Team 1 :
+                            </Label>
+                            <Input
+                              id="score1"
+                              defaultValue={props.score1 ? props.score1 : 0}
+                              type="number"
+                              name="score1"
+                              required
+                              className="col-span-3"
+                              // positive and under 100
+                              min={0}
+                              max={100}
+                            />
+                          </div>
+                          <div className="grid grid-cols-4 items-center gap-4">
+                            <Label htmlFor="score2" className="text-right">
+                              Team 2 :
+                            </Label>
+                            <Input
+                              id="score2"
+                              defaultValue={props.score2 ? props.score2 : 0}
+                              type="number"
+                              name="score2"
+                              required
+                              className="col-span-3"
+                              min={0}
+                              max={100}
+                            />
+                          </div>
+                        </div>
+                        <DialogFooter>
+                          <Button type="submit">Save</Button>
+                        </DialogFooter>
+                      </form>
+                    </DialogContent>
+                  </Dialog>
+                  <AlertDialog>
+                    <AlertDialogTrigger asChild>
+                      <Button>Match has ended</Button>
+                    </AlertDialogTrigger>
+                    <AlertDialogContent>
+                      <AlertDialogHeader>
+                        <AlertDialogTitle>
+                          Are you absolutely sure?
+                        </AlertDialogTitle>
+                        <AlertDialogDescription>
+                          That's Mean the match has Ended.
+                        </AlertDialogDescription>
+                      </AlertDialogHeader>
+                      <AlertDialogFooter>
+                        <AlertDialogCancel>Cancel</AlertDialogCancel>
+                        <AlertDialogAction onClick={handelEnd}>
+                          Continue
+                        </AlertDialogAction>
+                      </AlertDialogFooter>
+                    </AlertDialogContent>
+                  </AlertDialog>
                 </>
               )}
-              <Button variant={"destructive"} onClick={handelCancel}>
-                Match has canceled
-              </Button>
+              <AlertDialog>
+                <AlertDialogTrigger asChild>
+                  <Button variant={"destructive"}>Match has canceled</Button>
+                </AlertDialogTrigger>
+                <AlertDialogContent>
+                  <AlertDialogHeader>
+                    <AlertDialogTitle>
+                      Are you absolutely sure?
+                    </AlertDialogTitle>
+                    <AlertDialogDescription>
+                      That's Mean the match has Canceled.
+                    </AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <AlertDialogFooter>
+                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                    <AlertDialogAction onClick={handelCancel}>
+                      Continue
+                    </AlertDialogAction>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
             </div>
           )}
       </CardContent>
