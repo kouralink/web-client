@@ -204,6 +204,110 @@ const matchSlice = createSlice({
         state.isLoading = false;
         state.error = action.error.message;
       });
+    builder
+      .addCase(setInProgress.pending, (state) => {
+        state.isLoading = true;
+        state.error = null;
+      })
+      .addCase(setInProgress.fulfilled, (state, action) => {
+        state.isLoading = false;
+        if (typeof action.payload === "string") {
+          state.error = action.payload;
+          toast({
+            title: "Error",
+            description: action.payload,
+            variant: "destructive",
+          });
+          return;
+        }
+        toast({
+          title: "Success",
+          description: "Match status updated successfully",
+          variant: "default",
+        });
+      })
+      .addCase(setInProgress.rejected, (state, action) => {
+        state.isLoading = false;
+        state.error = action.error.message;
+      });
+    builder
+      .addCase(endMatch.pending, (state) => {
+        state.isLoading = true;
+        state.error = null;
+      })
+      .addCase(endMatch.fulfilled, (state, action) => {
+        state.isLoading = false;
+        if (typeof action.payload === "string") {
+          state.error = action.payload;
+          toast({
+            title: "Error",
+            description: action.payload,
+            variant: "destructive",
+          });
+          return;
+        }
+        toast({
+          title: "Success",
+          description: "Match status updated successfully",
+          variant: "default",
+        });
+      })
+      .addCase(endMatch.rejected, (state, action) => {
+        state.isLoading = false;
+        state.error = action.error.message;
+      });
+    builder
+      .addCase(cancelMatch.pending, (state) => {
+        state.isLoading = true;
+        state.error = null;
+      })
+      .addCase(cancelMatch.fulfilled, (state, action) => {
+        state.isLoading = false;
+        if (typeof action.payload === "string") {
+          state.error = action.payload;
+          toast({
+            title: "Error",
+            description: action.payload,
+            variant: "destructive",
+          });
+          return;
+        }
+        toast({
+          title: "Success",
+          description: "Match status updated successfully",
+          variant: "default",
+        });
+      })
+      .addCase(cancelMatch.rejected, (state, action) => {
+        state.isLoading = false;
+        state.error = action.error.message;
+      });
+    builder
+      .addCase(editResult.pending, (state) => {
+        state.isLoading = true;
+        state.error = null;
+      })
+      .addCase(editResult.fulfilled, (state, action) => {
+        state.isLoading = false;
+        if (typeof action.payload === "string") {
+          state.error = action.payload;
+          toast({
+            title: "Error",
+            description: action.payload,
+            variant: "destructive",
+          });
+          return;
+        }
+        toast({
+          title: "Success",
+          description: "Match status updated successfully",
+          variant: "default",
+        });
+      })
+      .addCase(editResult.rejected, (state, action) => {
+        state.isLoading = false;
+        state.error = action.error.message;
+      });
   },
 });
 
@@ -363,6 +467,153 @@ export const updateMatchDetails = createAsyncThunk(
         console.log("firebase function reuslt is:", result);
         store.dispatch(getMatchById(matchid));
       }
+      return true;
+    } catch (error) {
+      console.error(error);
+      console.log(error);
+      return "Updating match details failed!";
+    }
+  }
+);
+
+// se in progress action for refree
+export const setInProgress = createAsyncThunk(
+  "match/setInProgress",
+  async () => {
+    try {
+      // check is user auth
+      const authUSR = auth.currentUser;
+      if (!authUSR) {
+        return "User not authenticated!";
+      }
+      const matchid = store.getState().match.match.id;
+      if (!matchid) {
+        return "could not get matchid";
+      }
+      const requestUpdateInfo: refreeEdit = {
+        type: "set_in_progress",
+      };
+      const newMatchData: UpdateMatchData = {
+        matchid,
+        requestUpdateInfo,
+      };
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const changeCoachCloudFunction: (data: UpdateMatchData) => any =
+        httpsCallable(functions, "updateMatch");
+      const result = await changeCoachCloudFunction(newMatchData);
+      console.log("firebase function reuslt is:", result);
+      store.dispatch(getMatchById(matchid));
+      return true;
+    } catch (error) {
+      console.error(error);
+      console.log(error);
+      return "Updating match details failed!";
+    }
+  }
+);
+
+// end match action for refree
+
+export const endMatch = createAsyncThunk("match/endMatch", async () => {
+  try {
+    // check is user auth
+    const authUSR = auth.currentUser;
+    if (!authUSR) {
+      return "User not authenticated!";
+    }
+    const match = store.getState().match.match;
+    if (!match.id) {
+      return "could not get matchid";
+    }
+    const requestUpdateInfo: refreeEdit = {
+      type: "end_match",
+    };
+    // check if match team1 score or team2 score is null
+    if (match.team1.score === null || match.team2.score === null) {
+      return "Match score is not set!";
+    }
+    const newMatchData: UpdateMatchData = {
+      matchid: match.id,
+      requestUpdateInfo,
+    };
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const changeCoachCloudFunction: (data: UpdateMatchData) => any =
+      httpsCallable(functions, "updateMatch");
+    const result = await changeCoachCloudFunction(newMatchData);
+    console.log("firebase function reuslt is:", result);
+    store.dispatch(getMatchById(match.id));
+    return true;
+  } catch (error) {
+    console.error(error);
+    console.log(error);
+    return "Updating match details failed!";
+  }
+});
+
+// cancel match action for refree
+export const cancelMatch = createAsyncThunk("match/cancelMatch", async () => {
+  try {
+    // check is user auth
+    const authUSR = auth.currentUser;
+    if (!authUSR) {
+      return "User not authenticated!";
+    }
+    const matchid = store.getState().match.match.id;
+    if (!matchid) {
+      return "could not get matchid";
+    }
+    const requestUpdateInfo: refreeEdit = {
+      type: "cancel_match",
+    };
+    const newMatchData: UpdateMatchData = {
+      matchid,
+      requestUpdateInfo,
+    };
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const changeCoachCloudFunction: (data: UpdateMatchData) => any =
+      httpsCallable(functions, "updateMatch");
+    const result = await changeCoachCloudFunction(newMatchData);
+    console.log("firebase function reuslt is:", result);
+    store.dispatch(getMatchById(matchid));
+    return true;
+  } catch (error) {
+    console.error(error);
+    console.log(error);
+    return "Updating match details failed!";
+  }
+});
+
+// edit result action for refree
+export const editResult = createAsyncThunk(
+  "match/editResult",
+  async ({ team1, team2 }: { team1: number; team2: number }) => {
+    try {
+      // check is user auth
+      const authUSR = auth.currentUser;
+      if (!authUSR) {
+        return "User not authenticated!";
+      }
+      const matchid = store.getState().match.match.id;
+      if (!matchid) {
+        return "could not get matchid";
+      }
+      const requestUpdateInfo: refreeEdit = {
+        type: "edit_result",
+        result: {
+          team1,
+          team2,
+        },
+      };
+      const newMatchData: UpdateMatchData = {
+        matchid,
+        requestUpdateInfo,
+      };
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const changeCoachCloudFunction: (data: UpdateMatchData) => any =
+        httpsCallable(functions, "updateMatch");
+      const result = await changeCoachCloudFunction(newMatchData);
+      console.log("firebase function reuslt is:", result);
+      store.dispatch(getMatchById(matchid));
       return true;
     } catch (error) {
       console.error(error);
