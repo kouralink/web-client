@@ -99,36 +99,41 @@ const MatchPage: React.FC = () => {
 
   return (
     <div className="w-full h-fit container">
-      <div className="flex w-full justify-between">
-        <MatchTeamContainer
-          {...match.team1Info}
-          role={userRoleInTeam1}
-          teamMembers={match.team1Members}
-          coach={coachOfTeam1}
-        />
-
-        <MatchInfoContainer
-          role={
-            userRoleInTeam1 === "coach" || userRoleInTeam2 === "coach"
-              ? "coach"
-              : "user"
-          }
-          {...match.match}
-          isItRefree={auth.currentUser?.uid === match.match.refree.id && match.match.refree.isAgreed}
-          refree_user_info={match.refree}
-        />
-
-        <MatchTeamContainer
-          {...match.team2Info}
-          role={userRoleInTeam2}
-          teamMembers={match.team2Members}
-          coach={coachOfTeam2}
-        />
+      <div className="flex w-full  items-center gap-6 flex-col md:flex-wrap md:flex-row xl:items-start xl:justify-between">
+        <div className="order-2 xl:order-1 w-full md:w-auto md:flex-grow xl:flex-grow-0 xl:w-fit">
+          <MatchTeamContainer
+            {...match.team1Info}
+            role={userRoleInTeam1}
+            teamMembers={match.team1Members}
+            coach={coachOfTeam1}
+          />
+        </div>
+        <div className="order-1 xl:order-2 w-full xl:w-fit  ">
+          <MatchInfoContainer
+            role={
+              userRoleInTeam1 === "coach" || userRoleInTeam2 === "coach"
+                ? "coach"
+                : "user"
+            }
+            {...match.match}
+            isItRefree={
+              auth.currentUser?.uid === match.match.refree.id &&
+              match.match.refree.isAgreed
+            }
+            refree_user_info={match.refree}
+          />
+        </div>
+        <div className="order-3 xl:order-3 w-full md:w-auto md:flex-grow xl:flex-grow-0 xl:w-fit">
+          <MatchTeamContainer
+            {...match.team2Info}
+            role={userRoleInTeam2}
+            teamMembers={match.team2Members}
+            coach={coachOfTeam2}
+          />
+        </div>
       </div>
     </div>
   );
 };
-
-
 
 export default MatchPage;

@@ -86,7 +86,7 @@ const MatchHeader: React.FC<MatchHeaderProps> = (props) => {
   return (
     <Card
       className={[
-        "flex flex-col  w-[600px] rounded-lg  justify-between items-center py-2 px-8 text-card-foreground ",
+        "flex flex-col w-full xl:w-[550px]  rounded-lg  justify-between items-center py-2 px-8 text-card-foreground ",
         // , (props.team1.score !== null && props.team2.score !== null) && props.team1.score >= props.team2.score ? props.team1.score == props.team2.score ? "bg-yellow-100 dark:bg-yellow-800":"bg-green-100 dark:bg-green-800" : "bg-red-100 dark:bg-red-800"
       ].join(" ")}
     >
@@ -148,7 +148,7 @@ const MatchHeader: React.FC<MatchHeaderProps> = (props) => {
                         <div className="grid gap-4 py-4">
                           <div className="grid grid-cols-4 items-center gap-4">
                             <Label htmlFor="score1" className="text-right">
-                              Team 1 :
+                              Left :
                             </Label>
                             <Input
                               id="score1"
@@ -164,7 +164,7 @@ const MatchHeader: React.FC<MatchHeaderProps> = (props) => {
                           </div>
                           <div className="grid grid-cols-4 items-center gap-4">
                             <Label htmlFor="score2" className="text-right">
-                              Team 2 :
+                              Right :
                             </Label>
                             <Input
                               id="score2"

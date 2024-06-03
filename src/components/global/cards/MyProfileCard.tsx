@@ -24,7 +24,7 @@ const MyProfileCard = () => {
         <Card className="w-full bg-transparent border-none lg:py-10">
             <CardHeader>
                 <div className="flex items-center justify-between py-5">
-                    <p className="text-3xl lg:text-8xl font-bold">{userState.firstName} {userState.lastName}</p>
+                    <p className="text-3xl lg:text-8xl font-bold capitalize">{userState.firstName} {userState.lastName}</p>
                     {match && (
                         <Link to="/settings">
                             <Bolt className="h-7 w-7 lg:h-9 lg:w-9" />

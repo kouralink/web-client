@@ -10,7 +10,7 @@ interface PropsState {
 
 export default function MatchTeamMembers(props: PropsState) {
   return (
-    <Card className=" flex flex-col py-4 px-2 gap-4 h-full">
+    <Card className=" flex flex-col py-4 px-2 gap-4 w-full h-full">
       <div className="flex flex-col gap-2">
         <h2>Coach</h2>
         <div className=" ml-4">

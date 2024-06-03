@@ -18,7 +18,7 @@ export default function MatchDetails(
 ) {
   console.log("start isn time");
   return (
-    <Card className="w-full flex flex-col h-full gap-2">
+    <Card className="w-full xl:w-[550px] flex flex-col h-full gap-2">
       <CardHeader>
         <CardTitle>Match Details</CardTitle>
         <CardDescription className="text-muted-foreground">
