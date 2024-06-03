@@ -28,18 +28,33 @@ const searchUserSlice = createSlice({
     builder.addCase(searchByUserName.pending, (state) => {
       state.isLoading = true;
       state.error = null;
-    });
-    builder.addCase(searchByUserName.fulfilled, (state, action) => {
+    }).addCase(searchByUserName.fulfilled, (state, action) => {
       state.isLoading = false;
       state.error = null;
       if (typeof action.payload === "object" && action.payload !== null) {
         state.searchResults = action.payload.users;
       }
-    });
-    builder.addCase(searchByUserName.rejected, (state, action) => {
+    }).addCase(searchByUserName.rejected, (state, action) => {
       state.isLoading = false;
       state.error = action.error.message;
     });
+
+    builder.addCase(searchByUserNameAndTypeAccount.pending, (state) => {
+      state.isLoading = true;
+      state.error = null;
+    }
+    ).addCase(searchByUserNameAndTypeAccount.fulfilled, (state, action) => {
+      state.isLoading = false;
+      state.error = null;
+      if (typeof action.payload === "object" && action.payload !== null) {
+        state.searchResults = action.payload.users;
+      }
+    }).addCase(searchByUserNameAndTypeAccount.rejected, (state, action) => {
+      state.isLoading = false;
+      state.error = action.error.message;
+    });
+    
+
   },
 });
 
@@ -81,9 +96,10 @@ export const searchByUserNameAndTypeAccount = createAsyncThunk(
         usersCol,
         where("username", ">=", searchData.username),
         where("username", "<=", searchData.username + "\uf8ff"),
-        where("accountType", "==", searchData.typeAccount),
+        where("accountType", "==", "refree"),
         limit(10)
       );
+      console.log("searching")
       const querySnapshot = await getDocs(q);
       const users: SearchedUser[] = [];
       querySnapshot.forEach((doc) => {
@@ -94,8 +110,10 @@ export const searchByUserNameAndTypeAccount = createAsyncThunk(
           uid: doc.id,
         });
       });
+      console.log('users',users)
       return { users: users };
     } catch (error) {
+      console.log(error)
       throw new Error("Error fetching users");
     }
   }

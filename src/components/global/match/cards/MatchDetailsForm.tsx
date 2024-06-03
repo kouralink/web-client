@@ -2,13 +2,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
-import {
-  Command,
-  CommandEmpty,
-  CommandGroup,
-  CommandInput,
-  CommandItem,
-} from "@/components/ui/command";
+
 
 import {
   Form,
@@ -33,17 +27,14 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { toast } from "@/components/ui/use-toast";
 import { DateTimePicker } from "@/components/ui/datetime-picker";
-import { useEffect, useState } from "react";
+import SearchInRefrees from "../SearchInRefrees";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "@/state/store";
-import { searchByUserNameAndTypeAccount } from "@/state/search/searchUsersSlice";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
-import { Check, ChevronsUpDown } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { useEffect, useState } from "react";
+import { getUser } from "@/state/user/userSlice";
+import MatchMemberCard from "./MatchMemberCard";
+import { Timestamp } from "firebase/firestore";
+
 
 // Corrected regular expression to match Google Maps location links
 const googleMapsLinkRegex =
@@ -69,6 +60,8 @@ interface MatchDetailsFormProps {
 }
 
 export function MatchDetailsForm(props: MatchDetailsFormProps) {
+  const RefreeInfo = useSelector((state: RootState) => state.user);
+  const [rid, setRid] = useState<null | string>(props.refree_id);
   const dispatch = useDispatch<AppDispatch>();
   const defaultValues: Partial<MatchDetailsFormValues> = {
     // get default value from authUser state
@@ -76,26 +69,18 @@ export function MatchDetailsForm(props: MatchDetailsFormProps) {
     location: props.location || undefined,
     refree_id: props.refree_id || undefined,
   };
-  const searchResult = useSelector(
-    (state: RootState) => state.usersearch.searchResults
-  );
-  const [searchValue, setSearchValue] = useState("");
-  // const [refrees,setRefrees] = useState<User[]>([]);
-
-  useEffect(() => {
-    dispatch(
-      searchByUserNameAndTypeAccount({
-        username: searchValue,
-        typeAccount: "refree",
-      })
-    );
-  }, []);
 
   const form = useForm<MatchDetailsFormValues>({
     resolver: zodResolver(matchDetailsFormSchema),
     defaultValues,
     mode: "onChange",
   });
+  useEffect(() => {
+    console.log(rid);
+    if (rid) {
+      dispatch(getUser(rid));
+    }
+  }, [dispatch, rid]);
 
   const onSubmit = async (data: MatchDetailsFormValues) => {
     toast({
@@ -108,8 +93,14 @@ export function MatchDetailsForm(props: MatchDetailsFormProps) {
     });
   };
 
+  const selelct = (v: string) => {
+    console.log(v);
+    form.setValue("refree_id", v);
+    setRid(v);
+  };
+
   return (
-    <Card className="w-full flex flex-col h-full gap-2">
+    <Card className="w-[600px] flex flex-col h-full gap-2">
       <CardHeader>
         <CardTitle>Match Details</CardTitle>
         <CardDescription className="text-muted-foreground">
@@ -156,68 +147,34 @@ export function MatchDetailsForm(props: MatchDetailsFormProps) {
             <FormField
               control={form.control}
               name="refree_id"
-              render={({ field }) => (
+              render={() => (
                 <FormItem className="flex flex-col">
                   <FormLabel>Refrees</FormLabel>
-                  <Popover>
-                    <PopoverTrigger asChild>
-                      <FormControl>
-                        <Button
-                          variant="outline"
-                          role="combobox"
-                          className={cn(
-                            "w-[200px] justify-between",
-                            !field.value && "text-muted-foreground"
-                          )}
-                        >
-                          {field.value
-                            ? searchResult.find(
-                                (user) => user.uid === field.value
-                              )?.uid
-                            : "Select a Refree"}
-                          <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-                        </Button>
-                      </FormControl>
-                    </PopoverTrigger>
-                    <PopoverContent className="w-[200px] p-0">
-                      <Command>
-                        <CommandInput
-                          placeholder="Search Refree..."
-                          onValueChange={(v) => setSearchValue(v)}
-                          value={searchValue}
-                        />
-                        <CommandEmpty>No Refree found.</CommandEmpty>
-                        <CommandGroup>
-                          {searchResult.map((user) => (
-                            <CommandItem
-                              value={user.uid}
-                              key={user.uid}
-                              onSelect={() => {
-                                form.setValue("refree_id", user.uid);
-                              }}
-                            >
-                              <Check
-                                className={cn(
-                                  "mr-2 h-4 w-4",
-                                  user.uid === field.value
-                                    ? "opacity-100"
-                                    : "opacity-0"
-                                )}
-                              />
-                              {user.user_info.username}
-                            </CommandItem>
-                          ))}
-                        </CommandGroup>
-                      </Command>
-                    </PopoverContent>
-                  </Popover>
+                  <SearchInRefrees select={selelct} />
                   <FormDescription>
-                    This is the that will set result of the much later
+                    Refree is the person who can change & set result of the
+                    match, the most unique piece in the plateform.
                   </FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
             />
+            {form.getValues("refree_id") && RefreeInfo.uid && (
+              <div>
+                {" "}
+                Refree:
+                <MatchMemberCard
+                  member={{
+                    joinedAt: RefreeInfo.user.joinDate || Timestamp.now(),
+                    role: "member",
+                    team_id: "",
+                    userInfo: RefreeInfo.user,
+                    uid: RefreeInfo.uid,
+                  }}
+                />
+              </div>
+            )}
+
             <Button type="submit">Submit</Button>
           </form>
         </Form>
