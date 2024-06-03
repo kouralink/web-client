@@ -9,7 +9,8 @@ import { useSelector } from "react-redux";
 import { RootState } from "@/state/store";
 // import { Input } from "@/components/ui/input";
 import BlackListSearchMemberCard from "./cards/BlackListSearchMemberCard";
-
+import { Ban } from "lucide-react";
+import { DropdownMenuShortcut } from "@/components/ui/dropdown-menu";
 export function SearchBlackListTeam() {
   const blackListInfos = useSelector(
     (state: RootState) => state.team.blackListInfos
@@ -18,7 +19,11 @@ export function SearchBlackListTeam() {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <div>Blacklist</div>
+        <div className="flex justify-between w-full">
+          <Ban className="mr-2 h-4 w-4" />
+          <div>Blacklist</div>
+          <DropdownMenuShortcut>Baned users</DropdownMenuShortcut>
+        </div>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[400px] md:max-w-[600px] overflow-y-scroll">
         <DialogTitle>Search In Black List</DialogTitle>
