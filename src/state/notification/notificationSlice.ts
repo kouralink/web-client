@@ -566,8 +566,8 @@ export const updateNotificationAction = createAsyncThunk(
       if (
         [
           "request_to_join_tournement",
-          "invite_to_tournement",
-          "refree_invite"
+          "invite_to_tournement"
+          
         ].includes(notificationInfo.type)
       ) {
         console.log("this actions not supported yet");
@@ -576,11 +576,11 @@ export const updateNotificationAction = createAsyncThunk(
 
       // check if to_id == uid for type info and invite to team
       if (["info", "invite_to_team"].includes(notificationInfo.type)) {
-        if (uid !== notificationInfo.to_id) {
-          return "This Notification is not for you";
-        } else {
+        
           // check in notificationInfo.type === invite_to_team and action === accept if it the user account type shoulld be player and not already in a team
           if (notificationInfo.type === "invite_to_team") {
+            
+
             const accountType = store.getState().auth.user?.accountType;
             if (accountType !== "player" && ntf.action === "accept") {
               return "Account type is not player";
@@ -625,7 +625,7 @@ export const updateNotificationAction = createAsyncThunk(
           } else {
             return updated;
           }
-        }
+        
       }
       // for request to join team
       // check if the authUser is the coach of the team where the teamId === to_id
@@ -657,6 +657,23 @@ export const updateNotificationAction = createAsyncThunk(
         if (teamId !== notificationInfo.to_id) {
           return "You are not the coach of this team";
         }
+        const updated = await updateNotificationActionToTakedAction(
+          ntf.id,
+          ntf.action
+        );
+        if (updated === true) {
+          return true;
+        } else {
+          return updated;
+        }
+      }
+      if (notificationInfo.type == "refree_invite"){
+        // check if user auth account type
+        const accountType = store.getState().auth.user?.accountType;
+        if (accountType !== "refree") {
+          return "Account type is not refree";
+        }
+
         const updated = await updateNotificationActionToTakedAction(
           ntf.id,
           ntf.action

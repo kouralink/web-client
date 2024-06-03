@@ -99,6 +99,11 @@ const matchSlice = createSlice({
           });
           return;
         }
+        // const startIn =  action.payload.startIn?.toMillis()
+        // // convirst startin to TImestamp
+        // if (startIn) {
+        //   action.payload.startIn = Timestamp.fromMillis(startIn)
+        // }
         state.match = action.payload;
       })
       .addCase(getMatchById.rejected, (state, action) => {
