@@ -12,7 +12,7 @@ import { RootState } from "@/state/store";
 import React from "react";
 import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { getMemberTeamName } from "@/state/team/teamSlice";
 
 
@@ -23,7 +23,6 @@ const ProfileCard: React.FC<ProfileCardProps> = () => {
   const accountType = authUser?.accountType;
   const auth = useSelector((state: RootState) => state.auth);
   const uid = auth?.uid;
-  const [teamName, setTeamName] = useState<string | null>(null);
 
   useEffect(() => {
     if (uid && (accountType === "coach" || accountType === "player")) {
@@ -32,7 +31,6 @@ const ProfileCard: React.FC<ProfileCardProps> = () => {
           console.log("Error getting coach team name");
           return;
         }
-        setTeamName(teamName);
       });
     }
   }, [accountType, uid]);
