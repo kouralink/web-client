@@ -36,7 +36,7 @@ const UserSearchPage: React.FC = () => {
             <h1 className="font-bold text-7xl">
               <span className="text-green-700">U</span>sers
             </h1>
-            <p className="text-gray-600 lg:text-2xl lg-w-1/2">
+            <p className="text-gray-600 dark:text-gray-300 lg:text-2xl lg-w-1/2">
               search and players and enjoy a fulfilling experience together
             </p>
             <Input
