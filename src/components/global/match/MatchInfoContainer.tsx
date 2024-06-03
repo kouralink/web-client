@@ -12,7 +12,7 @@ type MatchInfoContainerProps = {
 const MatchInfoContainer: React.FC<MatchInfoContainerProps> = (props) => {
   console.log(props.role)
   return (
-    <div className="flex flex-col gap-2 w-fit">
+    <div className="flex flex-col gap-2 w-full xl:w-fit">
       <MatchHeader
         isRefree={props.isItRefree}
         score1={props.team1.score}
