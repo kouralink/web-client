@@ -2,6 +2,7 @@ import SectionTitle from "@/components/global/SectionTitle"
 import { Phone, Mail, MapPin } from "lucide-react";
 import { Facebook, Github, X } from "lucide-react";
 import ContactFormCard from "@/components/global/cards/ContactFormCard"
+import { Link } from "react-router-dom";
 
 const Contact = () => {
   return (
@@ -28,9 +29,9 @@ const Contact = () => {
           </div>
 
           <div className="flex justify-between p-5  w-full">
-            <Facebook className="hover:bg-white hover:text-green-700 rounded-lg text-white" />
-            <Github className="hover:bg-white hover:text-green-700 rounded-lg text-white" />
-            <X className="hover:bg-white hover:text-green-700 rounded-lg text-white" />
+            <Link to={"https://www.facebook.com/profile.php?id=100008421278534"}><Facebook className="hover:bg-white hover:text-green-700 rounded-lg text-white" /></Link>
+            <Link to={"https://github.com/kouralink"}><Github className="hover:bg-white hover:text-green-700 rounded-lg text-white" /></Link>
+            <Link to={"https://x.com/Kouralink"}><X className="hover:bg-white hover:text-green-700 rounded-lg text-white" /></Link>
           </div>
         </div>
         <ContactFormCard />
