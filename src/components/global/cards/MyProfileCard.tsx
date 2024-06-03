@@ -11,21 +11,25 @@ import { BookUser, Cake, Home, Phone, Smile } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Bolt } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useMatch } from 'react-router-dom';
 
 const MyProfileCard = () => {
     const userState = useSelector((state: RootState) => state.user.user);
     const authUser = useSelector((state: RootState) => state.auth.user);
 
     const timestamp = new Timestamp(authUser?.birthday?.seconds || 0, authUser?.birthday?.nanoseconds || 0);
+    const match = useMatch('/users/profile/me');
 
     return (
         <Card className="w-full bg-transparent border-none lg:py-10">
             <CardHeader>
                 <div className="flex items-center justify-between py-5">
                     <p className="text-3xl lg:text-8xl font-bold">{userState.firstName} {userState.lastName}</p>
-                    <Link to="/settings">
-                        <Bolt className="h-7 w-7 lg:h-9 lg:w-9" />
-                    </Link>
+                    {match && (
+                        <Link to="/settings">
+                            <Bolt className="h-7 w-7 lg:h-9 lg:w-9" />
+                        </Link>
+                    )}
                 </div>
                 <div className="lg:px-2 text-gray-600 dark:text-gray-300">
                     {userState.bio ? userState.bio : "add bio in settings"}
