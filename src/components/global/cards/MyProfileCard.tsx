@@ -60,7 +60,7 @@ const MyProfileCard = () => {
                 </ul>
             </CardContent>
             <div className="w-full flex justify-end">
-                <Button>Send Request</Button>
+                <Button className="hidden">Send Request</Button>
             </div>
         </Card>
     );
