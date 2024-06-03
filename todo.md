@@ -207,3 +207,6 @@
 - [ ] relive a team (only for deleted team and can be done by only the createdBy user)
 
  
+## securty tasks
+- [ ] update change coach function on firebase to use the auth user as the coachid not as paramater
+- [ ] check if there is any auth problme in firebase funcitons

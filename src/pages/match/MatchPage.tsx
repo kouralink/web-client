@@ -114,7 +114,7 @@ const MatchPage: React.FC = () => {
               : "user"
           }
           {...match.match}
-          isItRefree={auth.currentUser?.uid === match.match.refree.id}
+          isItRefree={auth.currentUser?.uid === match.match.refree.id && match.match.refree.isAgreed}
           refree_user_info={match.refree}
         />
 
@@ -128,5 +128,7 @@ const MatchPage: React.FC = () => {
     </div>
   );
 };
+
+
 
 export default MatchPage;

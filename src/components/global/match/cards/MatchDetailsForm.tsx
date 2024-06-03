@@ -34,6 +34,7 @@ import { useEffect, useState } from "react";
 import { getUser } from "@/state/user/userSlice";
 import MatchMemberCard from "./MatchMemberCard";
 import { Timestamp } from "firebase/firestore";
+import { updateMatchDetails } from "@/state/match/matchSlice";
 
 
 // Corrected regular expression to match Google Maps location links
@@ -51,7 +52,7 @@ const matchDetailsFormSchema = z.object({
   refree_id: z.string(),
 });
 
-type MatchDetailsFormValues = z.infer<typeof matchDetailsFormSchema>;
+export type MatchDetailsFormValues = z.infer<typeof matchDetailsFormSchema>;
 
 interface MatchDetailsFormProps {
   refree_id: string | null;
@@ -91,6 +92,8 @@ export function MatchDetailsForm(props: MatchDetailsFormProps) {
         </pre>
       ),
     });
+    console.log(Timestamp.fromDate(data.startin));
+    await dispatch(updateMatchDetails({matchData:data,who: "coach"}))
   };
 
   const selelct = (v: string) => {
