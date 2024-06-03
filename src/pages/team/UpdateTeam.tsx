@@ -152,7 +152,9 @@ export default function UpdateTeam() {
 
     dispatch(updateTeamAction({ id: team.id, team: changed_data}));
   };
-
+  const handleCancel = () => {
+    navigate(`/team/page/${team.teamName}`);
+  }
   return (
     <Card className="w-[800px]">
       <CardHeader>
@@ -250,7 +252,7 @@ export default function UpdateTeam() {
             </div>
             {error && <FormMessage className="mb-4">{error}</FormMessage>}
             <CardFooter className="flex justify-between">
-              <Button variant="outline">Cancel</Button>
+              <Button variant="outline" type="button" onClick={handleCancel}>Cancel</Button>
               {status === "loading" ? (
                 <Button variant="outline" disabled>
                   please waite...
