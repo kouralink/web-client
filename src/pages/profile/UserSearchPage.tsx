@@ -33,13 +33,13 @@ const UserSearchPage: React.FC = () => {
       <ScrollArea className="h-full rounded-md border">
         <div className="lg:p-8">
           <div className="mx-auto flex w-full flex-col  space-y-6 ">
-            <h1 className="font-bold text-7xl lg:py-10 px-10">
+            <h1 className="font-bold text-7xl lg:py-10 px-16">
               <span className="text-green-700">U</span>sers
             </h1>
-            <p className="text-gray-600 dark:text-gray-300 lg:text-2xl lg-w-fit px-10">
+            <p className="text-gray-600 dark:text-gray-300 lg:text-2xl lg-w-fit px-16">
               search and players and enjoy a fulfilling experience together
             </p>
-            <div className="flex flex-col py-10 w-fit">
+            <div className="flex flex-col p-10 w-fit lg:w-full">
               <Input
                 type="text"
                 onChange={(e) => setSearchValue(e.target.value)}
