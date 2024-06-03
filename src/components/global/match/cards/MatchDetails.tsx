@@ -16,6 +16,7 @@ import { Separator } from "@/components/ui/separator";
 export default function MatchDetails(
   props: MatchFirestore & { refree_user_info: User | null }
 ) {
+  console.log("start isn time");
   return (
     <Card className="w-full flex flex-col h-full gap-2">
       <CardHeader>
@@ -25,7 +26,7 @@ export default function MatchDetails(
         </CardDescription>
       </CardHeader>
       <CardContent className="flex flex-col gap-4">
-        <div >
+        <div>
           {props.refree_user_info && props.refree.id && (
             <div className="flex w-full gap-2 items-center">
               <ListItem
@@ -44,20 +45,15 @@ export default function MatchDetails(
               />
             </div>
           )}
-        <Separator />
+          <Separator />
         </div>
         <div className="flex flex-col gap-4">
           {props.startIn && (
             <div>
               <ListItem
                 iocn_name="calendar-days"
-                title={`Start${
-                  props.startIn.toDate() > new Date()
-                    ? "ed At : " +
-                      props.startIn.toDate().toDateString().toString +
-                      "."
-                    : " In : " + props.startIn.toDate().toDateString() + "."
-                } In`}
+                title={`Start : ${
+                  props.startIn.toDate().toDateString()}.`}
                 arrow={false}
               />
             </div>
