@@ -5,7 +5,7 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
-import { Bell, Loader2 } from "lucide-react";
+import { Bell, BellDot, Loader2 } from "lucide-react";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "@/state/store";
@@ -47,7 +47,17 @@ const NotificationASideSheet = () => {
   return (
     <Sheet>
       <SheetTrigger asChild>
-        <Bell className="mt-2 rounded-lg hover:text-gray-900 focus:text-gray-900 hover:bg-gray-200 focus:bg-gray-200 focus:outline-none focus:shadow-outline" />
+        <div className="relative">
+
+        {
+          (RecievedNotifications.length > 0 || teamNotifications.notifications.length > 0) ? (
+            
+            <BellDot className="mt-2 rounded-lg hover:text-gray-900 focus:text-gray-900 hover:bg-gray-200 focus:bg-gray-200 focus:outline-none focus:shadow-outline" />
+          ):(
+            <Bell className="mt-2 rounded-lg hover:text-gray-900 focus:text-gray-900 hover:bg-gray-200 focus:bg-gray-200 focus:outline-none focus:shadow-outline" />
+          )
+        }
+        </div>
       </SheetTrigger>
       <SheetContent className=" max-h-screen ">
         <SheetHeader className="py-10">
@@ -83,14 +93,14 @@ const NotificationASideSheet = () => {
           <TabsContent value="user" className="h-full">
             {error && <div>{error}</div>}
             {RecievedNotifications.length > 0 && (
-              <ScrollArea className="felx flex-col h-full  w-full rounded-md  border overflow-y-scroll gap-4">
+              <ScrollArea className="felx flex-col h-[480px]  w-full rounded-md  border overflow-y-scroll gap-4">
                 {/* <div className="h-[300px]"> */}
 
                 {RecievedNotifications.map((notification) => (
-                  <>
+                  <div key={notification.id}>
                     <NotificationCard {...notification} key={notification.id} />
                     <Separator />
-                  </>
+                  </div>
                 ))}
                 {/* </div> */}
               </ScrollArea>
@@ -100,12 +110,13 @@ const NotificationASideSheet = () => {
             <TabsContent value="team">
               {teamNotifications.error && <div>{teamNotifications.error}</div>}
               {teamNotifications.notifications.length > 0 && (
-                <ScrollArea className="h-full w-full rounded-md border">
+                <ScrollArea className="felx flex-col h-[480px]  w-full ">
                   <div>
                     <div className="space-y-1">
                       {teamNotifications.notifications.map((notification) => (
                         <div key={notification.id}>
                           <NotificationCard {...notification} />
+                          <Separator />
                         </div>
                       ))}
                     </div>
