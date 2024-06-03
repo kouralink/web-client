@@ -1,7 +1,6 @@
 import {
   ArrowLeftRight,
   BadgePlus,
-  Ban,
   LogOut,
   PenLine,
   Send,
@@ -95,9 +94,9 @@ export function TeamDropDownMenu({
         <DropdownMenuSeparator />
         {role === "coach" && (
           <DropdownMenuGroup>
-            <DropdownMenuItem  onSelect={(e) => {
-                e.preventDefault();
-              }}>
+            <DropdownMenuItem onSelect={(e) => {
+              e.preventDefault();
+            }}>
               <BadgePlus className="mr-2 h-4 w-4" />
               <span><SearchTeamsForNewMatch /></span>
               <DropdownMenuShortcut></DropdownMenuShortcut>
@@ -118,17 +117,15 @@ export function TeamDropDownMenu({
                 <DropdownMenuShortcut></DropdownMenuShortcut>
               </DropdownMenuItem>
             </Link>
+
             <DropdownMenuItem
               onSelect={(e) => {
                 e.preventDefault();
               }}
             >
-              <Ban className="mr-2 h-4 w-4" />
-              <span>
-                <SearchBlackListTeam />
-              </span>
-              <DropdownMenuShortcut>Baned users</DropdownMenuShortcut>
+              <SearchBlackListTeam />
             </DropdownMenuItem>
+
             <DropdownMenuItem
               onSelect={(e) => {
                 e.preventDefault();
