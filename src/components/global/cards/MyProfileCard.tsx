@@ -81,7 +81,7 @@ const MyProfileCard = () => {
             </span>
           </li>
         </ul>
-        {authUser?.accountType === "coach" && (
+        {authUser?.accountType === "coach" && authU.uid !== userS.uid && (
           <div className="w-full flex justify-end">
             <Button onClick={handelInvite}>
               {" "}

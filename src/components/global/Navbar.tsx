@@ -22,7 +22,7 @@ const Navbar: React.FC<NavbarProps> = ({ navHeight = 4 }) => {
     <div
       className={`bg-card border-gray-200 rounded-lg dark:bg-card py-${navHeight}`}
     >
-      <div className="flex flex-col max-w-screen-xl px-4 mx-auto lg:items-center lg:justify-between lg:flex-row lg:px-6 lg:px-8">
+      <div className="flex flex-col max-w-screen-xl px-4 mx-auto lg:items-center lg:justify-between lg:flex-row  lg:px-8">
         <div className="px-4 flex flex-row items-center justify-between">
           <Link
             to="/"
@@ -116,7 +116,7 @@ const Navbar: React.FC<NavbarProps> = ({ navHeight = 4 }) => {
             Contact
           </NavLink>
 
-          <div className="flex gap-2 hidden lg:flex">
+          <div className="gap-2 hidden lg:flex">
               <ModeToggle />
               {
                 authUser && (
