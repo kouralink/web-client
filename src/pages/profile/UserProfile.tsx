@@ -4,9 +4,8 @@ import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 import MyProfileCard from "@/components/global/cards/MyProfileCard"
-import './ProfileStyle.css';
+import   "./ProfileStyle.css"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-
 
 export default function UserProfile() {
   const userState = useSelector((state: RootState) => state.user.user);
@@ -24,20 +23,17 @@ export default function UserProfile() {
   }, [dispatch, username]);
 
   return (
-    <div>
+    <div className="flex flex-col lg:flex-row w-full maxh-screen lg:h-screen items-center">
 
+      <div className="p-5 h-full w-full lg:w-1/3 flex justify-center items-center half-image">
 
-      <div className="bg-green-700 h-60 w-svw  p-6 flex justify-start items-end half-image">
+        <Avatar className="rounded-none w-full h-2/3 border-white border-8">
+          <AvatarImage src={userState.avatar} alt="@shadcn" />
+          <AvatarFallback className="text-6xl rounded-none p-32">{userState.username.charAt(0).toUpperCase()}{userState.username.charAt(1).toUpperCase()}</AvatarFallback>
+        </Avatar>
 
-      <Avatar className="profile-img">
-        <AvatarImage src={userState.avatar} alt="@shadcn"/>
-        <AvatarFallback className="text-6xl">{userState.username.charAt(0).toUpperCase()}{userState.username.charAt(1).toUpperCase()}</AvatarFallback>
-      </Avatar>
-
-        <p className="font-semibold text-white content">{userState.firstName} {userState.lastName}</p>
-      </div>
-
-      <div className="my-24 md:flex md:items-end md:justify-center">
+      </div>  
+      <div className="h-full w-full lg:w-2/3 p-5 flex flex-col justify-center">
         <MyProfileCard />
       </div>
     </div>
