@@ -487,6 +487,14 @@ export const inviteToTeam = createAsyncThunk(
   "notification/inviteToTeam",
   async (notificationInfo: { to: string }) => {
     try {
+      // get uid
+      const authUID = auth.currentUser?.uid;
+      if (!authUID) {
+        return "Error getting current user";
+      }
+      if (notificationInfo.to === authUID) {
+        return "You can't invite yourself";
+      }
       const teamId = await getCoachTeamId();
 
       if (typeof teamId === "object" && teamId.error) {

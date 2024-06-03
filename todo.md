@@ -90,9 +90,9 @@
 - [x] Match Details From Componenet
 - [ ] Match Header Component
     - [x] UI
-    - [ ] action ui
-    - [ ] action redux
-    - [ ] possible edit (score) and action End match for refree
+    - [x] action ui
+    - [x] action redux
+    - [x] possible edit (score) and action End match for refree
 
 
 - [ ] Show pending matchs in profile of refree
@@ -104,6 +104,7 @@
     - [ ] team not really deleted is just called that because the team will be have no coach and team name will change to del
 - [ ] check if there any null notification of type match challenge or request to join team or invite to team that already sended in last 24h
 - [ ] bag notification is not for u when i;m trying to "view" to info notification of team accept my challenge request
+- [ ] add you can't invite yourself to team in trigger check
 
 ## Match rules (redux and triggers) take care about it
 - [x] "IMPORANT" in triggers should work just for match type classic_match
