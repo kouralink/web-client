@@ -12,7 +12,7 @@ const UserSearchCard: React.FC<UserSearchCardProps> = ({ result }) => {
   return (
     <div>
       <Link to={`/users/profile/${result.username}`}>
-        <div className="flex justify-between items-center">
+        <div className="flex justify-between items-center px-5">
           <div className="flex items-center p-5">
 
             <Avatar className="w-24 h-24 rounded-full object-cover">
@@ -20,7 +20,7 @@ const UserSearchCard: React.FC<UserSearchCardProps> = ({ result }) => {
               <AvatarFallback>{result.username.charAt(0).toUpperCase()}{result.username.charAt(1).toUpperCase()}</AvatarFallback>
             </Avatar>
 
-            <h1 className="flex flex-col p-5 font-bold ">
+            <h1 className="flex flex-col font-bold ">
               {result?.firstName} {result?.lastName}
             </h1>
           </div>
