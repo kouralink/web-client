@@ -183,7 +183,7 @@ const notificationSlice = createSlice({
           state.notifications = state.notifications.filter(
             (notification) => notification.id !== action.meta.arg.id
           );
-          console.log("done");
+          // console.log("done");
           toast({
             title: "Action updated",
             description: "Action updated successfully",
@@ -252,7 +252,7 @@ const getCoachTeamId = async () => {
     // test if account type is coach
     const accountType = store.getState().auth.user?.accountType;
     if (accountType !== "coach") {
-      console.log("Error account type is not coach");
+      // console.log("Error account type is not coach");
       return { error: "Error account type is not coach" };
     }
 
@@ -263,7 +263,7 @@ const getCoachTeamId = async () => {
     }
     return teamId;
   } catch (error) {
-    return { error: "Error getting coach team name" };
+    return { error: "You Don't have a Team Yet" };
   }
 };
 
@@ -329,7 +329,7 @@ export const getRecievedNotifications = createAsyncThunk(
       if (!uid) {
         return { error: "Error getting current user" };
       }
-      console.log("1");
+      // console.log("1");
 
       const notificationsCollection = collection(firestore, "notifications");
       const notificationsQuery = query(
@@ -337,9 +337,9 @@ export const getRecievedNotifications = createAsyncThunk(
         where("to_id", "==", uid),
         where("action", "==", null)
       );
-      console.log("2");
+      // console.log("2");
       const notificationsSnapshot = await getDocs(notificationsQuery);
-      console.log("3");
+      // console.log("3");
       const notifications: Notification[] = [];
       notificationsSnapshot.forEach((doc) => {
         notifications.push({
@@ -348,7 +348,7 @@ export const getRecievedNotifications = createAsyncThunk(
         } as Notification);
       });
 
-      console.log("4");
+      // console.log("4");
       if (notifications.length === 0) {
         return { error: "No notifications found" };
       }
@@ -397,21 +397,21 @@ export const sendRequestToJoinTeam = createAsyncThunk(
   "notification/sendRequestToJoinTeam",
   async (notificationInfo: { to: string }) => {
     try {
-      console.log("1");
-      console.log(notificationInfo.to);
+      // console.log("1");
+      // console.log(notificationInfo.to);
       // check if notificationInfo.to is valid team id
       const isValidTID: boolean = await isValidTeamId(notificationInfo.to);
       if (!isValidTID) {
         return "Error team id is not valid";
       }
-      console.log("2");
+      // console.log("2");
 
       // get uid
       const from_uid = auth.currentUser?.uid;
       if (!from_uid) {
         return "Error getting current user";
       }
-      console.log("3");
+      // console.log("3");
       // test if account type is player
       const accountType = store.getState().auth.user?.accountType;
       if (accountType !== "player") {
@@ -423,7 +423,7 @@ export const sendRequestToJoinTeam = createAsyncThunk(
 
         return "Error account type is not player";
       }
-      console.log("4");
+      // console.log("4");
 
       // get user username
       const username = store.getState().auth.user?.username;
@@ -570,7 +570,7 @@ export const updateNotificationAction = createAsyncThunk(
           
         ].includes(notificationInfo.type)
       ) {
-        console.log("this actions not supported yet");
+        // console.log("this actions not supported yet");
         return "this actions not supported yet";
       }
 

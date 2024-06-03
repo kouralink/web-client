@@ -63,13 +63,13 @@ const authSlice = createSlice({
   extraReducers: (builder) => {
     builder
       .addCase(login.pending, (state) => {
-        console.log("login pending");
+        // console.log("login pending");
         state.loading = true;
         state.error = null;
       })
       .addCase(login.fulfilled, (state, action) => {
         state.loading = false;
-        console.log("login fullfilled");
+        // console.log("login fullfilled");
         if (typeof action.payload === "object" && action.payload !== null) {
           state.error = null;
           state.uid = auth.currentUser?.uid as string;
@@ -79,19 +79,19 @@ const authSlice = createSlice({
         }
       })
       .addCase(login.rejected, (state, action) => {
-        console.log("login rejcted");
+        // console.log("login rejcted");
         state.loading = false;
         state.error = action.error.message as string;
       });
     builder
       .addCase(register.pending, (state) => {
-        console.log("pen");
+        // console.log("pen");
         state.loading = true;
         state.error = null;
       })
       .addCase(register.fulfilled, (state, action) => {
         state.loading = false;
-        console.log("fullfilled");
+        // console.log("fullfilled");
         if (typeof action.payload === "object" && action.payload !== null) {
           state.error = null;
           state.uid = auth.currentUser?.uid as string;
@@ -99,7 +99,7 @@ const authSlice = createSlice({
         }
       })
       .addCase(register.rejected, (state, action) => {
-        console.log("rej");
+        // console.log("rej");
         state.loading = false;
         state.error = action.error.message as string;
       });
@@ -125,13 +125,13 @@ const authSlice = createSlice({
       });
     builder
       .addCase(login_with_google_or_facebook.pending, (state) => {
-        console.log("login with google pending");
+        // console.log("login with google pending");
         state.loading = true;
         state.error = null;
       })
       .addCase(login_with_google_or_facebook.fulfilled, (state, action) => {
         state.loading = false;
-        console.log("login with google fullfilled");
+        // console.log("login with google fullfilled");
         if (typeof action.payload === "object" && action.payload !== null) {
           state.error = null;
           state.uid = auth.currentUser?.uid as string;
@@ -139,20 +139,20 @@ const authSlice = createSlice({
         }
       })
       .addCase(login_with_google_or_facebook.rejected, (state, action) => {
-        console.log("login with google rejcted");
+        // console.log("login with google rejcted");
         state.loading = false;
         state.error = action.error.message as string;
       });
 
     builder
       .addCase(reset_password.pending, (state) => {
-        console.log("reset password pending");
+        // console.log("reset password pending");
         state.loading = true;
         state.error = null;
       })
       .addCase(reset_password.fulfilled, (state, action) => {
         state.loading = false;
-        console.log("reset password fullfilled");
+        // console.log("reset password fullfilled");
         if (action.payload === true) {
           state.error = "reset with no error";
         } else {
@@ -160,7 +160,7 @@ const authSlice = createSlice({
         }
       })
       .addCase(reset_password.rejected, (state, action) => {
-        console.log("reset password rejcted");
+        // console.log("reset password rejcted");
         state.loading = false;
         state.error = action.error.message as string;
       });
@@ -272,18 +272,18 @@ const checkUsernameAvailability = async (username: string) => {
 };
 const GetUserAccountInfo = async () => {
   if (auth.currentUser) {
-    console.log("-------------------------------");
+    // console.log("-------------------------------");
     const uid = auth.currentUser.uid;
     const docRef = doc(firestore, "users", uid);
     const docSnap = await getDoc(docRef);
 
     if (docSnap.exists()) {
-      console.log("Document data:", docSnap.data());
-      console.log("********************************");
+      // console.log("Document data:", docSnap.data());
+      // console.log("********************************");
 
       return docSnap.data() as UserInterface;
     } else {
-      console.log("No such document!");
+      // console.log("No such document!");
       let username = auth.currentUser.email
         ? auth.currentUser.email.split("@")[0] +
           Math.random().toString(36).substring(7)
@@ -316,12 +316,12 @@ const GetUserAccountInfo = async () => {
       // create doc base on uid
       const docRef = doc(firestore, "users", uid);
       await setDoc(docRef, user);
-      console.log("********************************");
+      // console.log("********************************");
 
       return user;
     }
   } else {
-    console.log("user is not authenticated");
+    // console.log("user is not authenticated");
     return null;
   }
 };
@@ -448,14 +448,14 @@ export const register = createAsyncThunk(
     rememberMe: string;
   }) => {
     try {
-      console.log(email, password, confPassword);
+      // console.log(email, password, confPassword);
       if (password !== confPassword) {
         return "Password and confirm password do not match";
       }
       if (rememberMe === "on") {
         await createUserWithEmailAndPassword(auth, email, password)
           .then(() => {
-            console.log("user created");
+            // console.log("user created");
           })
           .catch((error) => {
             console.log(error);
@@ -466,7 +466,7 @@ export const register = createAsyncThunk(
             return createUserWithEmailAndPassword(auth, email, password);
           })
           .then(() => {
-            console.log("user created");
+            // console.log("user created");
           })
           .catch((error) => {
             console.log(error);
@@ -509,9 +509,9 @@ export const logout = createAsyncThunk("auth/lougout", async () => {
 
 export const getUserData = createAsyncThunk("auth/getUserData", async () => {
   try {
-    console.log("get user data running");
+    // console.log("get user data running");
     const user: UserInterface | null = await GetUserAccountInfo();
-    console.log("done");
+    // console.log("done");
     return user;
   } catch (error) {
     if (error instanceof FirebaseError) {
@@ -585,7 +585,7 @@ export const isItAlreadyInATeam = async (uid: string) => {
   snapshot.forEach((doc) => {
     
     if (doc.id === uid) {
-      console.log("user is already in a team");
+      // console.log("user is already in a team");
       isAlreadyInTeam = true;
     }
   });
