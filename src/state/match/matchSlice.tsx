@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { firestore } from "@/services/firebase";
+import { auth, firestore } from "@/services/firebase";
 import {
   doc,
   getDoc,
@@ -10,6 +10,10 @@ import {
 
 import { MatchFirestore, Member, Team, User } from "../../types/types";
 import { toast } from "@/components/ui/use-toast";
+import { MatchDetailsFormValues } from "@/components/global/match/cards/MatchDetailsForm";
+import { httpsCallable } from "firebase/functions";
+import { functions } from "@/services/firebase";
+import { store } from "../store";
 
 interface MatchState {
   match: MatchFirestore;
@@ -37,13 +41,16 @@ const initialState: MatchState = {
       score: null,
       isAgreed: false,
     },
-    referee_id: "",
+    refree: {
+      id: "",
+      isAgreed: false,
+    },
     createdAt: Timestamp.now(),
     updatedAt: Timestamp.now(),
     endedAt: null,
     location: null,
     startIn: null,
-    status: "pending",
+    status: "coachs_edit",
     type: "classic_match",
   },
   team1Info: {
@@ -166,6 +173,32 @@ const matchSlice = createSlice({
         state.isLoading = false;
         state.error = action.error.message;
       });
+    builder
+      .addCase(updateMatchDetails.pending, (state) => {
+        state.isLoading = true;
+        state.error = null;
+      })
+      .addCase(updateMatchDetails.fulfilled, (state, action) => {
+        state.isLoading = false;
+        if (typeof action.payload === "string") {
+          state.error = action.payload;
+          toast({
+            title: "Error",
+            description: action.payload,
+            variant: "destructive",
+          });
+          return;
+        }
+        toast({
+          title: "Success",
+          description: "Match details updated successfully",
+          variant: "default",
+        });
+      })
+      .addCase(updateMatchDetails.rejected, (state, action) => {
+        state.isLoading = false;
+        state.error = action.error.message;
+      });
   },
 });
 
@@ -214,18 +247,8 @@ export const getTeamsMembers = createAsyncThunk(
   "match/getTeamsMembers",
   async ({ id1, id2 }: { id1: string; id2: string }) => {
     try {
-      const team1MembersRef = collection(
-        firestore,
-        "teams",
-        id1,
-        "members"
-      );
-      const team2MembersRef = collection(
-        firestore,
-        "teams",
-        id2,
-        "members"
-      );
+      const team1MembersRef = collection(firestore, "teams", id1, "members");
+      const team2MembersRef = collection(firestore, "teams", id2, "members");
       const team1MembersSnap = await getDocs(team1MembersRef);
       const team2MembersSnap = await getDocs(team2MembersRef);
       const team1MembersData = team1MembersSnap.docs.map(
@@ -276,6 +299,70 @@ export const getRefreeInfo = createAsyncThunk(
     } catch (error) {
       console.error(error);
       return "Getting refree info failed!";
+    }
+  }
+);
+
+interface refreeEdit {
+  type: "edit_result" | "cancel_match" | "end_match" | "set_in_progress";
+  result?: {
+    team1: number;
+    team2: number;
+  };
+}
+interface coachEdit {
+  startIn: number | Timestamp;
+  location: string;
+  refreeid: string;
+}
+interface UpdateMatchData {
+  matchid: string;
+  requestUpdateInfo: refreeEdit | coachEdit;
+}
+
+export const updateMatchDetails = createAsyncThunk(
+  "match/updateMatchDetails",
+  async ({
+    matchData,
+    who,
+  }: {
+    matchData: MatchDetailsFormValues;
+    who: "coach" | "refree";
+  }) => {
+    try {
+      console.log(matchData.refree_id);
+      // check is user auth
+      const authUSR = auth.currentUser;
+      if (!authUSR) {
+        return "User not authenticated!";
+      }
+      if (who === "coach") {
+        // get mach id
+        const matchid = store.getState().match.match.id;
+        if (!matchid) {
+          return "could not get matchid";
+        }
+        const requestUpdateInfo: coachEdit = {
+          startIn: Timestamp.fromDate(matchData.startin as Date).toMillis(),
+          location: matchData.location as string,
+          refreeid: matchData.refree_id as string,
+        };
+        const newMatchData: UpdateMatchData = {
+          matchid,
+          requestUpdateInfo,
+        };
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const changeCoachCloudFunction: (data: UpdateMatchData) => any =
+          httpsCallable(functions, "updateMatch");
+        const result = await changeCoachCloudFunction(newMatchData);
+        console.log("firebase function reuslt is:", result);
+        store.dispatch(getMatchById(matchid));
+      }
+      return true;
+    } catch (error) {
+      console.error(error);
+      console.log(error);
+      return "Updating match details failed!";
     }
   }
 );

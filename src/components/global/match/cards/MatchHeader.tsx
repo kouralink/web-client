@@ -2,34 +2,47 @@ import React from "react";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { MatchStatus } from "@/types/types";
 
 interface MatchHeaderProps {
   isRefree: boolean;
   score1: number | null;
   score2: number | null;
-  status: "pending" | "finish" | "cancled";
+  status: MatchStatus;
 }
 
 interface statusSelectType {
-  variant: "outline" | "default" | "secondary"  ;
+  variant: "outline" | "default" | "secondary";
   value: string;
 }
 
 const MatchHeader: React.FC<MatchHeaderProps> = (props) => {
   const statusSelect = {
-    pending: {variant:"outline",value:"Pending"} as statusSelectType,
-    finish: {variant:"default",value:"Finished"}  as statusSelectType,
-    cancled: {variant:"secondary",value:"Cancled"}  as statusSelectType
+    pending: { variant: "outline", value: "Pending" } as statusSelectType,
+    finish: { variant: "default", value: "Finished" } as statusSelectType,
+    cancled: { variant: "secondary", value: "Cancled" } as statusSelectType,
+    coachs_edit: {
+      variant: "outline",
+      value: "Coaches editing",
+    } as statusSelectType,
+    refree_waiting: {
+      variant: "default",
+      value: "Refree waiting",
+    } as statusSelectType,
+    in_progress: {
+      variant: "default",
+      value: "In progress",
+    } as statusSelectType,
   };
   const handelEdit = () => {
     console.log("Edit");
-  }
+  };
   const handelEnd = () => {
     console.log("End");
-  }
+  };
   const handelCancel = () => {
     console.log("Cancel");
-  }
+  };
   return (
     <Card
       className={[
@@ -45,18 +58,34 @@ const MatchHeader: React.FC<MatchHeaderProps> = (props) => {
             <span> {props.score2}</span>
           </div>
           <div className="text-muted-foreground text-sm flex gap-2">
-            <span>Status :</span><Badge variant={statusSelect[props.status].variant}>{statusSelect[props.status].value}</Badge>
+            <span>Status :</span>
+            <Badge variant={statusSelect[props.status].variant}>
+              {statusSelect[props.status].value}
+            </Badge>
           </div>
         </div>
       </CardHeader>
       <CardContent className="flex items-center justify-center gap-4 m-0 p-0">
-        {props.isRefree && (
-          <div className="flex gap-2 p-4">
-            <Button variant={"outline"} onClick={handelEdit}>Edit Result</Button>
-            <Button onClick={handelEnd}>Match has ended</Button>
-            <Button variant={"destructive"} onClick={handelCancel}>Match has canceled</Button>
-          </div>
-        )}
+        {props.isRefree &&
+          (props.status === "pending" || props.status === "in_progress") && (
+            <div className="flex gap-2 p-4">
+              {props.status === "pending" ? (
+                <Button variant={"default"} onClick={handelEdit}>
+                  set In Progress
+                </Button>
+              ) : (
+                <>
+                  <Button variant={"outline"} onClick={handelEdit}>
+                    Edit Result
+                  </Button>
+                  <Button onClick={handelEnd}>Match has ended</Button>
+                </>
+              )}
+              <Button variant={"destructive"} onClick={handelCancel}>
+                Match has canceled
+              </Button>
+            </div>
+          )}
       </CardContent>
     </Card>
   );

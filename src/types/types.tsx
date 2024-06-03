@@ -100,13 +100,13 @@ export type Action = "accept" | "decline" | "view";
 //   actionType: Action | null;
 // }
 
-export type NotificationType =
-  | "info"
-  | "request_to_join_team"
-  | "request_to_join_tournement"
-  | "match_chalenge"
-  | "invite_to_team"
-  | "invite_to_tournement";
+type NotificationType = "info"
+| "request_to_join_team"
+| "request_to_join_tournement"
+| "match_chalenge"
+| "refree_invite"
+| "invite_to_team"
+| "invite_to_tournement";
 export interface Notification {
   id: string;
   from_id: string;
@@ -120,44 +120,55 @@ export interface Notification {
 
 // ------------- team Match State -------------
 
-interface AddedToTeamMatch{
+interface AddedToTeamMatch {
   logo: string;
-  name:string;
+  name: string;
 }
 
 export interface TeamMatch {
   id: string;
   score: number | null;
   isAgreed: boolean;
-}  
-
+}
+export type MatchStatus =
+  | "coachs_edit"
+  | "refree_waiting"
+  | "pending"
+  | "in_progress"
+  | "finish"
+  | "cancled";
 
 export interface MatchFirestore {
   id: string;
   team1: TeamMatch;
   team2: TeamMatch;
-  referee_id: string | null;
+  refree: {
+    id: string|null;
+    isAgreed: boolean;
+  };
   createdAt: Timestamp;
   updatedAt: Timestamp;
-  startIn: Timestamp|null;
-  endedAt: Timestamp|null;
+  startIn: Timestamp | null;
+  endedAt: Timestamp | null;
   location: string | null;
-  status: "pending" | "finish" | "cancled";
+  status:MatchStatus;
   type: "tournement" | "classic_match";
-
 }
 
 export interface Match {
   id: string;
   team1: TeamMatch & AddedToTeamMatch;
   team2: TeamMatch & AddedToTeamMatch;
-  referee_id: string | null;
+  refree: {
+    id: string;
+    isAgreed: boolean;
+  };
   createdAt: Timestamp;
   updatedAt: Timestamp;
-  startIn: Timestamp|null;
-  endedAt: Timestamp|null;
+  startIn: Timestamp | null;
+  endedAt: Timestamp | null;
   location: string | null;
-  status: "pending" | "finish" | "cancled";
+  status:MatchStatus;
   type: "tournement" | "classic_match";
 }
 // tournament
