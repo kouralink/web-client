@@ -2,12 +2,13 @@ import React from "react";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { MatchStatus } from "@/types/types";
 
 interface MatchHeaderProps {
   isRefree: boolean;
   score1: number | null;
   score2: number | null;
-  status: "pending" | "finish" | "cancled";
+  status: MatchStatus;
 }
 
 interface statusSelectType {
@@ -19,7 +20,10 @@ const MatchHeader: React.FC<MatchHeaderProps> = (props) => {
   const statusSelect = {
     pending: {variant:"outline",value:"Pending"} as statusSelectType,
     finish: {variant:"default",value:"Finished"}  as statusSelectType,
-    cancled: {variant:"secondary",value:"Cancled"}  as statusSelectType
+    cancled: {variant:"secondary",value:"Cancled"}  as statusSelectType,
+    coachs_edit: {variant:"outline",value:"Coaches editing"}  as statusSelectType,
+    refree_waiting: {variant:"default",value:"Refree waiting"}  as statusSelectType,
+    in_progress: {variant:"default",value:"In progress"}  as statusSelectType,
   };
   const handelEdit = () => {
     console.log("Edit");

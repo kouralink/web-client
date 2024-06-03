@@ -567,6 +567,7 @@ export const updateNotificationAction = createAsyncThunk(
         [
           "request_to_join_tournement",
           "invite_to_tournement",
+          "refree_invite"
         ].includes(notificationInfo.type)
       ) {
         console.log("this actions not supported yet");

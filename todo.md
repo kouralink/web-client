@@ -2,20 +2,20 @@
 
 ## what i can do:
 
-- create account
-- update account info
-- create team
-- change account type
-- open profile page
-- open team page
-- authentication
-- search on users
-- search on teams 
-- update team info
-- style profile page
-- create team error handling
-- kick player
-- ban player
+- [x] create account
+- [x] update account info
+- [x] create team
+- [x] change account type
+- [x] open profile page
+- [x] open team page
+- [x] authentication
+- [x] search on users
+- [x] search on teams 
+- [x] update team info
+- [x] style profile page
+- [x] create team error handling
+- [x] kick player
+- [x] ban player
 
 
 ## what i need to add;
@@ -79,31 +79,47 @@
 - [x] create validation data for match details edits
 - [ ] create refree search 
     - [ ] redux (search refree) & invite refree action
-    - [ ] create search ui
+    - [x] create search ui
     - [ ] create trigger for refree accept / decline match challenge (on Decline set isAgreed to false)
-    - [ ] add field is refree accept request to match
-    - [ ] update match type
-- [ ] match status type "not started" "in progress" "cancelled" "ended" "pending"
-- [ ] update status check in created components
-
+    - [x] add field is refree accept request to match
+    - [x] update match type
+- [x] match status type "not started" "in progress" "cancelled" "ended" "pending"
+- [x] update status check in created components
 - [ ] match setup before start
+- [x] Match Deatils Component
+- [x] Match Details From Componenet
+- [ ] Match Header Component
+    - [x] UI
+    - [ ] action ui
+    - [ ] action redux
+    - [ ] possible edit (score) and action End match for refree
+
+
+- [ ] Show pending matchs in profile of refree
+- [ ] show team page card in members and coach profile
+
 - [ ] create zod form validation for register and login
 - [ ] check username is unique in the lower case state
 - [ ] if not members in team coach can delete the team but:
     - [ ] team not really deleted is just called that because the team will be have no coach and team name will change to del
 - [ ] check if there any null notification of type match challenge or request to join team or invite to team that already sended in last 24h
 - [ ] bag notification is not for u when i;m trying to "view" to info notification of team accept my challenge request
-- [ ] Match Deatils Component
-- [ ] Match Details From Componenet
-- [ ] Match Header Component
-    - [ ] Edit to possible edit (score) and action End match for refree
-- [ ] Show pending matchs in profile of refree
-- [ ] show team page card in members and coach profile
 
 ## Match rules (redux and triggers) take care about it
-- [ ] "IMPORANT" in triggers should work just for match type classic_match
-- [ ] you can't edit on a match if the match is already started
-- [ ] match can't be started until both coach aggree with info and refree accept info
+- [x] "IMPORANT" in triggers should work just for match type classic_match
+- [x] you can't edit on a match if the match is already started
+- [x] match can't be started until both coach aggree with info and refree accept info
+- [x] a callable function fo updating match details by one of coachs or refree
+- [x] this callable functin work just with classic_matchs
+- [x] possiblety edit for coaches is just in the "coachs_edit" status
+- [x] the function will update the match details and send notifications to the other coach
+- [x] possiblety edit for refree is just in the "in_progress" status
+- [x] send notification to the coachs when refree make (edit result, or cancel match, or end match actions)
+- [x] both accept is where the matchdata === udpateData and and other coach is aggredd
+-      => make match in refree waiting status when both coachs agree on the match details
+-      and send invite request to selected refree
+- [x] the match edit_result or end can't be done if the match is not in progress
+- [x] refree can update status match to in progress
 - [ ] if you canceled the match before start it's will be deleted, 
 - [ ] you can't leave it if it in progress 
 - [ ] if you leave match before match start it's will be called as draw
@@ -115,6 +131,7 @@
     - [x] Request to join team
     - [x] Invite to team
     - [x] match challenge
+    - [x] invite refree to match + decline
     - [ ] request to join tournament
     - [ ] invite to tournament
 - [x] on Member joined or leaved a team
@@ -181,9 +198,12 @@
 - [ ] username should base unique in lower case
 - [ ] team name should be unique in lower case
 - [ ] update the message of notification to contain info username or team name not userid
+// search in match where team1.id or team2.id === match.team1.id or match.team2.id check in not finsish or cancled matches (this matchs should have difreent duree time from now 2 hours at least)
+- 
 
 
 
 ## futures
 - [ ] relive a team (only for deleted team and can be done by only the createdBy user)
+
  

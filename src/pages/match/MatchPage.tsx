@@ -52,10 +52,10 @@ const MatchPage: React.FC = () => {
   }, [dispatch, match.match.id, match.match.team1.id, match.match.team2.id]);
   // get referee info
   useEffect(() => {
-    if (match.match.referee_id) {
-      dispatch(getRefreeInfo(match.match.referee_id));
+    if (match.match.refree.id) {
+      dispatch(getRefreeInfo(match.match.refree.id));
     }
-  }, [dispatch, match.match.referee_id]);
+  }, [dispatch, match.match.refree.id]);
 
   // get coach of team 1
   useEffect(() => {
@@ -114,8 +114,8 @@ const MatchPage: React.FC = () => {
               : "user"
           }
           {...match.match}
-          isItRefree={auth.currentUser?.uid === match.match.referee_id}
-          refree={match.refree}
+          isItRefree={auth.currentUser?.uid === match.match.refree.id}
+          refree_user_info={match.refree}
         />
 
         <MatchTeamContainer

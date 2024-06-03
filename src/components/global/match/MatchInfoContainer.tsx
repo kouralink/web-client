@@ -6,7 +6,7 @@ import { MatchDetailsForm } from "./cards/MatchDetailsForm";
 type MatchInfoContainerProps = {
   isItRefree: boolean;
   role: "user" | "coach" | "member";
-  refree: User | null;
+  refree_user_info: User | null;
 } & MatchFirestore;
 
 const MatchInfoContainer: React.FC<MatchInfoContainerProps> = (props) => {
@@ -19,10 +19,10 @@ const MatchInfoContainer: React.FC<MatchInfoContainerProps> = (props) => {
         score2={props.team2.score}
         status={props.status}
       />
-      { props.role === "coach" && props.status === "pending" && !props.endedAt ? (
-        <MatchDetailsForm location={props.location} refree_id={props.referee_id} startin={props.startIn?.toDate()} /> 
+      { props.role === "coach" && props.status === "coachs_edit"  ? (
+        <MatchDetailsForm location={props.location} refree_id={props.refree.id} startin={props.startIn?.toDate()} /> 
       ) : (
-        <MatchDetails {...props} refree={props.refree} />
+        <MatchDetails {...props} refree_user_info={props.refree_user_info} />
       )}
     </div>
   );

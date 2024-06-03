@@ -37,13 +37,16 @@ const initialState: MatchState = {
       score: null,
       isAgreed: false,
     },
-    referee_id: "",
+    refree: {
+      id: "",
+      isAgreed: false,
+    },
     createdAt: Timestamp.now(),
     updatedAt: Timestamp.now(),
     endedAt: null,
     location: null,
     startIn: null,
-    status: "pending",
+    status: "coachs_edit",
     type: "classic_match",
   },
   team1Info: {

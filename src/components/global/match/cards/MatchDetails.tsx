@@ -14,7 +14,7 @@ import {
 import { Separator } from "@/components/ui/separator";
 
 export default function MatchDetails(
-  props: MatchFirestore & { refree: User | null }
+  props: MatchFirestore & { refree_user_info: User | null }
 ) {
   return (
     <Card className="w-full flex flex-col h-full gap-2">
@@ -26,7 +26,7 @@ export default function MatchDetails(
       </CardHeader>
       <CardContent className="flex flex-col gap-4">
         <div >
-          {props.refree && props.referee_id && (
+          {props.refree_user_info && props.refree.id && (
             <div className="flex w-full gap-2 items-center">
               <ListItem
                 iocn_name="user-check"
@@ -35,17 +35,17 @@ export default function MatchDetails(
               />{" "}
               <MatchMemberCard
                 member={{
-                  joinedAt: props.refree.joinDate || Timestamp.now(),
+                  joinedAt: props.refree_user_info.joinDate || Timestamp.now(),
                   role: "member",
                   team_id: "",
-                  userInfo: props.refree,
-                  uid: props.referee_id,
+                  userInfo: props.refree_user_info,
+                  uid: props.refree.id,
                 }}
               />
             </div>
           )}
-        </div>
         <Separator />
+        </div>
         <div className="flex flex-col gap-4">
           {props.startIn && (
             <div>

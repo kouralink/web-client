@@ -76,7 +76,7 @@ const NotificationASideSheet = () => {
                 <TabsTrigger value="user">User</TabsTrigger>
 
                 {accoutType === "coach" && (
-                  <TabsTrigger value="team">team</TabsTrigger>
+                  <TabsTrigger value="team">Team</TabsTrigger>
                 )}
               </TabsList>
             )}
