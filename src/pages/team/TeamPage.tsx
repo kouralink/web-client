@@ -82,7 +82,7 @@ export const TeamPage = () => {
   return (
     <div className="flex flex-col gap-8 mt-5 ">
       <TeamHeader {...team} role={role} />
-      <div className="flex gap-8 ">
+      <div className="flex w-full gap-8 flex-col lg:flex-row  ">
         <Card className=" flex flex-col py-4 px-2 gap-4 h-fit">
           <div className="flex flex-col gap-2">
             <h2>Coach</h2>
@@ -111,21 +111,21 @@ export const TeamPage = () => {
             </div>
           </div>
         </Card>
-        <div className="p-2 gap-4 w-full flex ">
-          <div className="flex flex-col gap-2 min-w-[400px]">
+        <div className="gap-4 w-full flex justify-end ">
+          <Card className="flex flex-col gap-2  p-4 w-full lg:w-fit">
             <h2>Match History</h2>
             {matchesHistory.length === 0 ? (
               <div className="text-muted-foreground ps-6">No Matches History Found</div>
             ) : (
               <ScrollArea className="h-96 w-full">
-                <div className="flex flex-col gap-4 pr-6">
+                <div className="flex flex-col gap-4 pr-6 w-full">
                   {matchesHistory.map((match: Match) => (
                     <MatchRecordCardIteam key={match.id} {...match} />
                   ))}
                 </div>
               </ScrollArea>
             )}
-          </div>
+          </Card>
         </div>
       </div>
     </div>

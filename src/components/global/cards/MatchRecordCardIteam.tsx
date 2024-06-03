@@ -8,7 +8,7 @@ const MatchRecordCardIteam: React.FC<Match> = (props) => {
   return (
     <Card
       className={[
-        "flex flex-col w-[600px] rounded-lg  justify-between items-center py-2 px-8 text-card-foreground ",
+        "flex flex-col w-full md:w-[600px] rounded-lg  justify-between items-center py-2 px-8 text-card-foreground ",
         // , (props.team1.score !== null && props.team2.score !== null) && props.team1.score >= props.team2.score ? props.team1.score == props.team2.score ? "bg-yellow-100 dark:bg-yellow-800":"bg-green-100 dark:bg-green-800" : "bg-red-100 dark:bg-red-800"
       ].join(" ")}
     >
