@@ -28,7 +28,7 @@ export default function UserProfile() {
       <div className="p-5 h-full w-full lg:w-1/3 flex justify-center items-center half-image">
 
         <Avatar className="rounded-none w-full h-2/3 border-white border-8">
-          <AvatarImage src={userState.avatar} alt="@shadcn" />
+          <AvatarImage src={userState.avatar} alt={userState.username + " logo"} className="object-cover"/>
           <AvatarFallback className="text-6xl rounded-none p-32">{userState.username.charAt(0).toUpperCase()}{userState.username.charAt(1).toUpperCase()}</AvatarFallback>
         </Avatar>
 
