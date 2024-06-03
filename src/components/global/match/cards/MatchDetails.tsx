@@ -45,7 +45,7 @@ export default function MatchDetails(
               />
             </div>
           )}
-          <Separator />
+          <Separator className="my-2" />
         </div>
         <div className="flex flex-col gap-4">
           {props.startIn && (
