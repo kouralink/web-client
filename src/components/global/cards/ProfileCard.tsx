@@ -12,11 +12,30 @@ import { RootState } from "@/state/store";
 import React from "react";
 import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { getMemberTeamName } from "@/state/team/teamSlice";
 
-interface ProfileCardProps {}
+
+interface ProfileCardProps { }
 
 const ProfileCard: React.FC<ProfileCardProps> = () => {
   const authUser = useSelector((state: RootState) => state.auth.user);
+  const accountType = authUser?.accountType;
+  const auth = useSelector((state: RootState) => state.auth);
+  const uid = auth?.uid;
+  const [teamName, setTeamName] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (uid && (accountType === "coach" || accountType === "player")) {
+      getMemberTeamName(uid).then((teamName) => {
+        if (!teamName) {
+          console.log("Error getting coach team name");
+          return;
+        }
+        setTeamName(teamName);
+      });
+    }
+  }, [accountType, uid]);
   return (
     <Card className=" border-none shadow-none flex flex-col sm:flex-row gap-2 w-full justify-between items-center px-4 py-2">
       <CardHeader className="flex flex-row m-0 p-0 gap-4">
@@ -34,13 +53,16 @@ const ProfileCard: React.FC<ProfileCardProps> = () => {
         </Avatar>
         <div className="flex flex-col justify-center">
           <CardTitle>
-            {authUser?.username ? authUser?.username : "Account"} (Player)
+            {authUser?.username ? authUser?.username : "Account"} <span className="capitalize">({
+              authUser?.accountType
+            })</span>
+
           </CardTitle>
           <CardDescription>Your personal account.</CardDescription>
         </div>
       </CardHeader>
       <CardFooter className="p-0 m-0">
-        <Link to={'/profile/me'}> <Button className="bg-primary-700">Go to your personal profile</Button></Link>
+        <Link to={'/users/profile/me'}> <Button className="bg-primary-700">Go to your personal profile</Button></Link>
       </CardFooter>
     </Card>
   );
