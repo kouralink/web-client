@@ -36,7 +36,7 @@ const TeamSearchPage: React.FC = () => {
             <h1 className="font-bold text-7xl py-10">
               <span className="text-green-700">T</span>eams
             </h1>
-            <p className="text-gray-600 lg:text-2xl lg-w-1/2">
+            <p className="text-gray-600 dark:text-gray-300 lg:text-2xl lg-w-1/2">
               search and Join your team to collaborate with passionate
               individuals and enjoy a fulfilling experience together
             </p>
