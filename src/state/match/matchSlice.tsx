@@ -439,7 +439,7 @@ export const updateMatchDetails = createAsyncThunk(
     who: "coach" | "refree";
   }) => {
     try {
-      console.log(matchData.refree_id);
+      // console.log(matchData.refree_id);
       // check is user auth
       const authUSR = auth.currentUser;
       if (!authUSR) {
@@ -463,14 +463,14 @@ export const updateMatchDetails = createAsyncThunk(
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const changeCoachCloudFunction: (data: UpdateMatchData) => any =
           httpsCallable(functions, "updateMatch");
-        const result = await changeCoachCloudFunction(newMatchData);
-        console.log("firebase function reuslt is:", result);
+        await changeCoachCloudFunction(newMatchData);
+        // console.log("firebase function reuslt is:", result);
         store.dispatch(getMatchById(matchid));
       }
       return true;
     } catch (error) {
       console.error(error);
-      console.log(error);
+      // console.log(error);
       return "Updating match details failed!";
     }
   }
@@ -500,13 +500,13 @@ export const setInProgress = createAsyncThunk(
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const changeCoachCloudFunction: (data: UpdateMatchData) => any =
         httpsCallable(functions, "updateMatch");
-      const result = await changeCoachCloudFunction(newMatchData);
-      console.log("firebase function reuslt is:", result);
+      await changeCoachCloudFunction(newMatchData);
+      // console.log("firebase function reuslt is:", result);
       store.dispatch(getMatchById(matchid));
       return true;
     } catch (error) {
       console.error(error);
-      console.log(error);
+      // console.log(error);
       return "Updating match details failed!";
     }
   }
@@ -539,13 +539,13 @@ export const endMatch = createAsyncThunk("match/endMatch", async () => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const changeCoachCloudFunction: (data: UpdateMatchData) => any =
       httpsCallable(functions, "updateMatch");
-    const result = await changeCoachCloudFunction(newMatchData);
-    console.log("firebase function reuslt is:", result);
+    await changeCoachCloudFunction(newMatchData);
+    // console.log("firebase function reuslt is:", result);
     store.dispatch(getMatchById(match.id));
     return true;
   } catch (error) {
     console.error(error);
-    console.log(error);
+    // console.log(error);
     return "Updating match details failed!";
   }
 });
@@ -572,13 +572,13 @@ export const cancelMatch = createAsyncThunk("match/cancelMatch", async () => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const changeCoachCloudFunction: (data: UpdateMatchData) => any =
       httpsCallable(functions, "updateMatch");
-    const result = await changeCoachCloudFunction(newMatchData);
-    console.log("firebase function reuslt is:", result);
+    await changeCoachCloudFunction(newMatchData);
+    // console.log("firebase function reuslt is:", result);
     store.dispatch(getMatchById(matchid));
     return true;
   } catch (error) {
     console.error(error);
-    console.log(error);
+    // console.log(error);
     return "Updating match details failed!";
   }
 });
@@ -611,13 +611,13 @@ export const editResult = createAsyncThunk(
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const changeCoachCloudFunction: (data: UpdateMatchData) => any =
         httpsCallable(functions, "updateMatch");
-      const result = await changeCoachCloudFunction(newMatchData);
-      console.log("firebase function reuslt is:", result);
+      await changeCoachCloudFunction(newMatchData);
+      // console.log("firebase function reuslt is:", result);
       store.dispatch(getMatchById(matchid));
       return true;
     } catch (error) {
       console.error(error);
-      console.log(error);
+      // console.log(error);
       return "Updating match details failed!";
     }
   }

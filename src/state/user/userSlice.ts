@@ -91,7 +91,7 @@ export const getUser = createAsyncThunk("user/getUser", async (uid: string) => {
     const docRef = doc(firestore, "users", uid);
     const docSnap = await getDoc(docRef);
     if (docSnap.exists()) {
-      console.log(docSnap.id, " => ", docSnap.data());
+      // console.log(docSnap.id, " => ", docSnap.data());
       return {uid:docSnap.id, user:docSnap.data() as User };
     } else {
       return null;

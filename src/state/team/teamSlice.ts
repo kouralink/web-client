@@ -406,7 +406,7 @@ const teamSlice = createSlice({
       .addCase(getTeamMatchesHistory.pending, (state) => {
         state.status = "loading";
         state.error = null;
-        console.log("getting matches history");
+        // console.log("getting matches history");
       })
       .addCase(getTeamMatchesHistory.fulfilled, (state, action) => {
         state.status = "idle";
@@ -417,12 +417,12 @@ const teamSlice = createSlice({
           action.payload.matches
         ) {
           state.MatchesHistory = action.payload.matches;
-          console.log("matches has updated");
+          // console.log("matches has updated");
         }
-        console.log("getting matches history another failed");
+        // console.log("getting matches history another failed");
       })
       .addCase(getTeamMatchesHistory.rejected, (state, action) => {
-        console.log("getting matches history failed");
+        // console.log("getting matches history failed");
         state.status = "failed";
         state.error = action.error.message;
       });
@@ -702,7 +702,7 @@ export const updateTeam = createAsyncThunk(
 
         try {
           logoUrl = await getDownloadURL(snapshot.ref);
-          console.log(logoUrl);
+          // console.log(logoUrl);
           newTeamData.teamLogo = logoUrl;
           toast({
             variant: "default",
@@ -1104,7 +1104,7 @@ export const getTeamMatchesHistory = createAsyncThunk(
   "team/getTeamMatchesHistory",
   async ({ teamId }: { teamId: string }) => {
     try {
-      console.log("get:", 1);
+      // console.log("get:", 1);
       const colRef = collection(firestore, "matches");
       const queryRef = query(
         colRef,
@@ -1112,13 +1112,13 @@ export const getTeamMatchesHistory = createAsyncThunk(
         orderBy("createdAt", "desc"),
         limit(10)
       );
-      console.log("get: 2");
+      // console.log("get: 2");
       const snap = await getDocs(queryRef);
       const matches: Match[] = [];
-      console.log("get: 3");
+      // console.log("get: 3");
       for (const doc of snap.docs) {
         const thismatch = doc.data() as Match;
-        console.log("this match:",thismatch)
+        // console.log("this match:",thismatch)
         const team1_data = await getTeamDataByTeamId(thismatch.team1.id);
         const team2_data = await getTeamDataByTeamId(thismatch.team2.id);
 
@@ -1141,12 +1141,12 @@ export const getTeamMatchesHistory = createAsyncThunk(
         matches.push(thismatch);
       }
       if (matches.length === 0) {
-        console.log("no matches found");
+        // console.log("no matches found");
       }
-      console.log(matches);
+      // console.log(matches);
       return { matches };
     } catch (error) {
-      console.log(error);
+      // console.log(error);
       return { matches: [] };
     }
   }

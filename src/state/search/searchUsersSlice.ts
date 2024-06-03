@@ -99,7 +99,7 @@ export const searchByUserNameAndTypeAccount = createAsyncThunk(
         where("accountType", "==", "refree"),
         limit(10)
       );
-      console.log("searching")
+      // console.log("searching")
       const querySnapshot = await getDocs(q);
       const users: SearchedUser[] = [];
       querySnapshot.forEach((doc) => {
@@ -110,10 +110,10 @@ export const searchByUserNameAndTypeAccount = createAsyncThunk(
           uid: doc.id,
         });
       });
-      console.log('users',users)
+      // console.log('users',users)
       return { users: users };
     } catch (error) {
-      console.log(error)
+      // console.log(error)
       throw new Error("Error fetching users");
     }
   }

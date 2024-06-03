@@ -14,19 +14,31 @@ import { Textarea } from "@/components/ui/textarea"
 
 export default function ContactFormCard() {
     const authError = useSelector((state: RootState) => state.auth.error);
-    const authUser = useSelector((state: RootState) => state.auth.user);
     const navigate = useNavigate();
     const authLoading = useSelector((state: RootState) => state.auth.loading);
 
-    if (!authError && authUser) {
+    
+    const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+        const formData = new FormData(e.currentTarget);
+        const data = {
+            first_name: formData.get("first_name") as string,
+            last_name: formData.get("last_name") as string,
+            email: formData.get("email") as string,
+            phone_number: formData.get("phone_number") as string,
+            subject: formData.get("subject") as string,
+            message: formData.get("message") as string,
+        };
+        console.log(data);
         navigate("/");
+        // dispatch(login(data));
     }
 
     return (
         <Card className=" aspect-square flex flex-col justify-center w-full lg:w-2/3 lg:rounded-r-3xl py-14 lg-p-0">
 
             <CardContent className="">
-                <form >
+                <form onSubmit={handleSubmit} >
                     <div className="grid w-full items-center gap-4">
                         <div className="lg:flex justify-around">
                             <div className="flex flex-col space-y-1.5 lg:w-1/3 py-5 lg:p-0">
