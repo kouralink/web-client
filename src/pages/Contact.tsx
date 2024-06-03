@@ -29,7 +29,7 @@ const Contact = () => {
           </div>
 
           <div className="flex justify-between p-5  w-full">
-            <Link to={"https://www.facebook.com/profile.php?id=100008421278534"}><Facebook className="hover:bg-white hover:text-green-700 rounded-lg text-white" /></Link>
+            <Link to={"https://www.facebook.com/groups/1502550624004839"}><Facebook className="hover:bg-white hover:text-green-700 rounded-lg text-white" /></Link>
             <Link to={"https://github.com/kouralink"}><Github className="hover:bg-white hover:text-green-700 rounded-lg text-white" /></Link>
             <Link to={"https://x.com/Kouralink"}><X className="hover:bg-white hover:text-green-700 rounded-lg text-white" /></Link>
           </div>
