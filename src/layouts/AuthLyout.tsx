@@ -8,7 +8,7 @@ export default function AuthLayout() {
       <div>
          <Navbar />
        </div>
-      <div className="container h-screen relative  flex-col items-center justify-center md:grid lg:max-w-none lg:grid-cols-2 lg:px-0">
+      <div className="container min-h-screen relative  flex-col items-center justify-center md:grid lg:max-w-none lg:grid-cols-2 lg:px-0">
         <div className="relative hidden h-full flex-col bg-muted p-10 text-white lg:flex dark:border-r ">
           {/* bg iamge url */}
           <div className="absolute inset-0 bg-primary-950 bg-cover bg-no-repeat bg-center "  style={{
@@ -40,19 +40,19 @@ export default function AuthLayout() {
           </div>
         </div>
         <div className="lg:p-8">
-          <div className="mx-auto flex w-full flex-col justify-center space-y-6 mt-0 pt-0 ">
+          <div className="mx-auto flex w-full flex-col items-center justify-center space-y-6 mt-0 pt-0 overflow-y-scroll">
             <Outlet/>
             <p className="px-8 text-center text-sm text-muted-foreground">
               By clicking continue, you agree to our{" "}
               <Link
-                to="/terms"
+                to="/about"
                 className="underline underline-offset-4 hover:text-primary"
               >
                 Terms of Service
               </Link>{" "}
               and{" "}
               <Link
-                to="/privacy"
+                to="/about"
                 className="underline underline-offset-4 hover:text-primary"
               >
                 Privacy Policy
