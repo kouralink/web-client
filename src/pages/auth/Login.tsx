@@ -86,7 +86,7 @@ export default function Login() {
   }
 
   return (
-    <div className="w-full h-fit max-w-[700px] flex items-center gap-4 justify-evenly overflow-y-scroll p-4">
+    <div className="w-full h-fit max-w-[700px] flex items-center gap-4 justify-evenly  p-4">
       <Card className="w-full aspect-square flex flex-col justify-center">
         <CardHeader>
           <CardTitle>

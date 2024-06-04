@@ -40,7 +40,7 @@ export default function AuthLayout() {
           </div>
         </div>
         <div className="lg:p-8">
-          <div className="mx-auto flex w-full flex-col items-center justify-center space-y-6 mt-0 pt-0 overflow-y-scroll">
+          <div className="mx-auto flex w-full flex-col items-center justify-center space-y-6 mt-0 pt-0 ">
             <Outlet/>
             <p className="px-8 text-center text-sm text-muted-foreground">
               By clicking continue, you agree to our{" "}
