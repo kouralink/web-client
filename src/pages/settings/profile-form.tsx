@@ -29,7 +29,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "@/state/store";
 import { updateUserData } from "@/state/auth/authSlice";
 import { UserUpdate } from "@/types/types";
-import { useEffect } from "react";
+// import { useEffect } from "react";
 
 const profileFormSchema = z.object({
   username: z
@@ -59,8 +59,8 @@ type ProfileFormValues = z.infer<typeof profileFormSchema>;
 
 export function ProfileForm() {
   const authUser = useSelector((state: RootState) => state.auth.user);
-  const isLoading = useSelector((state: RootState) => state.auth.loading);
-  const authError = useSelector((state: RootState) => state.auth.error);
+  // const isLoading = useSelector((state: RootState) => state.auth.loading);
+  // const authError = useSelector((state: RootState) => state.auth.error);
   const dispatch = useDispatch<AppDispatch>();
   const defaultValues: Partial<ProfileFormValues> = {
     // get default value from authUser state
@@ -76,15 +76,7 @@ export function ProfileForm() {
     mode: "onChange",
   });
 
-  useEffect(() => {
-    if (!isLoading && authError) {
-      toast({
-        title: "Error",
-        description: authError || "An error occurred",
-        variant: "destructive",
-      });
-    }
-  }, [isLoading, authError]);
+  
   const onSubmit = async (data: ProfileFormValues) => {
     const changedInfos: UserUpdate = {};
     if (authUser?.username !== data.username) {

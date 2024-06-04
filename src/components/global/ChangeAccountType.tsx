@@ -125,7 +125,7 @@ export function ChangeAccountType() {
                 <Button type="submit">Change</Button>
               )}
               <DialogClose asChild>
-                <button>close</button>
+                <button type="button">close</button>
               </DialogClose>
             </DialogFooter>
           </form>

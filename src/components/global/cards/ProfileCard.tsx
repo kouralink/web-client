@@ -12,28 +12,28 @@ import { RootState } from "@/state/store";
 import React from "react";
 import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
-import { useEffect } from "react";
-import { getMemberTeamName } from "@/state/team/teamSlice";
+// import { useEffect } from "react";
+// import { getMemberTeamName } from "@/state/team/teamSlice";
 
 
 interface ProfileCardProps { }
 
 const ProfileCard: React.FC<ProfileCardProps> = () => {
   const authUser = useSelector((state: RootState) => state.auth.user);
-  const accountType = authUser?.accountType;
-  const auth = useSelector((state: RootState) => state.auth);
-  const uid = auth?.uid;
+  // const accountType = authUser?.accountType;
+  // const auth = useSelector((state: RootState) => state.auth);
+  // const uid = auth?.uid;
 
-  useEffect(() => {
-    if (uid && (accountType === "coach" || accountType === "player")) {
-      getMemberTeamName(uid).then((teamName) => {
-        if (!teamName) {
-          console.log("Error getting coach team name");
-          return;
-        }
-      });
-    }
-  }, [accountType, uid]);
+  // useEffect(() => {
+  //   if (uid && (accountType === "coach" || accountType === "player")) {
+  //     getMemberTeamName(uid).then((teamName) => {
+  //       if (!teamName) {
+  //         console.log("Error getting coach team name");
+  //         return;
+  //       }
+  //     });
+  //   }
+  // }, [accountType, uid]);
   return (
     <Card className=" border-none shadow-none flex flex-col sm:flex-row gap-2 w-full justify-between items-center px-4 py-2">
       <CardHeader className="flex flex-row m-0 p-0 gap-4">

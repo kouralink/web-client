@@ -29,7 +29,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { updateUserData } from "@/state/auth/authSlice";
 import { Timestamp } from "firebase/firestore";
 import { UserUpdate } from "@/types/types";
-import { useEffect } from "react";
+// import { useEffect } from "react";
 
 const accountFormSchema = z.object({
   firstname: z
@@ -57,8 +57,8 @@ type AccountFormValues = z.infer<typeof accountFormSchema>;
 
 export function AccountForm() {
   const authUser = useSelector((state: RootState) => state.auth.user);
-  const isLoading = useSelector((state: RootState) => state.auth.loading);
-  const authError = useSelector((state: RootState) => state.auth.error);
+  // const isLoading = useSelector((state: RootState) => state.auth.loading);
+  // const authError = useSelector((state: RootState) => state.auth.error);
   const defaultValues: Partial<AccountFormValues> = {
     firstname: authUser?.firstName,
     lastname: authUser?.lastName,
@@ -71,15 +71,15 @@ export function AccountForm() {
 
   const dispatch = useDispatch<AppDispatch>();
 
-  useEffect(() => {
-    if (!isLoading && authError) {
-      toast({
-        title: "Error",
-        description: authError || "An error occurred",
-        variant: "destructive",
-      });
-    }
-  }, [isLoading, authError]);
+  // useEffect(() => {
+  //   if (!isLoading && authError) {
+  //     toast({
+  //       title: "Error",
+  //       description: authError || "An error occurred",
+  //       variant: "destructive",
+  //     });
+  //   }
+  // }, [isLoading, authError]);
 
   const onSubmit = async (data: AccountFormValues) => {
     const changedInfos: UserUpdate = {};
