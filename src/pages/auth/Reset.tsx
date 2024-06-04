@@ -1,4 +1,3 @@
-import Image from "/src/assets/singin.png";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -17,7 +16,7 @@ import SectionTitle from "@/components/global/SectionTitle";
 import AuthWith from "@/components/global/cards/AuthWith";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "@/state/store";
-import { reset_password } from "@/state/auth/authSlice";
+import { reset_password, setError } from "@/state/auth/authSlice";
 import { useToast } from "@/components/ui/use-toast";
 import { Loader2 } from "lucide-react";
 import { useEffect } from "react";
@@ -29,6 +28,14 @@ export default function Reset() {
   const authLoading = useSelector((state: RootState) => state.auth.loading);
   const authUser = useSelector((state: RootState) => state.auth.user);
   const dispatch = useDispatch<AppDispatch>();
+  // reset auth error state before destroy componenet
+  const reset = () => {
+    dispatch(setError(null))
+  }
+  useEffect(() => {
+    return () => {reset()}
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  },[])
   
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -37,13 +44,14 @@ export default function Reset() {
     
   };
   useEffect(() => {
-    if(!authLoading){
+    if( !authLoading && ['Too many requests','User not found','Invalid email',"reset with no error"].find(e => e === authError)){
     toast({
-        description: authError
-        ? authError
-        : "Reset password message has been sent.",
-        classesStyle:authError ? "bg-red-500 text-white" : ""
+        description: authError === "reset with no error"
+        ?  "Reset password message has been sent." : authError
+        ,
+        variant: authError === "reset with no error" ? "default": "destructive"
       });}
+      
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [authLoading]);
 
@@ -52,11 +60,9 @@ export default function Reset() {
     navigate("/");
   }
   return (
-    <div className="w-full h-fit flex items-center gap-4 justify-evenly mt-[100px]">
-      <div className="flex items-end justify-start">
-        <img src={Image} alt="singin" />
-      </div>
-      <Card className="w-[400px] aspect-square flex flex-col justify-center">
+    <div className="w-full h-fit flex items-center gap-4 justify-evenly ">
+     
+      <Card className="w-full aspect-square flex flex-col justify-center">
         <CardHeader>
           <CardTitle>
             <SectionTitle
@@ -99,7 +105,7 @@ export default function Reset() {
           <div className="flex justify-center ">
             <p>
               Don't have an account?{" "}
-              <Link to="/register" className="text-primary-700">
+              <Link to="/auth/register" className="text-primary-700">
                 Register
               </Link>
             </p>
@@ -107,7 +113,7 @@ export default function Reset() {
           <div className="flex justify-center ">
             <p>
               Already have an account?{" "}
-              <Link to="/login" className="text-primary-700">
+              <Link to="/auth" className="text-primary-700">
                 Log in
               </Link>
             </p>

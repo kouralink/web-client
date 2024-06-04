@@ -6,10 +6,10 @@ module.exports = {
     './components/**/*.{ts,tsx}',
     './app/**/*.{ts,tsx}',
     './src/**/*.{ts,tsx}',
-    'node_modules/flowbite-react/lib/esm/**/*.js',
   ],
   prefix: "",
   theme: {
+    
     container: {
       center: true,
       padding: "2rem",
@@ -18,6 +18,10 @@ module.exports = {
       },
     },
     extend: {
+      screens: {
+        'xs': '450px',
+        
+      },
       colors: {
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
@@ -86,7 +90,6 @@ module.exports = {
     },
   },
   plugins: [
-    require('flowbite/plugin'),
-    require("tailwindcss-animate")
+    require("tailwindcss-animate"),
   ],
 }

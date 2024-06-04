@@ -1,0 +1,9 @@
+.half-image {
+  background-image: linear-gradient(to right, #3d8f5f 50%, transparent 50%);
+}
+
+@media (max-width: 1023px) {
+  .half-image {
+    background-image: linear-gradient(to bottom, #3d8f5f 50%, transparent 50%);
+  }
+}

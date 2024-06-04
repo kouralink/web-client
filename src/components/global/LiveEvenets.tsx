@@ -32,8 +32,8 @@ export function LiveEvenets() {
             </CarouselItem>
           ))}
         </CarouselContent>
-        <CarouselPrevious iconClasses="min-w-10 min-h-10 text-gray-700"/>
-        <CarouselNext iconClasses="min-w-10 min-h-10 text-gray-700 " />
+        <CarouselPrevious iconClasses="min-w-10 min-h-10 text-gray-700" variant={"ghost"} />
+        <CarouselNext iconClasses="min-w-10 min-h-10 text-gray-700 " variant={"ghost"} />
       </Carousel>
     </div>
   );

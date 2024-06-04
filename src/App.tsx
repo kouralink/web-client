@@ -1,7 +1,9 @@
+import { useEffect, useState } from "react";
 import FeatureContents from "./components/global/FeatureContents";
 import Footer from "./components/global/Footer";
 import Header from "./components/global/Header";
 import { LiveEvenets } from "./components/global/LiveEvenets";
+import Navbar from "./components/global/Navbar";
 import NewsLetter from "./components/global/NewsLetter";
 import Privileges from "./components/global/Privileges";
 import SectionHead from "./components/global/SectionHead";
@@ -9,12 +11,49 @@ import SiteAnnouncements from "./components/global/SiteAnnouncements";
 import { Testimonials } from "./components/global/Testimonials";
 
 export default function App() {
- 
+  // navbar on scroll effect
+  const [navStyle, setNavStyle] = useState("mt-2");
+  const [prevScrollPos, setPrevScrollPos] = useState(0);
+  
+  useEffect(() => {
+    const handleScroll = () => {
+      const currentScrollPos = window.scrollY;
+      const isScrolledDown = prevScrollPos < currentScrollPos;
+
+      setPrevScrollPos(currentScrollPos);
+
+      // Show the navbar if scrolling up or at the top
+
+      if (window.scrollY > 10) {
+        if (!isScrolledDown) {
+          setNavStyle("mt-0 px-0 bg-white rounded-none");
+        } else {
+          setNavStyle("display-none  hidden");
+        }
+      } else {
+        setNavStyle("bg-none mt-2");
+      }
+    };
+
+    window.addEventListener("scroll", handleScroll);
+
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, [prevScrollPos]);
   
 
   return (
     <>
-      <Header title="Welcome to Kouralink" src="/src/assets/bg.png" />
+      <div
+        className={[
+          "fixed z-10 w-full   px-2 rounded-lg duration-300 transition-all",
+          navStyle,
+        ].join(" ")}
+      >
+        <Navbar />
+      </div>
+      <Header title="Welcome to Kouralink" src="/bg.png" />
       <div className="">
         <Privileges />
       </div>
@@ -29,7 +68,7 @@ export default function App() {
       />
       <FeatureContents />
       <SectionHead
-        title="Testimonials"
+        title="Testimonials "
         description="Discover what our community says about their unforgettable experiences and triumphs on our football platform."
       />
       <Testimonials />

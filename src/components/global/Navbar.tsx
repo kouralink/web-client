@@ -1,155 +1,148 @@
-import "flowbite";
-import { AccountNavDropdownMenu } from "./AccountNavDropdownMenu";
-import { Link } from "react-router-dom";
-import { useSelector } from "react-redux";
 import { RootState } from "@/state/store";
+import React, { useState } from "react";
+import { useSelector } from "react-redux";
+import { Link, NavLink } from "react-router-dom";
+import { ModeToggle } from "../mode-toggle";
+import SingInUpButtons from "./SingInUpButtons";
+import { AccountNavDropdownMenu } from "./AccountNavDropdownMenu";
+// import { CreateTeamPopUp } from "./CreateTeam";
+import NotificationASideSheet from "./NotificationASideSheet";
+import { cn } from "@/lib/utils";
 
-const Navbar: React.FC = () => {
-  const authUser = useSelector((state: RootState): RootState['auth']['user'] => state.auth.user);
+interface NavbarProps {
+  navHeight?: number;
+}
+const Navbar: React.FC<NavbarProps> = ({ navHeight = 4 }) => {
+  const [open, setOpen] = useState(false);
+
+  // const [dropdownOpen, setDropdownOpen] = useState(false);
+  const authUser = useSelector((state: RootState) => state.auth.user);
+
   return (
-    <nav className="bg-white border-gray-200 rounded-lg dark:bg-gray-900">
-      <div className="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
-        <Link to="/" className="flex items-center space-x-3 rtl:space-x-reverse">
-          <img src="/src/assets/logo.svg" className="h-8" alt="Flowbite Logo" />
-          <span className="self-center text-2xl font-semibold whitespace-nowrap dark:text-white">
-            Kouralink
-          </span>
-        </Link>
-        <div className="flex md:order-2 space-x-3 md:space-x-0 gap-2 rtl:space-x-reverse">
-          {!authUser ? (
-            <>
-              <Link to={'/login'}>
-
-              <button
-                type="button"
-                
-                className="text-accent-foreground bg-accent hover:bg-gray-200 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-4 py-2 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
-              >
-                Log in
-              </button>
-              </Link>
-
-              <Link to={'/register'}>
-              <button
-                type="button"
-                className="text-white bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-4 py-2 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
-              >
-                Sing up
-              </button>
-              </Link>
-            </>
-          ) : 
-          <AccountNavDropdownMenu />
-          }
-          <button
-            data-collapse-toggle="navbar-cta"
-            type="button"
-            className="inline-flex items-center p-2 w-10 h-10 justify-center text-sm text-gray-500 rounded-lg md:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600"
-            aria-controls="navbar-cta"
-            aria-expanded="false"
+    <div
+      className={`bg-card border-gray-200 rounded-lg dark:bg-card py-${navHeight}`}
+    >
+      <div className="flex flex-col max-w-screen-xl px-4 mx-auto lg:items-center lg:justify-between lg:flex-row  lg:px-8">
+        <div className="px-4 flex flex-row items-center justify-between">
+          <Link
+            to="/"
+            className="flex items-center space-x-3 rtl:space-x-reverse"
           >
-            <span className="sr-only">Open main menu</span>
-            <svg
-              className="w-5 h-5"
-              aria-hidden="true"
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 17 14"
-            >
-              <path
-                stroke="currentColor"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                d="M1 1h15M1 7h15M1 13h15"
-              />
-            </svg>
-          </button>
-        </div>
-        <div
-          className="items-center justify-between hidden w-full md:flex md:w-auto md:order-1"
-          id="navbar-cta"
-        >
-          <ul className="flex flex-col font-medium p-4 md:p-0 mt-4 border border-gray-100 rounded-lg bg-gray-50 md:space-x-8 rtl:space-x-reverse md:flex-row md:mt-0 md:border-0 md:bg-white dark:bg-gray-800 md:dark:bg-gray-900 dark:border-gray-700">
-            <li>
-              <a
-                href="#"
-                className="block py-2 px-3 md:p-0 text-white bg-primary-700 rounded md:bg-transparent md:text-primary-700 md:dark:text-primary-500"
-                aria-current="page"
-              >
-                About
-              </a>
-            </li>
-            <li>
-              <button
-                id="dropdownNavbarLink"
-                data-dropdown-toggle="dropdownNavbar"
-                className="flex items-center justify-between w-full py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-primary-700 md:p-0 md:w-auto dark:text-white md:dark:hover:text-primary-500 dark:focus:text-white dark:border-gray-700 dark:hover:bg-gray-700 md:dark:hover:bg-transparent"
-              >
-                Quick links{" "}
-                <svg
-                  className="w-2.5 h-2.5 ms-2.5"
-                  aria-hidden="true"
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 10 6"
-                >
-                  <path
-                    stroke="currentColor"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="2"
-                    d="m1 1 4 4 4-4"
-                  />
-                </svg>
-              </button>
-              <div
-                id="dropdownNavbar"
-                className="z-10 hidden font-normal bg-white divide-y divide-gray-100 rounded-lg shadow w-44 dark:bg-gray-700 dark:divide-gray-600"
-              >
-                <ul
-                  className="py-2 text-sm text-gray-700 dark:text-gray-400"
-                  aria-labelledby="dropdownLargeButton"
-                >
-                  <li>
-                    <a
-                      href="#"
-                      className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
-                    >
-                      Create Team
-                    </a>
-                  </li>
-                  <li>
-                    <a
-                      href="#"
-                      className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
-                    >
-                      Join Team
-                    </a>
-                  </li>
-                </ul>
+            <img src="/logo.svg" className="h-8" alt="Kouralink Logo" />
+            <span className="self-center text-2xl font-semibold whitespace-nowrap dark:text-card-foreground hidden sm:block">
+              Kouralink
+            </span>
+          </Link>
+          <div className="flex gap-2">
+            <div className="flex gap-2 lg:hidden">
+              <ModeToggle />
+
+              {
+                authUser && (
+              <div className="flex gap-2 ">
+                <NotificationASideSheet />
+                <AccountNavDropdownMenu />
               </div>
-            </li>
-            <li>
-              <a
-                href="#"
-                className="block py-2 px-3 md:p-0 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-primary-700 d:dark:hover:text-primary-500 dark:text-white dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700"
-              >
-                Services
-              </a>
-            </li>
-            <li>
-              <a
-                href="#"
-                className="block py-2 px-3 md:p-0 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-primary-700 md:dark:hover:text-primary-500 dark:text-white dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700"
-              >
-                Contact
-              </a>
-            </li>
-          </ul>
+              )}
+            </div>
+            <button
+              className="lg:hidden rounded-lg focus:outline-none focus:shadow-outline"
+              onClick={() => setOpen(!open)}
+            >
+              <svg fill="currentColor" viewBox="0 0 20 20" className="w-6 h-6">
+                {!open ? (
+                  <path
+                    fillRule="evenodd"
+                    d="M3 5a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 10a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM9 15a1 1 0 011-1h6a1 1 0 110 2h-6a1 1 0 01-1-1z"
+                    clipRule="evenodd"
+                  />
+                ) : (
+                  <path
+                    fillRule="evenodd"
+                    d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
+                    clipRule="evenodd"
+                  />
+                )}
+              </svg>
+            </button>
+          </div>
         </div>
+        <nav
+          className={`flex-col flex-grow gap-2 lg:pb-0 lg:flex lg:justify-end lg:flex-row ${
+            open ? "flex" : "hidden"
+          }`}
+        >
+          {/* <NavLink
+            className="px-4 py-2  text-sm font-semibold bg-transparent rounded-lg dark:bg-transparent dark:hover:bg-gray-600 dark:focus:bg-gray-600 dark:focus:text-white dark:hover:text-white dark:text-gray-200 lg:mt-0  hover:text-gray-900 focus:text-gray-900 hover:bg-gray-200 focus:bg-gray-200 focus:outline-none focus:shadow-outline"
+            to="/"
+          >
+            Home
+          </NavLink> */}
+          {/* <NavLink
+            className="px-4 py-2  text-sm font-semibold text-gray-900 bg-gray-200 rounded-lg dark:bg-gray-700 dark:hover:bg-gray-600 dark:focus:bg-gray-600 dark:focus:text-white dark:hover:text-white dark:text-gray-200 lg:mt-0 hover:text-gray-900 focus:text-gray-900 hover:bg-gray-200 focus:bg-gray-200 focus:outline-none focus:shadow-outline"
+            to="/team/search"
+          >
+            Teams
+          </NavLink> */}
+          <NavLink
+            className="px-4 py-2  text-sm font-semibold bg-transparent rounded-lg dark:bg-transparent dark:hover:bg-gray-600 dark:focus:bg-gray-600 dark:focus:text-white dark:hover:text-white dark:text-gray-200 lg:mt-0  hover:text-gray-900 focus:text-gray-900 hover:bg-gray-200 focus:bg-gray-200 focus:outline-none focus:shadow-outline"
+            to="/team/search"
+          >
+            Teams
+          </NavLink>
+          <NavLink
+            className="px-4 py-2  text-sm font-semibold bg-transparent rounded-lg dark:bg-transparent dark:hover:bg-gray-600 dark:focus:bg-gray-600 dark:focus:text-white dark:hover:text-white dark:text-gray-200 lg:mt-0  hover:text-gray-900 focus:text-gray-900 hover:bg-gray-200 focus:bg-gray-200 focus:outline-none focus:shadow-outline"
+            to="/users/search"
+          >
+            Users
+          </NavLink>
+
+          <NavLink
+            className="px-4 py-2  text-sm font-semibold bg-transparent rounded-lg dark:bg-transparent dark:hover:bg-gray-600 dark:focus:bg-gray-600 dark:focus:text-white dark:hover:text-white dark:text-gray-200 lg:mt-0  hover:text-gray-900 focus:text-gray-900 hover:bg-gray-200 focus:bg-gray-200 focus:outline-none focus:shadow-outline"
+            to="/tournament"
+          >
+            Tournaments
+          </NavLink>
+          <NavLink
+            className="px-4 py-2 mt-2 text-sm font-semibold bg-transparent rounded-lg dark:bg-transparent dark:hover:bg-gray-600 dark:focus:bg-gray-600 dark:focus:text-white dark:hover:text-white dark:text-gray-200 lg:mt-0  hover:text-gray-900 focus:text-gray-900 hover:bg-gray-200 focus:bg-gray-200 focus:outline-none focus:shadow-outline"
+            to="/about"
+          >
+            About
+          </NavLink>
+          <NavLink
+            className="px-4 py-2 mt-2 text-sm font-semibold bg-transparent rounded-lg dark:bg-transparent dark:hover:bg-gray-600 dark:focus:bg-gray-600 dark:focus:text-white dark:hover:text-white dark:text-gray-200 lg:mt-0  hover:text-gray-900 focus:text-gray-900 hover:bg-gray-200 focus:bg-gray-200 focus:outline-none focus:shadow-outline"
+            to="/contact"
+          >
+            Contact
+          </NavLink>
+
+          <div className="gap-2 hidden lg:flex">
+              <ModeToggle />
+              {
+                authUser && (
+                  <div className="flex gap-2 ">
+                <NotificationASideSheet />
+                <AccountNavDropdownMenu />
+              </div>
+              )}
+            </div>
+          <div className={cn("flex gap-2 flex-col", "lg:flex-row")}>
+            {
+              !authUser && (
+                <div>
+                  <SingInUpButtons />
+                </div>
+              )
+              // : (
+              //   <div className="flex gap-2">
+              //     <AccountNavDropdownMenu />
+              //   </div>
+              // )
+            }
+          </div>
+        </nav>
       </div>
-    </nav>
+    </div>
   );
 };
 

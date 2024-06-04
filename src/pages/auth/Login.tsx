@@ -1,5 +1,16 @@
-import Image from "/src/assets/singin.png";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
 
+import {
+  Form,
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -10,15 +21,23 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { Link, useNavigate } from "react-router-dom";
 
 import SectionTitle from "@/components/global/SectionTitle";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "@/state/store";
-import { login } from "@/state/auth/authSlice";
+import { login, setError } from "@/state/auth/authSlice";
 import { Loader2 } from "lucide-react";
 import AuthWith from "@/components/global/cards/AuthWith";
+import { useEffect } from "react";
+import { Checkbox } from "@/components/ui/checkbox";
+
+const loginFormSchema = z.object({
+  email: z.string().email(),
+  password: z.string().min(8).max(60),
+  rememberme: z.boolean().default(false).optional(),
+});
+type LoginFormValues = z.infer<typeof loginFormSchema>;
 
 export default function Login() {
   const navigate = useNavigate();
@@ -26,28 +45,49 @@ export default function Login() {
   const authLoading = useSelector((state: RootState) => state.auth.loading);
   const authUser = useSelector((state: RootState) => state.auth.user);
   const dispatch = useDispatch<AppDispatch>();
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    console.log("submit");
-    const formData = Object.fromEntries(new FormData(e.currentTarget));
-    console.log(formData)
+  const defaultValues: Partial<LoginFormValues> = {
+    rememberme: false,
+  };
+  const form = useForm<LoginFormValues>({
+    resolver: zodResolver(loginFormSchema),
+    defaultValues,
+    mode: "onChange",
+  });
+  // reset auth error state before destroy componenet
+  const reset = () => {
+    dispatch(setError(null));
+  };
+  useEffect(() => {
+    return () => {
+      reset();
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const onSubmit = async (data: LoginFormValues) => {
+    // toast({
+    //   title: "You submitted the following values:",
+    //   description: (
+    //     <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
+    //       <code className="text-white">{JSON.stringify(data, null, 2)}</code>
+    //     </pre>
+    //   ),
+    // });
     dispatch(
       login({
-        email: formData.email as string,
-        password: formData.password as string,
-        rememberMe:formData.rememberme ? formData.rememberme as string: "off",
+        email: data.email,
+        password: data.password,
+        rememberMe: data.rememberme ? "on" : "off",
       })
     );
   };
   if (!authError && authUser) {
     navigate("/");
   }
+
   return (
-    <div className="w-full h-fit flex items-center gap-4 justify-evenly mt-[100px]">
-      <div>
-        <img src={Image} alt="singin" />
-      </div>
-      <Card className="w-[400px] aspect-square flex flex-col justify-center">
+    <div className="w-full h-fit max-w-[700px] flex items-center gap-4 justify-evenly  p-4">
+      <Card className="w-full aspect-square flex flex-col justify-center">
         <CardHeader>
           <CardTitle>
             <SectionTitle
@@ -58,64 +98,95 @@ export default function Login() {
           <CardDescription>Create your hestory in one-click.</CardDescription>
         </CardHeader>
         <CardContent className="">
-          <form onSubmit={handleSubmit}>
-            <div className="grid w-full items-center gap-4">
-              <div className="flex flex-col space-y-1.5">
-                <Label htmlFor="email">Email</Label>
-                <Input
-                  type="email"
-                  id="email"
+          <Form {...form}>
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+              <div className="grid w-full items-center gap-4">
+                <FormField
+                  control={form.control}
                   name="email"
-                  placeholder="example@gmail.com"
-                  required
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Email</FormLabel>
+                      <FormControl>
+                        <Input placeholder="email@example.com" {...field} />
+                      </FormControl>
+                      <FormDescription>
+                        This the email you used to register.
+                      </FormDescription>
+                      <FormMessage />
+                    </FormItem>
+                  )}
                 />
-              </div>
-              <div className="flex flex-col space-y-1.5">
-                <Label htmlFor="password">Password</Label>
-                <Input
-                  type="password"
-                  id="password"
+                <FormField
+                  control={form.control}
                   name="password"
-                  placeholder="Password"
-                  required
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Password</FormLabel>
+                      <FormControl>
+                        <Input
+                          placeholder="password"
+                          type="password"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormDescription>
+                        This is your password. Make sure it's secure.
+                      </FormDescription>
+                      <FormMessage />
+                    </FormItem>
+                  )}
                 />
-              </div>
-              <div className=" w-full flex flex-row items-center justify-between  m-0 p-0 gap-4">
-                <div className="flex flex-row gap-2 ">
-                  <input
-                    type="checkbox"
-                    id="rememberme"
+                <div className=" w-full flex flex-col items-center justify-between  m-0 p-0 gap-4">
+                  <div className="flex flex-row w-full items-center justify-between">
+
+                  <FormField
+                    control={form.control}
                     name="rememberme"
-                    className="rounded-lg"
+                    render={({ field }) => (
+                      <FormItem className="flex flex-row items-start space-x-3 space-y-0  p-4">
+                        <FormControl>
+                          <Checkbox
+                            checked={field.value}
+                            onCheckedChange={field.onChange}
+                          />
+                        </FormControl>
+                        <div className="space-y-1 leading-none">
+                          Remember me
+                          <FormDescription></FormDescription>
+                        </div>
+                      </FormItem>
+                    )}
                   />
-                  <Label htmlFor="rememberme">Remember me</Label>
+                  <div>
+                    <Link to={"/auth/reset-password"}>Forgot password?</Link>
+                  </div>
+                  </div>
+
+                  <div className="w-full">
+                    {authError && <p className="text-red-500">{authError}</p>}
+                  </div>
+                  <div className="flex w-full justify-end">
+                    {authLoading ? (
+                      <Button disabled>
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        Please wait
+                      </Button>
+                    ) : (
+                      <Button type="submit">Join</Button>
+                    )}
+                  </div>
                 </div>
-                <div>
-                  <Link to={"/reset-password"}>Forgot password?</Link>
-                </div>
               </div>
-              <div>
-                {authError && <p className="text-red-500">{authError}</p>}
-              </div>
-              <div className="flex justify-end">
-                {authLoading ? (
-                  <Button disabled>
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    Please wait
-                  </Button>
-                ) : (
-                  <Button type="submit">Join</Button>
-                )}
-              </div>
-            </div>
-          </form>
+            </form>
+          </Form>
         </CardContent>
         <CardFooter className="w-full flex flex-col gap-4 [&>*]:w-full">
           <AuthWith />
           <div className="flex justify-center mb-2">
             <p>
               Don't have an account?{" "}
-              <Link to="/register" className="text-primary-700">
+              <Link to="/auth/register" className="text-primary-700">
                 Register
               </Link>
             </p>
