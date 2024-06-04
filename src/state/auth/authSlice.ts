@@ -21,7 +21,7 @@ import {
   where,
   query,
   Timestamp,
-  collectionGroup
+  collectionGroup,
 } from "@firebase/firestore";
 import { User as UserInterface, UserUpdate } from "../../types/types";
 import { toast } from "@/components/ui/use-toast";
@@ -96,12 +96,24 @@ const authSlice = createSlice({
           state.error = null;
           state.uid = auth.currentUser?.uid as string;
           state.user = action.payload as UserInterface;
+        } else {
+          state.error = action.payload as string;
+          toast({
+            title: "Error",
+            description: state.error,
+            variant: "destructive",
+          });
         }
       })
       .addCase(register.rejected, (state, action) => {
         // console.log("rej");
         state.loading = false;
         state.error = action.error.message as string;
+        toast({
+          title: "Error",
+          description: state.error,
+          variant: "destructive",
+        });
       });
     builder
       .addCase(logout.pending, (state) => {
@@ -224,9 +236,9 @@ const authSlice = createSlice({
       .addCase(updateUserData.rejected, (state, action) => {
         state.loading = false;
         state.error = action.error.message as string;
-        
       });
-      builder.addCase(changeAccountType.pending, (state) => {
+    builder
+      .addCase(changeAccountType.pending, (state) => {
         state.loading = true;
         state.error = null;
         toast({
@@ -241,7 +253,10 @@ const authSlice = createSlice({
           state.user = action.payload as UserInterface;
           toast({
             title: "Account type updated",
-            description: "Your account type has been successfully updated to " + action.payload.accountType + ".",
+            description:
+              "Your account type has been successfully updated to " +
+              action.payload.accountType +
+              ".",
           });
         } else {
           state.error = action.payload as string;
@@ -413,8 +428,6 @@ export const login = createAsyncThunk(
       if (error instanceof FirebaseError) {
         if (error.code === "auth/user-not-found") {
           return "User not found";
-        } else if (error.code === "auth/invalid-credential") {
-          return "Invalid credential";
         } else if (error.code === "auth/invalid-email") {
           return "Invalid email";
         } else if (error.code === "auth/wrong-password") {
@@ -423,6 +436,10 @@ export const login = createAsyncThunk(
           return "User disabled";
         } else if (error.code === "auth/operation-not-allowed") {
           return "Operation not allowed";
+        } else if (error.code === "auth/invalid-credential") {
+          return "Invalid credential";
+        } else if (error.code === "auth/invalid-verification-code") {
+          return "Invalid verification code";
         }
         return error.message;
       } else {
@@ -458,6 +475,7 @@ export const register = createAsyncThunk(
             // console.log("user created");
           })
           .catch((error) => {
+            console.log("error here 2");
             console.log(error);
           });
       } else {
@@ -469,7 +487,10 @@ export const register = createAsyncThunk(
             // console.log("user created");
           })
           .catch((error) => {
+            console.log("error here 1");
+
             console.log(error);
+            throw error;
           });
       }
       const user: UserInterface | null = await GetUserAccountInfo();
@@ -583,7 +604,6 @@ export const isItAlreadyInATeam = async (uid: string) => {
   let isAlreadyInTeam = false;
 
   snapshot.forEach((doc) => {
-    
     if (doc.id === uid) {
       // console.log("user is already in a team");
       isAlreadyInTeam = true;
@@ -613,8 +633,7 @@ export const changeAccountType = createAsyncThunk(
             title: "Error",
             description: "You are already a " + data.accountType,
             variant: "destructive",
-          
-          })
+          });
 
           return "You are already a " + data.accountType;
         }
@@ -630,8 +649,7 @@ export const changeAccountType = createAsyncThunk(
           } else {
             return "You are already in a team, you can not change your account type";
           }
-        }
-        else if (currentUserAccountType === "tournement_manager") {
+        } else if (currentUserAccountType === "tournement_manager") {
           return await setAccountType(uid, data.accountType);
         } else if (currentUserAccountType === "refree") {
           return await setAccountType(uid, data.accountType);
