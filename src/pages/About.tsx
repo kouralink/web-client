@@ -15,18 +15,18 @@ const About = () => {
         x: "https://x.com/WahmaneHamza",
       },
     },
-    {
-      name: "Meriem Maatouqui",
-      image:
-        "https://firebasestorage.googleapis.com/v0/b/koura-link.appspot.com/o/PROJECT_TEAM%2Fmeriem.jpg?alt=media&token=b36983e4-a6bb-442f-8da0-d54bd15b09ac",
-      role: "Frontend Developer",
-      links: {
-        github: "https://github.com/meriemmaat4",
-        linkedin: "d",
-        facebook: "d",
-        x: "d",
-      },
-    },
+    // {
+    //   name: "Meriem Maatouqui",
+    //   image:
+    //     "https://firebasestorage.googleapis.com/v0/b/koura-link.appspot.com/o/PROJECT_TEAM%2Fmeriem.jpg?alt=media&token=b36983e4-a6bb-442f-8da0-d54bd15b09ac",
+    //   role: "Frontend Developer",
+    //   links: {
+    //     github: "https://github.com/meriemmaat4",
+    //     linkedin: "d",
+    //     facebook: "d",
+    //     x: "d",
+    //   },
+    // },
     {
       name: "Zoubair Najdaoui",
       image:
@@ -80,7 +80,10 @@ const About = () => {
         <AboutCard teamInfo={teamInfo[0]} />
         <AboutCard teamInfo={teamInfo[1]} />
         <AboutCard teamInfo={teamInfo[2]} />
-        <AboutCard teamInfo={teamInfo[3]} />
+        {/* <AboutCard teamInfo={teamInfo[0]} />
+        <AboutCard teamInfo={teamInfo[1]} />
+        <AboutCard teamInfo={teamInfo[2]} />
+        <AboutCard teamInfo={teamInfo[3]} /> */}
       </div>
 
     </div>
