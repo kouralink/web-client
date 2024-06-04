@@ -28,7 +28,7 @@ const MyProfileCard = () => {
   };
 
   return (
-    <Card className="w-full bg-transparent border-none lg:py-10 container overflow-x-scroll">
+    <Card className="w-full bg-transparent border-none lg:py-10 container">
       <CardHeader>
         <div className="flex items-center justify-between py-5">
           <p className="text-3xl lg:text-8xl font-bold capitalize">
