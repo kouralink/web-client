@@ -988,7 +988,6 @@ export const changeCoach = createAsyncThunk(
         );
 
         const result = await changeCoachCloudFunction({
-          coachid: authUID,
           memberid: uid,
           teamid: teamId,
         });
@@ -1151,6 +1150,11 @@ export const getTeamMatchesHistory = createAsyncThunk(
     }
   }
 );
+
+// leave team for coach
+//  [ ] after check if user is coach and have a team
+//  [ ] for coach leave team should be only one on the team
+//  [ ] call a callback firebase function leaveTeamForCoach
 
 export const { setTeam, clearTeam, setError, setLoading } = teamSlice.actions;
 export default teamSlice.reducer;
