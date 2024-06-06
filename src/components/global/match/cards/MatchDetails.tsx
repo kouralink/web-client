@@ -53,7 +53,7 @@ export default function MatchDetails(
               <ListItem
                 iocn_name="calendar-days"
                 title={`Start : ${
-                  props.startIn.toDate().toDateString()}.`}
+                  props.startIn.toDate().toLocaleString()}.`}
                 arrow={false}
               />
             </div>
@@ -62,7 +62,7 @@ export default function MatchDetails(
             <div>
               <ListItem
                 iocn_name="calendar-days"
-                title={`Ended At : ${props.endedAt.toDate().toDateString()}.`}
+                title={`Ended At : ${props.endedAt.toDate().toLocaleString()}.`}
                 arrow={false}
               />
             </div>

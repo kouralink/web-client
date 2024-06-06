@@ -36,7 +36,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "@/state/store";
 import { sendRequestToJoinTeam } from "@/state/notification/notificationSlice";
 import SearchUsersProfile from "./SearchUsersProfile";
-import { leaveTeam } from "@/state/team/teamSlice";
+import { leaveTeam, leaveTeamForCoach } from "@/state/team/teamSlice";
 import { InfoTeamProfileCard } from "@/components/global/cards/InfoTeamProfileCard";
 import { Separator } from "@/components/ui/separator";
 import { Timestamp } from "firebase/firestore";
@@ -61,6 +61,10 @@ export function TeamDropDownMenu({
   const handleLeaveTeam = async () => {
     console.log("Leave team");
     await dispatch(leaveTeam(teamId));
+  };
+  const handleLeaveTeamForCoach = async () => {
+    console.log("Leave team for coach");
+    await dispatch(leaveTeamForCoach(teamId));
   };
 
   const team = useSelector((state: RootState) => state.team.team);
@@ -138,6 +142,36 @@ export function TeamDropDownMenu({
               </span>
               <DropdownMenuShortcut></DropdownMenuShortcut>
             </DropdownMenuItem>
+            <AlertDialog>
+              <AlertDialogTrigger className="w-full">
+                {" "}
+                <DropdownMenuItem
+                  onSelect={(e) => {
+                    e.preventDefault();
+                  }}
+                  className="text-red-400"
+                >
+                  <LogOut className="mr-2 h-4 w-4" />
+
+                  <span>Leave team</span>
+                  <DropdownMenuShortcut></DropdownMenuShortcut>
+                </DropdownMenuItem>
+              </AlertDialogTrigger>
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                  <AlertDialogDescription>
+                    This action cannot be undone, This team will be delete after coach left!
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel>Cancel</AlertDialogCancel>
+                  <AlertDialogAction onClick={handleLeaveTeamForCoach}>
+                    Continue
+                  </AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
           </DropdownMenuGroup>
         )}
         {role === "member" && (

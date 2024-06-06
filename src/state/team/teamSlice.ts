@@ -426,6 +426,41 @@ const teamSlice = createSlice({
         state.status = "failed";
         state.error = action.error.message;
       });
+    builder
+      .addCase(leaveTeamForCoach.pending, (state) => {
+        state.status = "loading";
+        state.error = null;
+      })
+      .addCase(leaveTeamForCoach.fulfilled, (state, action) => {
+        state.status = "idle";
+        state.error = null;
+        if (action.payload === true) {
+          toast({
+            variant: "default",
+            title: "Leave Team",
+            description: "You have left the team successfully!",
+            className: "text-primary border-2 border-primary text-start",
+          });
+        } else {
+          state.error = action.payload as string;
+          toast({
+            variant: "default",
+            title: "Leave Team Failed",
+            description: state.error,
+            className: "text-error border-2 border-error text-start",
+          });
+        }
+      })
+      .addCase(leaveTeamForCoach.rejected, (state, action) => {
+        state.status = "failed";
+        state.error = action.error.message;
+        toast({
+          variant: "default",
+          title: "Leave Team Rejected",
+          description: state.error,
+          className: "text-error border-2 border-error text-start",
+        });
+      });
   },
 });
 
@@ -1152,9 +1187,57 @@ export const getTeamMatchesHistory = createAsyncThunk(
 );
 
 // leave team for coach
-//  [ ] after check if user is coach and have a team
-//  [ ] for coach leave team should be only one on the team
-//  [ ] call a callback firebase function leaveTeamForCoach
+//  [x] after check if user is coach and have a team
+//  [x] for coach leave team should be only one on the team
+//  [x] call a callback firebase function leaveTeamForCoach
+
+export const leaveTeamForCoach = createAsyncThunk(
+  "team/leaveTeamForCoach",
+  async (teamId: string) => {
+    try {
+      // check if the user is authenticated
+      const authUID = auth.currentUser?.uid;
+      if (!authUID) {
+        return "User not authenticated!";
+      }
+      // check if the user is in the team
+      const teamRef = doc(firestore, "teams", teamId);
+      const memberRef = doc(teamRef, "members", authUID);
+      const memberSnap = await getDoc(memberRef);
+      if (!memberSnap.exists()) {
+        return "Player not in the team!";
+      }
+      // check if the user is the coach of team
+      const data = memberSnap.data() as Member;
+      if (data.role !== "coach") {
+        return "You are not the coach of this team!";
+      }
+      // check if the coach is the only one in the team
+      const members = await getTeamMembers(teamId);
+      if (members.length > 1) {
+        return "For Leave Team, You should give the role of coach to a member of team or be the only one in the team!";
+      }
+
+      try {
+        const leaveTeamForCoachCloudFunction = httpsCallable(
+          functions,
+          "leaveTeamForCoach"
+        );
+
+        const result = await leaveTeamForCoachCloudFunction({teamId});
+        if ((result?.data as { success: boolean })?.success) {
+          return true;
+        }
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      } catch (error: any) {
+        return error.message;
+      }
+    } catch (error) {
+      // console.log(error);
+      return "Leave Team Failed!";
+    }
+  }
+);
 
 export const { setTeam, clearTeam, setError, setLoading } = teamSlice.actions;
 export default teamSlice.reducer;
