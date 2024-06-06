@@ -20,6 +20,7 @@ export const TeamPage = () => {
   const team = useSelector((state: RootState) => state.team.team);
   const members = useSelector((state: RootState) => state.team.members);
   const error = useSelector((state: RootState) => state.team.error);
+  const loading = useSelector((state: RootState) => state.team.status === "loading");
   const navigate = useNavigate();
   const accountType = useSelector(
     (state: RootState) => state.auth.user?.accountType
@@ -84,13 +85,15 @@ export const TeamPage = () => {
       <TeamHeader {...team} role={role} />
       <div className="flex w-full gap-8 flex-col lg:flex-row  ">
         <Card className=" flex flex-col py-4 px-2 gap-4 h-fit">
+          {loading ? <>Loading ...</> : !coach ? <>This Team has been Deleted!</>:
+          <>
           <div className="flex flex-col gap-2">
             <h2>Coach</h2>
             <div className=" ml-4">
-              {coach ? (
+              {loading ? <p className="text-muted-foreground">Loading ...</p> : coach  ? (
                 <MemberCard member={coach} key={coach.uid} role={role} />
               ) : (
-                <p className="text-muted-foreground">Coach Not Found!</p>
+                <p className="text-muted-foreground">No coach found!</p>
               )}
             </div>
           </div>
@@ -110,6 +113,7 @@ export const TeamPage = () => {
               )}
             </div>
           </div>
+          </>}
         </Card>
         <div className="gap-4 w-full flex justify-end ">
           <Card className="flex flex-col gap-2  p-4 w-full lg:w-fit">
