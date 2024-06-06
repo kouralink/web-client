@@ -66,9 +66,11 @@ const MyProfileCard = () => {
           </li>
           <li className="flex items-center py-3">
             <Phone />
-            <span className="px-4">
+            <span className="px-4 flex gap-2">
               {userState.phoneNumbers
-                ? userState.phoneNumbers
+                ? userState.phoneNumbers.map((n)=>{
+                  return <Card key={n} className="px-2 py-1">{n}</Card>
+                })
                 : "add phone number in settings"}
             </span>
           </li>
