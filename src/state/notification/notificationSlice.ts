@@ -242,7 +242,7 @@ const notificationSlice = createSlice({
  * @returns {Promise<string>} teamId
  *
  */
-const getCoachTeamId = async () => {
+export const getCoachTeamId = async () => {
   try {
     // is authinticated
     const userUid = auth.currentUser?.uid;
