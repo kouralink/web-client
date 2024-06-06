@@ -26,7 +26,7 @@
     - [x] info notifiaction
     - [x] Change coach to member
     - [x] match Challenge
-    - [ ] invite refree to match
+    - [x] invite refree to match
     - [ ] request to join tournament
     - [ ] invite to tournament
     
@@ -77,28 +77,28 @@
     - [x] get match refree info
     - [x] link match slice with redux store
 - [x] create validation data for match details edits
-- [ ] create refree search 
-    - [ ] redux (search refree) & invite refree action
+- [x] create refree search 
+    - [x] redux (search refree) & invite refree action
     - [x] create search ui
     - [ ] create trigger for refree accept / decline match challenge (on Decline set isAgreed to false)
     - [x] add field is refree accept request to match
     - [x] update match type
 - [x] match status type "not started" "in progress" "cancelled" "ended" "pending"
 - [x] update status check in created components
-- [ ] match setup before start
+- [x] match setup before start
 - [x] Match Deatils Component
 - [x] Match Details From Componenet
-- [ ] Match Header Component
+- [x] Match Header Component
     - [x] UI
     - [x] action ui
     - [x] action redux
     - [x] possible edit (score) and action End match for refree
+- [x] create zod form validation for register and login
 
 
 - [ ] Show pending matchs in profile of refree
 - [ ] show team page card in members and coach profile
 
-- [ ] create zod form validation for register and login
 - [ ] check username is unique in the lower case state
 - [ ] if not members in team coach can delete the team but:
     - [ ] team not really deleted is just called that because the team will be have no coach and team name will change to del
@@ -141,15 +141,15 @@
 - [x] Notification Triggers (match challenge)
 - [x] change account type when  change coach for new coach and the old one
 - [ ] is not possible to ajout or leave team for coach it's need to change coach first and set one of members or delete team
-- [ ] match update
-    - [ ] on match start
-        - [ ] send notification to all members 
-    - [ ] on match end
-        - [ ] send notification to all members
-- [ ] if coach left the team (some how) the oldest member will be the coach if no members found the team will be deleted
+- [x] match update
+    - [x] on match start
+        - [x] send notification to all members 
+    - [x] on match end
+        - [x] send notification to all members
 - [x] notification of coach change should be sent to all members
-- [ ] trriger notification on invite refree to match can be aceepted if the refree have a match in same time
 - [x] team logos should upload to team logos folder
+- [ ] if coach left the team (some how) the oldest member will be the coach if no members found the team will be deleted
+- [ ] trriger notification on invite refree to match can be aceepted if the refree have a match in same time
 
 ## Triggers Next update add:
     - [ ] check if there is a already pending request match challenge from same teams
@@ -191,16 +191,15 @@
 
 ## @@Merieme tasks:
 - [x] Raport 50%
-- [ ] Raport 100%
+- [x] Raport 100%
 
 
 
 ## logic later tasks
 - [ ] username should base unique in lower case
 - [ ] team name should be unique in lower case
-- [ ] update the message of notification to contain info username or team name not userid
-// search in match where team1.id or team2.id === match.team1.id or match.team2.id check in not finsish or cancled matches (this matchs should have difreent duree time from now 2 hours at least)
-- 
+- [x] update the message of notification to contain info username or team name not userid
+- [ ]search in match where team1.id or team2.id === match.team1.id or match.team2.id check in not finsish or cancled matches (this matchs should have difreent duree time from now 2 hours at least)
 
 
 
