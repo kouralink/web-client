@@ -300,14 +300,13 @@ const GetUserAccountInfo = async () => {
     } else {
       // console.log("No such document!");
       let username = auth.currentUser.email
-        ? auth.currentUser.email.split("@")[0] +
-          Math.random().toString(36).substring(7)
-        : Math.random().toString(36).substring(7);
+        ? auth.currentUser.email.split("@")[0].toLowerCase()
+        : Math.random().toString(36).substring(7).toLowerCase();
 
       // check if yourname is available by checking if the username is already taken
       let isUsernameAvailable = await checkUsernameAvailability(username);
       while (!isUsernameAvailable) {
-        username = username + Math.random().toString(36).substring(7);
+        username = username + Math.random().toString(36).substring(7).toLowerCase();
         isUsernameAvailable = await checkUsernameAvailability(username);
       }
 
@@ -571,6 +570,7 @@ export const updateUserData = createAsyncThunk(
     try {
       if (auth.currentUser) {
         if (user.username) {
+          user.username = user.username.toLowerCase();
           const isUsernameAvailable = await checkUsernameAvailability(
             user.username
           );
