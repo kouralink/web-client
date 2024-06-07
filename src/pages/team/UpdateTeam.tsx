@@ -43,10 +43,13 @@ const ACCEPTED_IMAGE_MIME_TYPES = [
   "image/webp",
 ];
 // const ACCEPTED_IMAGE_TYPES = ["jpeg", "jpg", "png", "webp"];
-
+// teamNmae hould be lower case
 const createTeamSchema = z.object({
   teamName: z
     .string()
+    .regex(/^[a-z0-9]+$/, {
+      message: "Team name must be lowercase and contain only letters and numbers.",
+    })
     .min(4, {
       message: "Team name must be at least 4 characters.",
     })
@@ -112,14 +115,7 @@ export default function UpdateTeam() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  useEffect(() => {
-    if (error === "  1  " && status !== "loading" && team.teamName) {
-      // react router redirect
-      // console.log('updated')
-
-      navigate(`/team/page/${team.teamName}`);
-    }
-  }, [error, navigate, team.teamName, status]);
+  
   const form = useForm<CreateTeamFormValues>({
     resolver: zodResolver(createTeamSchema),
     mode: "onSubmit",
@@ -155,6 +151,14 @@ export default function UpdateTeam() {
   const handleCancel = () => {
     navigate(`/team/page/${team.teamName}`);
   }
+  useEffect(() => {
+    if (error === "  1  " && status !== "loading" && team.teamName) {
+      // react router redirect
+      // console.log('updated')
+      
+      navigate(`/team/page/${team.teamName}`);
+    }
+  }, [error, navigate, status, team.teamName]);
   return (
     <Card className="w-[800px]">
       <CardHeader>

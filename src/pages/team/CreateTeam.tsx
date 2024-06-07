@@ -23,13 +23,13 @@ import { createTeam } from "@/state/team/teamSlice";
 import { Textarea } from "@/components/ui/textarea";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
-    Card,
-    CardContent,
-    CardDescription,
-    CardFooter,
-    CardHeader,
-    CardTitle,
-  } from "@/components/ui/card"
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { useNavigate } from "react-router-dom";
 
 const MAX_FILE_SIZE = 1024 * 1024 * 2;
@@ -42,18 +42,26 @@ const ACCEPTED_IMAGE_MIME_TYPES = [
 // const ACCEPTED_IMAGE_TYPES = ["jpeg", "jpg", "png", "webp"];
 
 const createTeamSchema = z.object({
-  teamName: z.string()
+  teamName: z
+    .string()
+    .regex(/^[a-z0-9]+$/, {
+      message:
+        "Team name must be lowercase and contain only letters and numbers.",
+    })
     .min(4, {
       message: "Team name must be at least 4 characters.",
     })
     .max(30, {
       message: "Team name must not be longer than 30 characters.",
     }),
-  teamBio: z.string().max(160,{
-    message: "Team bio must be less then 160 characters.",
-  }).min(4, {
-    message: "Team bio must be more then 4 characters.",
-  }),
+  teamBio: z
+    .string()
+    .max(160, {
+      message: "Team bio must be less then 160 characters.",
+    })
+    .min(4, {
+      message: "Team bio must be more then 4 characters.",
+    }),
   logo: z
     .any()
     .refine((files) => {
@@ -84,41 +92,43 @@ export default function CreateTeam() {
     },
   });
   const onSubmit = async (data: CreateTeamFormValues) => {
-    data.logo = data.logo[0]
+    data.logo = data.logo[0];
     dispatch(createTeam(data));
-
   };
-  const navigate = useNavigate()
-      
+  const navigate = useNavigate();
 
   // redirect to team page after team created
   useEffect(() => {
-    if (error === '  0  ' && status !== "loading" && team.teamName) {
+    if (error === "  0  " && status !== "loading" && team.teamName) {
       // react router redirect
       navigate(`/team/page/${team.teamName}`);
     }
-  } , [error, navigate, team.teamName, status]);
+  }, [error, navigate, team.teamName, status]);
 
   return (
     <Card className="w-[800px]">
-    <CardHeader>
-      <CardTitle>Create Team</CardTitle>
-      <CardDescription> Create your team and invite others to join.</CardDescription>
-    </CardHeader>
-    <CardContent>
+      <CardHeader>
+        <CardTitle>Create Team</CardTitle>
+        <CardDescription>
+          {" "}
+          Create your team and invite others to join.
+        </CardDescription>
+      </CardHeader>
+      <CardContent>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-            
             <div className="grid gap-4 py-4">
               <div className="flex flex-col items-center px-7  mt-7 mb-8">
-                {status === 'loading' ? (
+                {status === "loading" ? (
                   <Loader2 className="h-40 w-40 text-primary animate-spin" />
                 ) : (
                   <label htmlFor="fileInput">
                     <Avatar className="w-36 h-36 flex items-center justify-center">
                       <AvatarImage
                         loading="lazy"
-                        src={URL.createObjectURL(selectedImage ? selectedImage as Blob: new Blob())}
+                        src={URL.createObjectURL(
+                          selectedImage ? (selectedImage as Blob) : new Blob()
+                        )}
                         className="object-cover"
                       />
                       <AvatarFallback className="text-6xl">
@@ -158,7 +168,7 @@ export default function CreateTeam() {
                   <FormItem>
                     <FormLabel>Team Name</FormLabel>
                     <FormControl>
-                      <Input  placeholder="Team Name" {...field} />
+                      <Input placeholder="Team Name" {...field} />
                     </FormControl>
                     <FormDescription>
                       This is the name of your team.
@@ -188,14 +198,9 @@ export default function CreateTeam() {
                 )}
               />
             </div>
-            {error && (
-              <FormMessage  className="mb-4">
-                {error}
-              </FormMessage>
-            )}
-           <CardFooter className="flex justify-between">
-
-                <Button variant="outline">Cancel</Button>
+            {error && <FormMessage className="mb-4">{error}</FormMessage>}
+            <CardFooter className="flex justify-between">
+              <Button variant="outline">Cancel</Button>
               {status === "loading" ? (
                 <Button variant="outline" disabled>
                   Creating Team...
@@ -203,14 +208,10 @@ export default function CreateTeam() {
               ) : (
                 <Button type="submit">Create Team</Button>
               )}
-                </CardFooter>
-
-            
+            </CardFooter>
           </form>
         </Form>
-        </CardContent>
-     
+      </CardContent>
     </Card>
-    
   );
 }
