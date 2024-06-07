@@ -94,6 +94,13 @@
     - [x] action redux
     - [x] possible edit (score) and action End match for refree
 - [x] create zod form validation for register and login
+- [ ] create cloud funciton for create users and teams
+- [ ] create cloud function for update users and teams
+- [ ] for change account type
+- [ ] link this functions with redux actions
+- [ ] leave team for team in match
+- [ ] update rules for users and teams
+
 
 
 - [ ] Show pending matchs in profile of refree
