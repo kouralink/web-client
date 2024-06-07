@@ -34,6 +34,9 @@ import { UserUpdate } from "@/types/types";
 const profileFormSchema = z.object({
   username: z
     .string()
+    .regex(/^[a-z0-9]+$/, {
+      message: "Team name must be lowercase and contain only letters and numbers.",
+    })
     .min(4, {
       message: "Username must be at least 4 characters.",
     })
