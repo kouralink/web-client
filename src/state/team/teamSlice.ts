@@ -175,9 +175,7 @@ const teamSlice = createSlice({
         state.error = null;
         if (typeof action.payload === "object" && action.payload !== null) {
           state.team = action.payload.team;
-          state.members = action.payload.members;
           state.error = "  1  ";
-
           toast({
             variant: "default",
             title: "Team Updated",
@@ -629,7 +627,7 @@ export const createTeam = createAsyncThunk(
 
         // add doc to teams collection
         const docRef = await addDoc(colRef, {
-          teamName: team.teamName,
+          teamName: team.teamName.toLowerCase(),
           blackList: [],
           createdAt: Timestamp.now(),
           updatedAt: Timestamp.now(),
@@ -719,6 +717,7 @@ export const updateTeam = createAsyncThunk(
 
       // console.log(2);
       if (team.teamName) {
+        team.teamName = team.teamName.toLowerCase();
         const isUnique = await isItUniqueTeamName(team.teamName);
         if (!isUnique) {
           return "Team Name Not Unique";
@@ -761,28 +760,16 @@ export const updateTeam = createAsyncThunk(
         { merge: true }
       );
 
-      const teamInfo = await getDoc(docRef);
-      if (teamInfo.exists()) {
-        // console.log("teamInfo", teamInfo.data());
-        // get members
+      
 
-        const members = await getTeamMembers(id);
+      const teamInfo = {...store.getState().team.team,...newTeamData}
 
-        // members.map(async (member) => {
-        //   member.userInfo = (await getMemberInfo(member.uid)) as User;
-        // });
-        // promise all
-        await Promise.all(
-          members.map(async (member) => {
-            member.userInfo = (await getMemberInfo(member.uid)) as User;
-            return member;
-          })
-        );
-        const teamData = { ...teamInfo.data(), id: id } as Team;
-
+      if (teamInfo){
+        
+        
+        
         const data = {
-          members: members,
-          team: teamData,
+          team: teamInfo,
         };
 
         return data;
