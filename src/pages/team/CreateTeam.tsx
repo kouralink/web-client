@@ -105,6 +105,10 @@ export default function CreateTeam() {
     }
   }, [error, navigate, team.teamName, status]);
 
+  const handelCancel = () => {
+    navigate("/team/search");
+  };
+
   return (
     <Card className="w-[800px]">
       <CardHeader>
@@ -200,7 +204,7 @@ export default function CreateTeam() {
             </div>
             {error && <FormMessage className="mb-4">{error}</FormMessage>}
             <CardFooter className="flex justify-between">
-              <Button variant="outline">Cancel</Button>
+              <Button variant="outline" type="button" onClick={handelCancel}>Cancel</Button>
               {status === "loading" ? (
                 <Button variant="outline" disabled>
                   Creating Team...
