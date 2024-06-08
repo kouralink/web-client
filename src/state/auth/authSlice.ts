@@ -632,12 +632,12 @@ export const isItAlreadyInATeam = async (uid: string) => {
   return isAlreadyInTeam;
 };
 
-const setAccountType = async (uid: string, accountType: string) => {
-  const docRef = doc(firestore, "users", uid);
-  await setDoc(docRef, { accountType: accountType }, { merge: true });
-  const updated_user = await GetUserAccountInfo();
-  return updated_user;
-};
+// const setAccountType = async (uid: string, accountType: string) => {
+//   const docRef = doc(firestore, "users", uid);
+//   await setDoc(docRef, { accountType: accountType }, { merge: true });
+//   const updated_user = await GetUserAccountInfo();
+//   return updated_user;
+// };
 
 export const changeAccountType = createAsyncThunk(
   "auth/changeAccountType",
@@ -649,32 +649,65 @@ export const changeAccountType = createAsyncThunk(
         const uid = auth.currentUser.uid;
         const currentUserAccountType = store.getState().auth.user?.accountType;
         if (currentUserAccountType === data.accountType) {
-          toast({
-            title: "Error",
-            description: "You are already a " + data.accountType,
-            variant: "destructive",
-          });
+          // toast({
+          //   title: "Error",
+          //   description: "You are already a " + data.accountType,
+          //   variant: "destructive",
+          // });
 
           return "You are already a " + data.accountType;
         }
         if (currentUserAccountType === "user") {
-          return await setAccountType(uid, data.accountType);
-        } else if (
+          // do no thing
+        }
+        else if (
           currentUserAccountType === "coach" ||
           currentUserAccountType === "player"
         ) {
           const isAlreadyInTeam = await isItAlreadyInATeam(uid);
-          if (!isAlreadyInTeam) {
-            return await setAccountType(uid, data.accountType);
-          } else {
+          if (isAlreadyInTeam) {
             return "You are already in a team, you can not change your account type";
           }
-        } else if (currentUserAccountType === "tournement_manager") {
-          return await setAccountType(uid, data.accountType);
         } else if (currentUserAccountType === "refree") {
-          return await setAccountType(uid, data.accountType);
+          // check if there is any match not canceled or finished
+
+          // search in matches collection for match status not in cancled or finish or coachs_edit and the refree.id === uid
+          const matchesRef = collection(firestore, "matches");
+          const q = query(
+            matchesRef,
+            where("refree.id", "==", uid),
+            where("matchStatus", "not-in", [
+              "canceled",
+              "finished",
+              "coachs_edit",
+            ])
+          );
+          const querySnapshot = await getDocs(q);
+          if (!querySnapshot.empty) {
+            return "You are refree in a match, you can not change your account type";
+          }
+        } else if (currentUserAccountType === "tournement_manager") {
+          console.log("todo here");
+        } else {
+          return "Account type not supported";
         }
-        return "Account type is not valid ";
+        // change account type callback function
+        const changeAccountTypeFunction = httpsCallable(
+          functions,
+          "changeAccountType"
+        );
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const result: any = await changeAccountTypeFunction({
+          accountType: data.accountType,
+        });
+        if (result.data.success) {
+          // get updated user data
+          const updated_user = await GetUserAccountInfo();
+          return updated_user;
+        } else {
+          console.log(result.data);
+          return result.message as string;
+        }
       } else {
         return "User is not authenticated";
       }
