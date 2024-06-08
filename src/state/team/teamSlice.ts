@@ -776,6 +776,7 @@ export const updateTeam = createAsyncThunk(
           return result.message as string;
         }
       } else {
+        console.log('here is it:',newTeamData)
         const docRef = doc(firestore, "teams", id);
         await setDoc(
           docRef,
