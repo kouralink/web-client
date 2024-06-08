@@ -29,15 +29,17 @@ import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "@/state/store";
 import { updateUserData } from "@/state/auth/authSlice";
 import { UserUpdate } from "@/types/types";
+import { Loader2 } from "lucide-react";
 // import { useEffect } from "react";
 
 const profileFormSchema = z.object({
   username: z
     .string()
     .regex(/^[a-z0-9]+$/, {
-      message: "Team name must be lowercase and contain only letters and numbers.",
+      message:
+        "Team name must be lowercase and contain only letters and numbers.",
     })
-    .min(4, {
+    .min(1, {
       message: "Username must be at least 4 characters.",
     })
     .max(30, {
@@ -62,8 +64,8 @@ type ProfileFormValues = z.infer<typeof profileFormSchema>;
 
 export function ProfileForm() {
   const authUser = useSelector((state: RootState) => state.auth.user);
-  // const isLoading = useSelector((state: RootState) => state.auth.loading);
-  // const authError = useSelector((state: RootState) => state.auth.error);
+  const isLoading = useSelector((state: RootState) => state.auth.loading);
+  const authError = useSelector((state: RootState) => state.auth.error);
   const dispatch = useDispatch<AppDispatch>();
   const defaultValues: Partial<ProfileFormValues> = {
     // get default value from authUser state
@@ -79,7 +81,6 @@ export function ProfileForm() {
     mode: "onChange",
   });
 
-  
   const onSubmit = async (data: ProfileFormValues) => {
     const changedInfos: UserUpdate = {};
     if (authUser?.username !== data.username) {
@@ -187,7 +188,15 @@ export function ProfileForm() {
             </FormItem>
           )}
         />
-        <Button type="submit">Update profile</Button>
+        {authError && <p className="text-red-500">{authError}</p>}
+        {isLoading ? (
+          <Button disabled>
+            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+            Please wait
+          </Button>
+        ) : (
+          <Button type="submit">Update profile</Button>
+        )}
       </form>
     </Form>
   );
