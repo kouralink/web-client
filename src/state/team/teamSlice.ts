@@ -11,7 +11,6 @@ import {
   collectionGroup,
   query,
   where,
-  addDoc,
   deleteDoc,
   updateDoc,
   arrayUnion,
@@ -29,6 +28,7 @@ import { UpdateTeamDataType } from "@/pages/team/UpdateTeam";
 import { httpsCallable } from "firebase/functions";
 import { functions } from "@/services/firebase";
 import { store } from "../store";
+import { FirebaseError } from "firebase/app";
 
 const initialState: TeamState = {
   team: {
@@ -94,7 +94,7 @@ const teamSlice = createSlice({
           state.team = initialState.team;
           state.error = action.payload as string;
           toast({
-            variant: "default",
+            variant: "destructive",
             title: "Team Creation Failed",
             description: action.payload as string,
             className: "text-error border-2 border-error text-start",
@@ -575,7 +575,7 @@ export const createTeam = createAsyncThunk(
       if (userSnap.exists()) {
         const user = userSnap.data() as User;
         if (user.accountType !== "coach") {
-          return "User is not a coach";
+          return "User is not a coach, you need to change your account type!";
         }
         // test if user already have a team
         const isInTeam = await isItAlreadyInATeam(auth.currentUser.uid);
@@ -586,9 +586,7 @@ export const createTeam = createAsyncThunk(
         return "User not found";
       }
 
-      // console.log(2);
-
-      const isUnique = await isItUniqueTeamName(team.teamName);
+      const isUnique = await isItUniqueTeamName(team.teamName.toLowerCase());
       if (isUnique) {
         // upload image
         const storageRef = ref(storage, `Team/Logos/${team.teamName}`);
@@ -597,26 +595,26 @@ export const createTeam = createAsyncThunk(
           storageRef,
           team.logo as Blob
         );
-        // console.log(3);
 
         let logoUrl = "";
         try {
           logoUrl = await getDownloadURL(snapshot.ref);
-          toast({
-            variant: "default",
-            title: "Upload Image",
-            description: "Image uploaded successfully!",
-            className: "text-primary border-2 border-primary text-start",
-          });
+          // toast({
+          //   variant: "default",
+          //   title: "Upload Image",
+          //   description: "Image uploaded successfully!",
+          //   className: "text-primary border-2 border-primary text-start",
+          // });
         } catch (error) {
           // console.log(error);
           return "Get Download URL Failed!";
         }
 
-        const colRef = collection(firestore, "teams");
+        // const colRef = collection(firestore, "teams");
 
-        // await setDoc(docRef, {
-        //   teamName: team.teamName,
+        // // add doc to teams collection
+        // const docRef = await addDoc(colRef, {
+        //   teamName: team.teamName.toLowerCase(),
         //   blackList: [],
         //   createdAt: Timestamp.now(),
         //   updatedAt: Timestamp.now(),
@@ -624,62 +622,74 @@ export const createTeam = createAsyncThunk(
         //   description: team.teamBio,
         //   createdBy: auth.currentUser.uid,
         // });
+        // const teamId = docRef.id;
+        // // set members doc on /teams/teamName/members/userId
+        // const membersDocRef = doc(docRef, "members", auth.currentUser.uid);
+        // await setDoc(membersDocRef, {
+        //   team_id: teamId,
+        //   uid: auth.currentUser.uid,
+        //   role: "coach",
+        //   joinedAt: Timestamp.now(),
+        // });
 
-        // add doc to teams collection
-        const docRef = await addDoc(colRef, {
+        // call createTeam firebase call back function
+
+        const createTeamCloudFunction = httpsCallable(functions, "createTeam");
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const result: any = await createTeamCloudFunction({
           teamName: team.teamName.toLowerCase(),
-          blackList: [],
-          createdAt: Timestamp.now(),
-          updatedAt: Timestamp.now(),
           teamLogo: logoUrl,
-          description: team.teamBio,
-          createdBy: auth.currentUser.uid,
+          teamDescription: team.teamBio,
         });
-        const teamId = docRef.id;
-        // set members doc on /teams/teamName/members/userId
-        const membersDocRef = doc(docRef, "members", auth.currentUser.uid);
-        await setDoc(membersDocRef, {
-          team_id: teamId,
-          uid: auth.currentUser.uid,
-          role: "coach",
-          joinedAt: Timestamp.now(),
-        });
+        console.log(result);
 
-        // get doc
-        let members: Member[] = [];
-        const teamInfo = await getDoc(docRef);
-        if (teamInfo.exists()) {
-          // console.log("teamInfo", teamInfo.data());
-          // get members
+        if (result.data.success) {
+          const teamId = result.data.teamId as string;
+          const teamDoc = doc(firestore, "teams", teamId);
+          // get doc
+          let members: Member[] = [];
+          const teamInfo = await getDoc(teamDoc);
+          if (teamInfo.exists()) {
+            // console.log("teamInfo", teamInfo.data());
+            // get members
 
-          members = await getTeamMembers(teamId);
-          members.map(async (member) => {
-            member.userInfo = (await getMemberInfo(member.uid)) as User;
-          });
-          const teamData = { ...teamInfo.data(), id: teamId } as Team;
+            members = await getTeamMembers(teamId);
+            members.map(async (member) => {
+              member.userInfo = (await getMemberInfo(member.uid)) as User;
+            });
+            const teamData = { ...teamInfo.data(), id: teamId } as Team;
 
-          const data = {
-            members: members as Member[],
-            team: teamData,
-          };
+            const data = {
+              members: members as Member[],
+              team: teamData,
+            };
 
-          return data;
+            return data;
+          } else {
+            return "Team Doesn't created!";
+          }
         } else {
-          return "Team Doesn't created!";
+          console.log("error not returned");
+
+          return result.message as string;
         }
       } else {
         // console.log("Team Name Not Unique");
-        toast({
-          variant: "default",
-          title: "Team Name Not Unique",
-          description: "Team name is not unique! Please try another name.",
-          className: "text-error border-2 border-error text-start",
-        });
+        // toast({
+        //   variant: "default",
+        //   title: "Team Name Not Unique",
+        //   description: "Team name is not unique! Please try another name.",
+        //   className: "text-error border-2 border-error text-start",
+        // });
         return "Team name is not unique";
       }
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    } catch (error: any) {
-      throw new Error(error.response.data as string);
+    } catch (error) {
+      if (error instanceof FirebaseError) {
+        return error.message;
+      } else {
+        return "An error occurred";
+      }
     }
   }
 );
@@ -750,24 +760,36 @@ export const updateTeam = createAsyncThunk(
         }
       }
 
-      const docRef = doc(firestore, "teams", id);
-      await setDoc(
-        docRef,
-        {
-          updatedAt: Timestamp.now(),
-          ...newTeamData,
-        },
-        { merge: true }
-      );
+      if (newTeamData.teamName) {
+        // callback function for update team if user update teamName
+        const updateTeamCloudFunction = httpsCallable(functions, "updateTeam");
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const result: any = await updateTeamCloudFunction({
+          teamId: id,
+          teamName: newTeamData.teamName,
+          teamLogo: newTeamData.teamLogo,
+          teamDescription: newTeamData.description,
+        });
+        // console.log(result);
+        if (!result.data.success) {
+          console.log("error not returned");
+          return result.message as string;
+        }
+      } else {
+        const docRef = doc(firestore, "teams", id);
+        await setDoc(
+          docRef,
+          {
+            updatedAt: Timestamp.now(),
+            ...newTeamData,
+          },
+          { merge: true }
+        );
+      }
 
-      
+      const teamInfo = { ...store.getState().team.team, ...newTeamData };
 
-      const teamInfo = {...store.getState().team.team,...newTeamData}
-
-      if (teamInfo){
-        
-        
-        
+      if (teamInfo) {
         const data = {
           team: teamInfo,
         };
@@ -777,9 +799,12 @@ export const updateTeam = createAsyncThunk(
         return "Team Doesn't created!";
       }
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    } catch (error: any) {
-      // console.log(error)
-      throw new Error(error.response.data as string);
+    } catch (error) {
+      if (error instanceof FirebaseError) {
+        return error.message;
+      } else {
+        return "An error occurred";
+      }
     }
   }
 );
@@ -1211,7 +1236,7 @@ export const leaveTeamForCoach = createAsyncThunk(
           "leaveTeamForCoach"
         );
 
-        const result = await leaveTeamForCoachCloudFunction({teamId});
+        const result = await leaveTeamForCoachCloudFunction({ teamId });
         if ((result?.data as { success: boolean })?.success) {
           return true;
         }
