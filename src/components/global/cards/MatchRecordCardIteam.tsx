@@ -3,8 +3,31 @@ import { Match } from "@/types/types";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Link } from "react-router-dom";
+import { Badge } from "@/components/ui/badge";
+
+interface statusSelectType {
+  variant: "outline" | "default" | "secondary";
+  value: string;
+}
 
 const MatchRecordCardIteam: React.FC<Match> = (props) => {
+  const statusSelect = {
+    pending: { variant: "outline", value: "Pending" } as statusSelectType,
+    finish: { variant: "default", value: "Finished" } as statusSelectType,
+    cancled: { variant: "secondary", value: "Cancled" } as statusSelectType,
+    coachs_edit: {
+      variant: "outline",
+      value: "Coaches editing",
+    } as statusSelectType,
+    refree_waiting: {
+      variant: "default",
+      value: "Refree waiting",
+    } as statusSelectType,
+    in_progress: {
+      variant: "default",
+      value: "In progress",
+    } as statusSelectType,
+  };
   return (
     <Card
       className={[
@@ -29,19 +52,13 @@ const MatchRecordCardIteam: React.FC<Match> = (props) => {
           <div className="text-2xl">
             {props.team1.score}-{props.team2.score}
           </div>
-          {props.location ? (
-            <div className="text-sm ">
-              Location :{" "}
-              <a
-                href={props.location}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-sm text-sky-500"
-              >
-                Open
-              </a>
-            </div>
-          ) : (<span className="text-muted-foreground">Match not started yet</span>)}
+
+          <div className="text-muted-foreground text-sm flex gap-2">
+            <span>Status :</span>
+            <Badge variant={statusSelect[props.status].variant}>
+              {statusSelect[props.status].value}
+            </Badge>
+          </div>
           <div className="text-muted-foreground text-sm">
             {props.startIn?.toDate().toLocaleString()}
           </div>

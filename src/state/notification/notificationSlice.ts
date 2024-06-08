@@ -296,8 +296,9 @@ export const getTeamRequestNotifications = createAsyncThunk(
       if (teamId.error) {
         return { error: teamId.error };
       }
-
+      // order by createdAt desc
       const notificationsCollection = collection(firestore, "notifications");
+
       const notificationsQuery = query(
         notificationsCollection,
         where("to_id", "==", teamId),
@@ -317,6 +318,7 @@ export const getTeamRequestNotifications = createAsyncThunk(
       }
       return { notis: notifications };
     } catch (error) {
+      console.log(error);
       return { error: "Error getting team request notifications" };
     }
   }
@@ -575,11 +577,9 @@ export const updateNotificationAction = createAsyncThunk(
       }
 
       if (
-        [
-          "request_to_join_tournement",
-          "invite_to_tournement"
-          
-        ].includes(notificationInfo.type)
+        ["request_to_join_tournement", "invite_to_tournement"].includes(
+          notificationInfo.type
+        )
       ) {
         // console.log("this actions not supported yet");
         return "this actions not supported yet";
@@ -587,46 +587,33 @@ export const updateNotificationAction = createAsyncThunk(
 
       // check if to_id == uid for type info and invite to team
       if (["info", "invite_to_team"].includes(notificationInfo.type)) {
-        
-          // check in notificationInfo.type === invite_to_team and action === accept if it the user account type shoulld be player and not already in a team
-          if (notificationInfo.type === "invite_to_team") {
-            
-
-            const accountType = store.getState().auth.user?.accountType;
-            if (accountType !== "player" && ntf.action === "accept") {
-              return "Account type is not player";
-            }
-            const isItInTeam = await isItAlreadyInATeam(uid);
-            if (isItInTeam && ntf.action === "accept") {
-              return "You are already in a team, leave the team first to accept the invite and join new team.";
-            }
-
-            // check if this player in black list
-            const isItInBlackListValue = await isItInBlackList(
-              notificationInfo.from_id,
-              uid
-            );
-            if (
-              typeof isItInBlackListValue === "object" &&
-              isItInBlackListValue.error
-            ) {
-              return isItInBlackListValue.error;
-            }
-            if (isItInBlackListValue === true) {
-              await updateNotificationActionToTakedAction(ntf.id, "decline");
-              return "You have been black listed by this team";
-            }
-
-            const updated = await updateNotificationActionToTakedAction(
-              ntf.id,
-              ntf.action
-            );
-            if (updated === true) {
-              return true;
-            } else {
-              return updated;
-            }
+        // check in notificationInfo.type === invite_to_team and action === accept if it the user account type shoulld be player and not already in a team
+        if (notificationInfo.type === "invite_to_team") {
+          const accountType = store.getState().auth.user?.accountType;
+          if (accountType !== "player" && ntf.action === "accept") {
+            return "Account type is not player";
           }
+          const isItInTeam = await isItAlreadyInATeam(uid);
+          if (isItInTeam && ntf.action === "accept") {
+            return "You are already in a team, leave the team first to accept the invite and join new team.";
+          }
+
+          // check if this player in black list
+          const isItInBlackListValue = await isItInBlackList(
+            notificationInfo.from_id,
+            uid
+          );
+          if (
+            typeof isItInBlackListValue === "object" &&
+            isItInBlackListValue.error
+          ) {
+            return isItInBlackListValue.error;
+          }
+          if (isItInBlackListValue === true) {
+            await updateNotificationActionToTakedAction(ntf.id, "decline");
+            return "You have been black listed by this team";
+          }
+
           const updated = await updateNotificationActionToTakedAction(
             ntf.id,
             ntf.action
@@ -636,7 +623,16 @@ export const updateNotificationAction = createAsyncThunk(
           } else {
             return updated;
           }
-        
+        }
+        const updated = await updateNotificationActionToTakedAction(
+          ntf.id,
+          ntf.action
+        );
+        if (updated === true) {
+          return true;
+        } else {
+          return updated;
+        }
       }
       // for request to join team
       // check if the authUser is the coach of the team where the teamId === to_id
@@ -678,7 +674,7 @@ export const updateNotificationAction = createAsyncThunk(
           return updated;
         }
       }
-      if (notificationInfo.type == "refree_invite"){
+      if (notificationInfo.type == "refree_invite") {
         // check if user auth account type
         const accountType = store.getState().auth.user?.accountType;
         if (accountType !== "refree") {
