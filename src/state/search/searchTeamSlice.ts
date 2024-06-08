@@ -54,7 +54,6 @@ export const searchByTeamName = createAsyncThunk(
         teamsCol,
         where("teamName", ">=", teamname),
         where("teamName", "<=", teamname + "\uf8ff"),
-        where("teamName", "!=", "_"),
         limit(10)
       );
       const querySnapshot = await getDocs(q);

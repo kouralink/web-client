@@ -14,6 +14,7 @@ import { MatchDetailsFormValues } from "@/components/global/match/cards/MatchDet
 import { httpsCallable } from "firebase/functions";
 import { functions } from "@/services/firebase";
 import { store } from "../store";
+import { FirebaseError } from "firebase/app";
 
 interface MatchState {
   match: MatchFirestore;
@@ -308,6 +309,37 @@ const matchSlice = createSlice({
         state.isLoading = false;
         state.error = action.error.message;
       });
+    builder
+      .addCase(cancelMatchForCoach.pending, (state) => {
+        state.isLoading = true;
+        state.error = null;
+      })
+      .addCase(cancelMatchForCoach.fulfilled, (state, action) => {
+        state.isLoading = false;
+        if (typeof action.payload === "string") {
+          state.error = action.payload;
+          toast({
+            title: "Error",
+            description: action.payload,
+            variant: "destructive",
+          });
+          return;
+        }
+        toast({
+          title: "Success",
+          description: "Match status updated successfully",
+          variant: "default",
+        });
+      })
+      .addCase(cancelMatchForCoach.rejected, (state, action) => {
+        state.isLoading = false;
+        state.error = action.error.message;
+        toast({
+          title: "Error",
+          description: action.error.message,
+          variant: "destructive",
+        });
+      });
   },
 });
 
@@ -468,10 +500,13 @@ export const updateMatchDetails = createAsyncThunk(
         store.dispatch(getMatchById(matchid));
       }
       return true;
-    } catch (error) {
-      console.error(error);
-      // console.log(error);
-      return "Updating match details failed!";
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (error: any) {
+      if (error instanceof FirebaseError) {
+        return error.message;
+      } else {
+        return "Updating match details failed!";
+      }
     }
   }
 );
@@ -504,10 +539,13 @@ export const setInProgress = createAsyncThunk(
       // console.log("firebase function reuslt is:", result);
       store.dispatch(getMatchById(matchid));
       return true;
-    } catch (error) {
-      console.error(error);
-      // console.log(error);
-      return "Updating match details failed!";
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (error: any) {
+      if (error instanceof FirebaseError) {
+        return error.message;
+      } else {
+        return "Updating match details failed!";
+      }
     }
   }
 );
@@ -543,10 +581,13 @@ export const endMatch = createAsyncThunk("match/endMatch", async () => {
     // console.log("firebase function reuslt is:", result);
     store.dispatch(getMatchById(match.id));
     return true;
-  } catch (error) {
-    console.error(error);
-    // console.log(error);
-    return "Updating match details failed!";
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  } catch (error: any) {
+    if (error instanceof FirebaseError) {
+      return error.message;
+    } else {
+      return "Updating match details failed!";
+    }
   }
 });
 
@@ -576,10 +617,13 @@ export const cancelMatch = createAsyncThunk("match/cancelMatch", async () => {
     // console.log("firebase function reuslt is:", result);
     store.dispatch(getMatchById(matchid));
     return true;
-  } catch (error) {
-    console.error(error);
-    // console.log(error);
-    return "Updating match details failed!";
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  } catch (error: any) {
+    if (error instanceof FirebaseError) {
+      return error.message;
+    } else {
+      return "Updating match details failed!";
+    }
   }
 });
 
@@ -615,10 +659,45 @@ export const editResult = createAsyncThunk(
       // console.log("firebase function reuslt is:", result);
       store.dispatch(getMatchById(matchid));
       return true;
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (error: any) {
+      if (error instanceof FirebaseError) {
+        return error.message;
+      } else {
+        return "Updating match details failed!";
+      }
+    }
+  }
+);
+// cancel match for coachs
+// call a callback firebase function for cancel match
+// work just for classic matchs and for only coachs
+// working just on coachs_edit,refree_waiting and pending status
+
+export const cancelMatchForCoach = createAsyncThunk(
+  "match/cancelMatchForCoach",
+  async () => {
+    try {
+      // check is user auth
+      const authUSR = auth.currentUser;
+      if (!authUSR) {
+        return "User not authenticated!";
+      }
+      const matchid = store.getState().match.match.id;
+      if (!matchid) {
+        return "could not get matchid";
+      }
+
+      const cancelMatchCloudFunction = httpsCallable(functions, "cancelMatch");
+      await cancelMatchCloudFunction({ matchid: matchid });
+      store.dispatch(getMatchById(matchid));
+      return true;
     } catch (error) {
-      console.error(error);
-      // console.log(error);
-      return "Updating match details failed!";
+      if (error instanceof FirebaseError) {
+        return error.message;
+      } else {
+        return "Updating match details failed!";
+      }
     }
   }
 );

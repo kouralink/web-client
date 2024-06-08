@@ -1,4 +1,4 @@
-import {  LogOut, Users } from "lucide-react";
+import { LogOut, Users } from "lucide-react";
 
 import {
   DropdownMenu,
@@ -10,7 +10,21 @@ import {
   DropdownMenuShortcut,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 import { Link } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { AppDispatch, RootState } from "@/state/store";
+import { cancelMatchForCoach } from "@/state/match/matchSlice";
 
 export default function MatchTeamDropDownMenu({
   teamname,
@@ -19,6 +33,13 @@ export default function MatchTeamDropDownMenu({
   teamname: string;
   role: "user" | "coach" | "member";
 }) {
+  const matchStatus = useSelector(
+    (state: RootState) => state.match.match.status
+  );
+  const dispatch = useDispatch<AppDispatch>();
+  const handelLeaveMatch = () => {
+    dispatch(cancelMatchForCoach());
+  };
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild className="cursor-pointer">
@@ -42,16 +63,47 @@ export default function MatchTeamDropDownMenu({
       <DropdownMenuContent className="w-56">
         <DropdownMenuLabel>Match Team Menu</DropdownMenuLabel>
         <DropdownMenuSeparator />
-        {role === "coach" && (
-          <DropdownMenuGroup>
-            <DropdownMenuItem className="text-red-500">
-              <LogOut className="mr-2 h-4 w-4" />
-              {/* // TODO: add confirm dialog  */}
-              <span>Leave Match</span>
-              <DropdownMenuShortcut></DropdownMenuShortcut>
-            </DropdownMenuItem>
-          </DropdownMenuGroup>
-        )}
+        {/* the match cancel working coachs_edit or refree_waiting or pending satus just */}
+        {role === "coach" &&
+          ["coachs_edit", "refree_waiting", "pending"].includes(
+            matchStatus
+          ) && (
+            <DropdownMenuGroup>
+              <AlertDialog>
+                <AlertDialogTrigger className="w-full">
+                  {" "}
+                  <DropdownMenuItem
+                    onSelect={(e) => {
+                      e.preventDefault();
+                    }}
+                    className="text-red-400"
+                  >
+                    <LogOut className="mr-2 h-4 w-4" />
+
+                    <span>Leave Match</span>
+                    <DropdownMenuShortcut></DropdownMenuShortcut>
+                  </DropdownMenuItem>
+                </AlertDialogTrigger>
+                <AlertDialogContent>
+                  <AlertDialogHeader>
+                    <AlertDialogTitle>
+                      Are you absolutely sure?
+                    </AlertDialogTitle>
+                    <AlertDialogDescription>
+                      This action cannot be undone, This team will be cancel the
+                      match!
+                    </AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <AlertDialogFooter>
+                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                    <AlertDialogAction onClick={handelLeaveMatch}>
+                      Continue
+                    </AlertDialogAction>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
+            </DropdownMenuGroup>
+          )}
         <DropdownMenuGroup>
           <DropdownMenuItem asChild>
             <Link to={`/team/page/${teamname}`}>
