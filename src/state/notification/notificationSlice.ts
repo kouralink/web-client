@@ -10,6 +10,7 @@ import {
   getDoc,
   doc,
   updateDoc,
+  orderBy,
 } from "firebase/firestore";
 import { firestore, auth } from "@/services/firebase";
 import { toast } from "@/components/ui/use-toast";
@@ -300,7 +301,8 @@ export const getTeamRequestNotifications = createAsyncThunk(
       const notificationsQuery = query(
         notificationsCollection,
         where("to_id", "==", teamId),
-        where("action", "==", null)
+        where("action", "==", null),
+        orderBy("createdAt", "desc")
       );
       const notificationsSnapshot = await getDocs(notificationsQuery);
       const notifications: Notification[] = [];
@@ -335,7 +337,8 @@ export const getRecievedNotifications = createAsyncThunk(
       const notificationsQuery = query(
         notificationsCollection,
         where("to_id", "==", uid),
-        where("action", "==", null)
+        where("action", "==", null),
+        orderBy("createdAt", "desc")
       );
       // console.log("2");
       const notificationsSnapshot = await getDocs(notificationsQuery);

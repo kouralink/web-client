@@ -414,9 +414,14 @@ const teamSlice = createSlice({
           action.payload !== null &&
           action.payload.matches
         ) {
+          console.log("udpate 2:", action.payload.matches);
           state.MatchesHistory = action.payload.matches;
           // console.log("matches has updated");
+        } else {
+          state.MatchesHistory = [];
         }
+
+        // console.log('udpate 2:', action.payload.matches)
         // console.log("getting matches history another failed");
       })
       .addCase(getTeamMatchesHistory.rejected, (state, action) => {
@@ -776,7 +781,7 @@ export const updateTeam = createAsyncThunk(
           return result.message as string;
         }
       } else {
-        console.log('here is it:',newTeamData)
+        console.log("here is it:", newTeamData);
         const docRef = doc(firestore, "teams", id);
         await setDoc(
           docRef,
@@ -1157,7 +1162,7 @@ export const getTeamMatchesHistory = createAsyncThunk(
         colRef,
         or(where("team1.id", "==", teamId), where("team2.id", "==", teamId)),
         orderBy("createdAt", "desc"),
-        limit(10)
+        limit(20)
       );
       // console.log("get: 2");
       const snap = await getDocs(queryRef);
@@ -1166,6 +1171,7 @@ export const getTeamMatchesHistory = createAsyncThunk(
       for (const doc of snap.docs) {
         const thismatch = doc.data() as Match;
         // console.log("this match:",thismatch)
+        // TODO: update this stupid function
         const team1_data = await getTeamDataByTeamId(thismatch.team1.id);
         const team2_data = await getTeamDataByTeamId(thismatch.team2.id);
 
