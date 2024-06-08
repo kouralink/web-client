@@ -10,7 +10,7 @@ import {
   sendPasswordResetEmail,
   browserSessionPersistence,
 } from "firebase/auth";
-import { auth, firestore } from "@/services/firebase";
+import { auth, firestore, functions } from "@/services/firebase";
 import { FirebaseError } from "firebase/app";
 import {
   doc,
@@ -20,13 +20,14 @@ import {
   getDocs,
   where,
   query,
-  Timestamp,
   collectionGroup,
 } from "@firebase/firestore";
 import { User as UserInterface, UserUpdate } from "../../types/types";
 import { toast } from "@/components/ui/use-toast";
 import { changeAccountFormValues } from "@/components/global/ChangeAccountType";
 import { store } from "../store";
+
+import { httpsCallable } from "firebase/functions";
 
 interface AuthState {
   user: UserInterface | null;
@@ -231,6 +232,11 @@ const authSlice = createSlice({
           });
         } else {
           state.error = action.payload as string;
+          toast({
+            title: "Error",
+            description: state.error,
+            variant: "destructive",
+          });
         }
       })
       .addCase(updateUserData.rejected, (state, action) => {
@@ -306,7 +312,8 @@ const GetUserAccountInfo = async () => {
       // check if yourname is available by checking if the username is already taken
       let isUsernameAvailable = await checkUsernameAvailability(username);
       while (!isUsernameAvailable) {
-        username = username + Math.random().toString(36).substring(7).toLowerCase();
+        username =
+          username + Math.random().toString(36).substring(7).toLowerCase();
         isUsernameAvailable = await checkUsernameAvailability(username);
       }
 
@@ -314,25 +321,31 @@ const GetUserAccountInfo = async () => {
         username,
       ];
 
-      const user: UserInterface = {
-        username: username,
-        accountType: "user",
-        firstName: name_splited[0],
-        lastName: name_splited.length > 1 ? name_splited[1] : "",
-        bio: "",
-        birthday: Timestamp.now(),
-        joinDate: Timestamp.now(),
-        gender: "male",
-        phoneNumbers: [],
-        address: "",
-        avatar: auth.currentUser.photoURL ? auth.currentUser.photoURL : "",
-      };
-      // create doc base on uid
-      const docRef = doc(firestore, "users", uid);
-      await setDoc(docRef, user);
-      // console.log("********************************");
+      const firstame = name_splited[0];
+      const lastname = name_splited.length > 1 ? name_splited[1] : "";
 
-      return user;
+      // callback function for create team
+
+      const createUserFunction = httpsCallable(functions, "createUser");
+
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const result: any = await createUserFunction({
+        username: username,
+        firstName: firstame,
+        lastName: lastname,
+        avatar: auth.currentUser.photoURL ? auth.currentUser.photoURL : "",
+      });
+
+      // console.log(result.data.success);
+      if (result.data.success) {
+        const docRef = doc(firestore, "users", uid);
+        const newDocSnap = await getDoc(docRef);
+        const user = newDocSnap.data() as UserInterface;
+        return user;
+      } else {
+        console.log(result.data);
+        return null;
+      }
     }
   } else {
     // console.log("user is not authenticated");
@@ -578,14 +591,21 @@ export const updateUserData = createAsyncThunk(
             return "Username is not available";
           }
         }
-        const uid = auth.currentUser.uid;
-        const docRef = doc(firestore, "users", uid);
-        await setDoc(docRef, user, { merge: true });
-        // get updated user data
-        const updated_user = await GetUserAccountInfo();
-        return updated_user;
+
+        const updateUserFunction = httpsCallable(functions, "updateUser");
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const result: any = await updateUserFunction(user);
+
+        if (result.data.success) {
+          // get updated user data
+          const updated_user = await GetUserAccountInfo();
+          return updated_user;
+        } else {
+          console.log(result.data);
+          return result.message as string;
+        }
       } else {
-        return null;
+        return "User is not authenticated";
       }
     } catch (error) {
       if (error instanceof FirebaseError) {
