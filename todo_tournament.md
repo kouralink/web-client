@@ -3,9 +3,9 @@
 - [x] : @ilorez : update create tournament form add loading and handle errors
 - [ ] : @ilorez : update create tournament -> navigate to tournament page
 - [ ] : @ilorez : create update tournament page page
-- [ ] : @Abdo-Nsila : get tournament info
-- [ ] : get tournament teamsinfo
-- [ ] : get tournament refreesinfo
+- [x] : @Abdo-Nsila : get tournament info
+- [x] : @Abdo-Nsila : get tournament teamsinfo
+- [x] : @Abdo-Nsila : get tournament refreesinfo
 - [x] : @ilorez : request to join tournament for team
 - [x] : @ilorez : invite team
 - [ ] : leave tournament for team (require firebase callback function)
