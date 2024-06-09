@@ -46,9 +46,9 @@ const UserSearchPage: React.FC = () => {
                 placeholder="Search users..."
               />
               <ul>
-                {searchResults.map((result) => {
+                {searchResults.map((result, index) => {
                   return (
-                    <div>
+                    <div key={index}>
                       <UserSearchCard result={result.user_info} />
                     </div>
                   );
