@@ -60,6 +60,7 @@ import Contact from "./pages/Contact.tsx";
 import ErrorPage from "./pages/ErrorPage.tsx";
 import CreateTournament from "./pages/tournament/Create.tsx";
 import { TournamentPage } from "./pages/tournament/Page.tsx";
+import TournamentSearchPage from "./pages/tournament/Search.tsx";
 
 // private route
 export const PrivateRoute = ({ children }: { children: React.ReactNode }) => {
@@ -188,6 +189,8 @@ const router = createBrowserRouter(
             </PrivateRoute>
           }
         >
+          <Route index element={<TournamentSearchPage />} />
+          <Route path="search" element={<TournamentSearchPage />} />
           <Route
             path="page/:paramtourid"
             element={<TournamentPage />}
