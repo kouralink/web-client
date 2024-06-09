@@ -91,7 +91,7 @@ export function AccountNavDropdownMenu() {
             <Link to={`/team/page/${teamName}`}>
               <DropdownMenuItem>
                 <Users className="mr-2 h-4 w-4" />
-                <span>Team</span>
+                <span>Team {teamName}</span>
               </DropdownMenuItem>
             </Link>
           )}
@@ -100,6 +100,15 @@ export function AccountNavDropdownMenu() {
               <DropdownMenuItem>
                 <Plus className="mr-2 h-4 w-4" />
                 <span>Create Team</span>
+                <DropdownMenuShortcut>⌘+T</DropdownMenuShortcut>
+              </DropdownMenuItem>
+            </Link>
+          )}
+          {authUser?.accountType === "tournement_manager" && (
+            <Link to={"/tournament/create"}>
+              <DropdownMenuItem>
+                <Plus className="mr-2 h-4 w-4" />
+                <span>Create Tournament</span>
                 <DropdownMenuShortcut>⌘+T</DropdownMenuShortcut>
               </DropdownMenuItem>
             </Link>
