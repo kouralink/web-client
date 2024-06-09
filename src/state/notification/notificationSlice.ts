@@ -20,24 +20,35 @@ import { getMemberTeamId, isValidTeamId } from "../team/teamSlice";
 
 interface NotificationState {
   notifications: Notification[];
+
+  isLoading: boolean;
+  error: string | null | undefined;
   teamNotifications: {
     notifications: Notification[];
     isLoading: boolean;
     error: string | null | undefined;
   };
-  isLoading: boolean;
-  error: string | null | undefined;
+  tournamentNotifications: {
+    notifications: Notification[];
+    isLoading: boolean;
+    error: string | null | undefined;
+  };
 }
 
 const initialState: NotificationState = {
   notifications: [],
+  isLoading: false,
+  error: null,
   teamNotifications: {
     notifications: [],
     isLoading: false,
     error: null,
   },
-  isLoading: false,
-  error: null,
+  tournamentNotifications: {
+    notifications: [],
+    isLoading: false,
+    error: null,
+  },
 };
 
 const notificationSlice = createSlice({
@@ -298,6 +309,36 @@ const notificationSlice = createSlice({
           description: action.error.message,
           variant: "destructive",
         });
+      });
+    builder
+      .addCase(getTournamentNotifications.pending, (state) => {
+        state.tournamentNotifications.isLoading = true;
+        state.tournamentNotifications.error = null;
+      })
+      .addCase(getTournamentNotifications.fulfilled, (state, action) => {
+        state.tournamentNotifications.error = null;
+        state.tournamentNotifications.isLoading = false;
+
+        if (action.payload.notis) {
+          state.tournamentNotifications.notifications = action.payload
+            .notis as Notification[];
+          // toast({
+          //   title: "Notifications loaded",
+          //   description: "Notifications loaded successfully",
+          // });
+        } else {
+          state.tournamentNotifications.error = action.payload.error;
+
+          // toast({
+          //   title: "Notifications failed",
+          //   description: action.payload.error,
+          //   variant: "destructive",
+          // });
+        }
+      })
+      .addCase(getTournamentNotifications.rejected, (state, action) => {
+        state.tournamentNotifications.error = action.error.message;
+        state.tournamentNotifications.isLoading = false;
       });
   },
 });
@@ -641,9 +682,10 @@ export const updateNotificationAction = createAsyncThunk(
       }
 
       if (
-        ["request_to_join_tournament", "invite_to_tournament","invite_referee_to_tournament"].includes(
-          notificationInfo.type
-        )
+        [
+          "request_to_join_tournament",
+          "invite_referee_to_tournament",
+        ].includes(notificationInfo.type)
       ) {
         // console.log("this actions not supported yet");
         return "this actions not supported yet";
@@ -745,6 +787,31 @@ export const updateNotificationAction = createAsyncThunk(
           return "Account type is not refree";
         }
 
+        const updated = await updateNotificationActionToTakedAction(
+          ntf.id,
+          ntf.action
+        );
+        if (updated === true) {
+          return true;
+        } else {
+          return updated;
+        }
+      }
+      if (notificationInfo.type === "invite_to_tournament"){
+        // check if user auth account type
+        const accountType = store.getState().auth.user?.accountType;
+        if (accountType !== "coach") {
+          return "Account type is not coach";
+        }
+        // check if the to_id === teamId
+        const teamId = await getCoachTeamId();
+        if (typeof teamId === "object" && teamId.error) {
+          return teamId.error;
+        }
+        if (teamId !== notificationInfo.to_id) {
+          return "You are not the coach of this team";
+        }
+        
         const updated = await updateNotificationActionToTakedAction(
           ntf.id,
           ntf.action
@@ -964,6 +1031,51 @@ export const inviteToJoinTournament = createAsyncThunk(
       return "Error sending invite to join";
     } catch (error) {
       return "Error sending invite to join";
+    }
+  }
+);
+
+// get tournament notification
+export const getTournamentNotifications = createAsyncThunk(
+  "notification/getTournamentNotifications",
+  async () => {
+    try {
+      // get uid
+      const uid = auth.currentUser?.uid;
+      if (!uid) {
+        return { error: "Error getting current user" };
+      }
+
+      // get tournament of auth user
+      const tournament = await getTournamentManagerTournament();
+      if (typeof tournament === "string") {
+        return { error: tournament };
+      }
+
+      // get notifications
+      const notificationsCollection = collection(firestore, "notifications");
+      const notificationsQuery = query(
+        notificationsCollection,
+        where("to_id", "==", tournament.id),
+        where("action", "==", null),
+        orderBy("createdAt", "desc")
+      );
+      const notificationsSnapshot = await getDocs(notificationsQuery);
+      const notifications: Notification[] = [];
+      notificationsSnapshot.forEach((doc) => {
+        notifications.push({
+          ...doc.data(),
+          id: doc.id,
+        } as Notification);
+      });
+
+      if (notifications.length === 0) {
+        return { error: "No notifications found" };
+      }
+
+      return { notis: notifications };
+    } catch (error) {
+      return { error: "Error getting tournament notifications" };
     }
   }
 );

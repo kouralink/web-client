@@ -34,12 +34,17 @@ const NotificationASideSheet = () => {
   const teamNotifications = useSelector(
     (state: RootState) => state.notification.teamNotifications
   );
+  const tournamentNotifications = useSelector(
+    (state: RootState) => state.notification.tournamentNotifications
+  );
   const dispatch = useDispatch<AppDispatch>();
-
   useEffect(() => {
     if (!authUserUID) return;
     dispatch(getRecievedNotifications());
     if (accoutType === "coach") {
+      dispatch(getTeamRequestNotifications());
+    }
+    if (accoutType === "tournament_manager") {
       dispatch(getTeamRequestNotifications());
     }
   }, [accoutType, authUserUID, dispatch]);
@@ -80,13 +85,16 @@ const NotificationASideSheet = () => {
               <TabsList
                 className={cn(
                   "grid w-full ",
-                  accoutType === "coach" && "grid-cols-2"
+                  (accoutType === "coach" || accoutType === "tournament_manager" ) && "grid-cols-2"
                 )}
               >
                 <TabsTrigger value="user">User</TabsTrigger>
 
                 {accoutType === "coach" && (
                   <TabsTrigger value="team">Team</TabsTrigger>
+                )}
+                {accoutType === "tournament_manager" && (
+                  <TabsTrigger value="team">Tournament</TabsTrigger>
                 )}
               </TabsList>
             )}
@@ -114,6 +122,25 @@ const NotificationASideSheet = () => {
                   <div>
                     <div className="space-y-1">
                       {teamNotifications.notifications.map((notification) => (
+                        <div key={notification.id}>
+                          <NotificationCard {...notification} />
+                          <Separator />
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </ScrollArea>
+              )}
+            </TabsContent>
+          )}
+          {accoutType === "tournament_manager" && (
+            <TabsContent value="team">
+              {tournamentNotifications.error && <div>{tournamentNotifications.error}</div>}
+              {tournamentNotifications.notifications.length > 0 && (
+                <ScrollArea className="felx flex-col h-[480px]  w-full ">
+                  <div>
+                    <div className="space-y-1">
+                      {tournamentNotifications.notifications.map((notification) => (
                         <div key={notification.id}>
                           <NotificationCard {...notification} />
                           <Separator />
