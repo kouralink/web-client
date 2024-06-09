@@ -641,7 +641,7 @@ export const updateNotificationAction = createAsyncThunk(
       }
 
       if (
-        ["request_to_join_tournement", "invite_to_tournement"].includes(
+        ["request_to_join_tournement", "invite_to_tournement","invite_referee_to_tournament"].includes(
           notificationInfo.type
         )
       ) {
