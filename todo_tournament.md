@@ -9,13 +9,13 @@
 - [x] : @ilorez : request to join tournament for team
 - [x] : @ilorez : invite team
 - [ ] : leave tournament for team (require firebase callback function)
-- [ ] : kick team
+- [x] : @Abdo-Nsila : kick team
 - [ ] : @ilorez : invite refree to tournament
 - [ ] : @ilorez : leave tournament for refree !(in progress)
 - [ ] : @ilorez : get tournament notification for tournament manager redux
 - [ ] : @ilorez : add notification to notifiaction aside
 - [ ] : @ilorez : link notification actions with redux
-- [ ] : update tournament info
+- [ ] : @Abdo-Nsila : update tournament info
 - [ ] : change account type logic for tournament_manager
 
 status : pending => in progress => finish || failed
