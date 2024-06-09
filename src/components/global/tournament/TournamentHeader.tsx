@@ -2,19 +2,19 @@ import React from "react";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Star } from "lucide-react";
-import { tournament } from "@/types/types";
+import { Tournament } from "@/types/types";
 import TournamentDropDownMenu from "./cards/TournamentHeaderDropDownMenu";
 
-type TeamHeaderProps = {
+type TournamentHeaderProps = {
   role:
     | "user"
     | "coach_inside"
     | "refree"
     | "tournament_manager"
     | "coach_outside";
-} & tournament;
+} & Tournament;
 
-const TeamHeader: React.FC<TeamHeaderProps> = (props) => {
+const TournamentHeader: React.FC<TournamentHeaderProps> = (props) => {
   return (
     <Card
       className={"flex w-full rounded-lg p-2 justify-between items-center  "}
@@ -41,4 +41,4 @@ const TeamHeader: React.FC<TeamHeaderProps> = (props) => {
   );
 };
 
-export default TeamHeader;
+export default TournamentHeader;
