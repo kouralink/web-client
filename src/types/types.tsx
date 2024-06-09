@@ -186,10 +186,11 @@ export interface Tournament {
   logo: string;
   description: string;
   start_date: Timestamp;
-  end_date: Timestamp;
+  end_date: Timestamp | null;
   created_at: Timestamp;
   updated_at: Timestamp;
   created_by: string;
+  manager_id:string;
   refree_ids: string[];
   location: string;
   participants: string[];
