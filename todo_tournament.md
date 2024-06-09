@@ -1,7 +1,8 @@
 ## redux actions
 
-- [ ] : @ilorez : update create tournament form add loading and handle errors and navigate to tournament page
-- [ ] : @ilorez : create update team page
+- [x] : @ilorez : update create tournament form add loading and handle errors
+- [ ] : navigate to tournament page after created successfully
+- [ ] : create update team page
 - [ ] : @Abdo-Nsila : get tournament info
 - [ ] : get tournament teamsinfo
 - [ ] : get tournament refreesinfo
