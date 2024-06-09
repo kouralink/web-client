@@ -5,7 +5,7 @@ import TournamentTeamsList from "@/components/global/tournament/TournamentTeamsL
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "@/state/store";
-import { getTournamentByName } from "@/state/tournament/tournamentSlice";
+import { getTournamentById } from "@/state/tournament/tournamentSlice";
 
 export const TournamentPage = () => {
   const { paramtourid } = useParams<{ paramtourid: string }>();
@@ -18,7 +18,7 @@ export const TournamentPage = () => {
   const dispatch = useDispatch<AppDispatch>();
 
   useEffect(() => {
-    dispatch(getTournamentByName(paramtourid as string));
+    dispatch(getTournamentById(paramtourid as string));
   }, [paramtourid]);
 
 
@@ -47,7 +47,7 @@ export const TournamentPage = () => {
       {paramtourid}
       <TournamentHeader role={role} {...tournament} />
       <TournamentRefereesList referees={referees} />
-      <TournamentTeamsList teams={participantsTeams}  isManager={userId === tournament.manager_id} />
+      <TournamentTeamsList teams={participantsTeams} isManager={userId === tournament.manager_id} />
     </div>
   );
 };
