@@ -1,6 +1,6 @@
 // create store for team manage team have a id and a teamName and a blackList of users that are not allowed to join the team, and a coach that is team leader and createdAt date updateAt date and teamLogo and description and createdBy that is the user that created the team
 import { CreateTournamentFormValues } from "@/pages/tournament/Create";
-import { Tournament, User } from "@/types/types";
+import { Team, Tournament, User } from "@/types/types";
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { Timestamp } from "firebase/firestore";
 import { auth, firestore, storage } from "@/services/firebase";
@@ -23,6 +23,7 @@ interface TournamentState {
   isLoading: boolean;
   error: string | null;
   refereesInfo: User[];
+  teamsInfo: Team[]
 }
 
 const initialState: TournamentState = {
@@ -47,6 +48,7 @@ const initialState: TournamentState = {
   isLoading: false,
   error: null,
   refereesInfo: [],
+  teamsInfo:[],
 };
 
 const teamSlice = createSlice({
@@ -191,6 +193,7 @@ export const createTournament = createAsyncThunk(
       }
     }
   }
+
 );
 
 export default teamSlice.reducer;
