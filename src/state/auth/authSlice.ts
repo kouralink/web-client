@@ -686,7 +686,7 @@ export const changeAccountType = createAsyncThunk(
           if (!querySnapshot.empty) {
             return "You are refree in a match, you can not change your account type";
           }
-        } else if (currentUserAccountType === "tournement_manager") {
+        } else if (currentUserAccountType === "tournament_manager") {
           console.log("todo here");
         } else {
           return "Account type not supported";

@@ -641,7 +641,7 @@ export const updateNotificationAction = createAsyncThunk(
       }
 
       if (
-        ["request_to_join_tournement", "invite_to_tournement","invite_referee_to_tournament"].includes(
+        ["request_to_join_tournament", "invite_to_tournament","invite_referee_to_tournament"].includes(
           notificationInfo.type
         )
       ) {
@@ -872,7 +872,7 @@ export const sendRequestToJoinTournament = createAsyncThunk(
         from_id: teamId,
         action: null,
         createdAt: Timestamp.now(),
-        type: "request_to_join_tournement",
+        type: "request_to_join_tournament",
       });
 
       // return true is sended succesfully in not return false
@@ -899,7 +899,7 @@ export const getTournamentManagerTournament = async () => {
 
     // check if type account of user is tournament managet
     const accountType = store.getState().auth.user?.accountType;
-    if (accountType !== "tournement_manager") {
+    if (accountType !== "tournament_manager") {
       return "Error account type is not tournament manager";
     }
 
@@ -954,7 +954,7 @@ export const inviteToJoinTournament = createAsyncThunk(
         from_id: tournament.id,
         action: null,
         createdAt: Timestamp.now(),
-        type: "invite_to_tournement",
+        type: "invite_to_tournament",
       });
 
       // return true is sended succesfully in not return false

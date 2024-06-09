@@ -75,14 +75,14 @@ export const CoachRoute = ({ children }: { children: React.ReactNode }) => {
   return user?.accountType === "coach" ? children : <Navigate to="/" />;
 };
 
-// account type tournement_manager route
+// account type tournament_manager route
 export const TournamentManagerRoute = ({
   children,
 }: {
   children: React.ReactNode;
 }) => {
   const user = store.getState().auth.user;
-  return user?.accountType === "tournement_manager" ? (
+  return user?.accountType === "tournament_manager" ? (
     children
   ) : (
     <Navigate to="/" />
