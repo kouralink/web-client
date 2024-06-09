@@ -1,20 +1,19 @@
 ## redux actions
 
-- [x] : @ilorez : update create tournament form add loading and handle errors
-- [ ] : navigate to tournament page after created successfully
-- [ ] : create update team page
+- [ ] : @ilorez : update create tournament form add loading and handle errors and navigate to tournament page
+- [ ] : @ilorez : create update tournament page page
 - [ ] : @Abdo-Nsila : get tournament info
 - [ ] : get tournament teamsinfo
 - [ ] : get tournament refreesinfo
-- [ ] : request to join tournament for team
-- [ ] : invite team
-- [ ] : leave tournament for team
+- [ ] : @ilorez : request to join tournament for team
+- [ ] : @ilorez : invite team
+- [ ] : leave tournament for team (require firebase callback function)
 - [ ] : kick team
-- [ ] : invite refree to tournament
-- [ ] : leave tournament for refree !(in progress)
-- [ ] : get tournament notification for tournament manager redux
-- [ ] : add notification to notifiaction aside
-- [ ] : link notification actions with redux
+- [ ] : @ilorez : invite refree to tournament
+- [ ] : @ilorez : leave tournament for refree !(in progress)
+- [ ] : @ilorez : get tournament notification for tournament manager redux
+- [ ] : @ilorez : add notification to notifiaction aside
+- [ ] : @ilorez : link notification actions with redux
 - [ ] : update tournament info
 
 status : pending => in progress => finish || failed

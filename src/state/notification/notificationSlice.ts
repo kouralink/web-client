@@ -1,4 +1,4 @@
-import { Action, Notification, Team } from "@/types/types";
+import { Action, Notification, Team, Tournament } from "@/types/types";
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import {
   getDocs,
@@ -747,6 +747,161 @@ export const sendChallengeRequest = createAsyncThunk(
       return "Error sending challenge request";
     } catch (error) {
       throw new Error("sending challenge request");
+    }
+  }
+);
+
+// send request to join tournament
+export const sendRequestToJoinTournament = createAsyncThunk(
+  "notification/sendRequestToJoinTournament",
+  async (notificationInfo: { to: string }) => {
+    try {
+      // get team id of coach
+      const teamId = await getCoachTeamId();
+      if (typeof teamId === "object" && teamId.error) {
+        return teamId.error;
+      }
+      const teamRef = doc(firestore, "teams", teamId);
+      const teamDoc = await getDoc(teamRef);
+      if (!teamDoc.exists()) {
+        return "Error getting team";
+      }
+      const teamData = teamDoc.data() as Team;
+      if (!teamData) {
+        return "Error getting team data";
+      }
+
+      // check if notificationInfo.to is valid tournament id
+      const tournamentDoc = await getDoc(
+        doc(firestore, "tournaments", notificationInfo.to)
+      );
+      if (!tournamentDoc.exists()) {
+        return "Error getting tournament";
+      }
+
+      // check if team already in the tournament
+      const tournamentData = tournamentDoc.data() as Tournament;
+      if (tournamentData.participants.includes(teamId)) {
+        return "Your team already in the tournament";
+      }
+
+      // check if team id exist already in a tournament participants that is not finished or canceled
+
+      const tournamentCollection = collection(firestore, "tournaments");
+      const tournamentsQuery = query(
+        tournamentCollection,
+        where("participants", "array-contains", teamId),
+        where("status", "in", ["pending", "in_progress"])
+      );
+      const tournamentsSnapshot = await getDocs(tournamentsQuery);
+      if (tournamentsSnapshot.size > 0) {
+        return "Your team already in a tournament that is not finished or canceled";
+      }
+
+      // send notification to tournament
+
+      const notificationCollection = collection(firestore, "notifications");
+      const notificationDoc = await addDoc(notificationCollection, {
+        to_id: notificationInfo.to,
+        title: "Request to join tournament",
+        message: `${teamData.teamName} want to join Your Tournament`,
+        from_id: teamId,
+        action: null,
+        createdAt: Timestamp.now(),
+        type: "request_to_join_tournement",
+      });
+
+      // return true is sended succesfully in not return false
+      if (notificationDoc.id) {
+        return true;
+      }
+      return "Error sending request to join tournament";
+    } catch (error) {
+      return "Error sending request to join tournament";
+    }
+  }
+);
+
+
+// get tournament id of tournament manager
+export const getTournamentManagerTournament = async () => {
+  try {
+    // check if user is authinticated
+    // get user id
+
+    const uid = auth.currentUser?.uid;
+    if (!uid) {
+      return "Error getting current user" 
+    }
+
+    // check if type account of user is tournament managet
+    const accountType = store.getState().auth.user?.accountType;
+    if (accountType !== "tournement_manager") {
+      return "Error account type is not tournament manager" 
+    }
+
+    // get tournament id where manager_id === uid and status is pending or in_progress
+    const tournamentCollection = collection(firestore, "tournaments");
+    const tournamentsQuery = query(
+      tournamentCollection,
+      where("manager_id", "==", uid),
+      where("status", "in", ["pending", "in_progress"])
+    );
+    const tournamentsSnapshot = await getDocs(tournamentsQuery);
+    if (tournamentsSnapshot.size === 0) {
+      return "No tournament found"
+    }
+    const tournament = tournamentsSnapshot.docs[0];
+    return tournament.data() as Tournament;
+  } catch (error) {
+    return "Error getting tournament id"
+  }
+};
+
+// send invite to join team form tournament manager to team
+export const inviteToJoinTournament = createAsyncThunk(
+  "notification/inviteToJoinTournament",
+  async (notificationInfo: { to: string }) => {
+    try {
+      
+      // get tournamnet of auth user
+      const tournament = await getTournamentManagerTournament();
+      if (typeof tournament === "string") {
+        return tournament;
+      }
+
+      // check if to is valid team id
+      
+      const isValidTID: boolean = await isValidTeamId(notificationInfo.to);
+      if (!isValidTID) {
+        return "Error team id is not valid";
+      }
+
+      // check if team already in the tournament
+      
+      if (tournament.participants.includes(notificationInfo.to)) {
+        return "Your team already in the tournament";
+      }
+      
+      // send notification
+      const notificationCollection = collection(firestore, "notifications");
+      const notificationDoc = await addDoc(notificationCollection, {
+        to_id: notificationInfo.to,
+        title: "Invite to join tournament",
+        message: `You invited to join Tournament ${tournament.name}`,
+        from_id: tournament.id,
+        action: null,
+        createdAt: Timestamp.now(),
+        type: "invite_to_tournement",
+      });
+      
+      // return true is sended succesfully in not return false
+      if (notificationDoc.id) {
+        return true;
+      }
+      return "Error sending invite to join";
+    } catch (error) {
+      return "Error sending invite to join";
     }
   }
 );
