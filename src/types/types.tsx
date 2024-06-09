@@ -62,10 +62,11 @@ export interface MemberState {
   logo: string;
   uid: string;
 }
+type accountT = "user" | "coach" | "refree" | "tournament_manager" | "player";
 
 export interface User {
   username: string;
-  accountType: "user" | "coach" | "tournement_manager" | "refree" | "player";
+  accountType: accountT;
   bio?: string;
   birthday?: Timestamp;
   joinDate?: Timestamp;
@@ -102,11 +103,11 @@ export type Action = "accept" | "decline" | "view";
 
 type NotificationType = "info"
 | "request_to_join_team"
-| "request_to_join_tournement"
+| "request_to_join_tournament"
 | "match_chalenge"
 | "refree_invite"
 | "invite_to_team"
-| "invite_to_tournement"
+| "invite_to_tournament"
 | "invite_referee_to_tournament";
 export interface Notification {
   id: string;
@@ -153,7 +154,7 @@ export interface MatchFirestore {
   endedAt: Timestamp | null;
   location: string | null;
   status:MatchStatus;
-  type: "tournement" | "classic_match";
+  type: "tournament" | "classic_match";
 }
 
 export interface Match {
@@ -170,7 +171,7 @@ export interface Match {
   endedAt: Timestamp | null;
   location: string | null;
   status:MatchStatus;
-  type: "tournement" | "classic_match";
+  type: "tournament" | "classic_match";
 }
 // tournament
 

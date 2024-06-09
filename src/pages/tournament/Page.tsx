@@ -33,7 +33,7 @@ export const TournamentPage = () => {
         role = tournament.participants.includes(userId) ? 'coach_inside' : 'coach_outside';
       } else if (accountType === 'refree') {
         role = tournament.refree_ids.includes(userId) ? 'refree' : 'user';
-      } else if (accountType === 'tournement_manager') { // tournement_manager => tournament_manager
+      } else if (accountType === 'tournament_manager') { // tournament_manager => tournament_manager
         role = tournament.manager_id === userId ? 'tournament_manager' : 'user';
       }
       setRole(role);

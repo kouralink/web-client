@@ -110,7 +110,7 @@ export function AccountNavDropdownMenu() {
         </DropdownMenuGroup>
           )}
 
-        {authUser?.accountType === "tournement_manager" && (
+        {authUser?.accountType === "tournament_manager" && (
           <DropdownMenuGroup>
             <Link to={"/tournament/create"}>
               <DropdownMenuItem>

@@ -135,7 +135,7 @@ export const getAuthUserManagerTournament = async () => {
     }
     // is a tournamnet manager
     const accountType = store.getState().auth.user?.accountType;
-    if (accountType !== "tournement_manager") {
+    if (accountType !== "tournament_manager") {
       return "User is not a Tournament Manager, you need to change your account type!";
     }
     // get tournamnet info from tournaments collection where manager_id === uid

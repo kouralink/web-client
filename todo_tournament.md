@@ -16,6 +16,7 @@
 - [ ] : @ilorez : add notification to notifiaction aside
 - [ ] : @ilorez : link notification actions with redux
 - [ ] : update tournament info
+- [ ] : change account type logic for tournament_manager
 
 status : pending => in progress => finish || failed
 
@@ -29,6 +30,7 @@ status : pending => in progress => finish || failed
   - accept invitation (add teamid to particiapants)
 - [ ] leave tournament for team (remove teamid from particiapants)
 - [ ] kick team (remove teamid from particiapants)
+- [ ] : change account type logic for tournament_manager
 
 ## Tournamnet firesore rules
 

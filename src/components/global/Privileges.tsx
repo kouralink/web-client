@@ -18,7 +18,7 @@ const Privileges: React.FC<PrivilegesProps> = () => {
       description: "Design your own football team, recruit players, and strategize your way to victory.",
     },
     {
-      icon: "/privileges/tournement.svg",
+      icon: "/privileges/tournament.svg",
       title: "Host Your Own Tournament",
       description: "Organize and host football tournaments, set the rules, and watch the competition unfold.",
     },

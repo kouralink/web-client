@@ -37,7 +37,7 @@ const changeAccountSchema = z.object({
   accountType: z.enum([
     "user",
     "coach",
-    "tournement_manager",
+    "tournament_manager",
     "refree",
     "player",
   ]),
@@ -99,7 +99,7 @@ export function ChangeAccountType() {
                       <SelectContent>
                         <SelectItem value="player">Player</SelectItem>
                         <SelectItem value="coach">Coach</SelectItem>
-                        <SelectItem value="tournement_manager">
+                        <SelectItem value="tournament_manager">
                           Tournement Manager
                         </SelectItem>
                         <SelectItem value="refree">Refree</SelectItem>
