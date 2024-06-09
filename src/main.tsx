@@ -62,6 +62,7 @@ import CreateTournament from "./pages/tournament/Create.tsx";
 import { TournamentPage } from "./pages/tournament/Page.tsx";
 import TournamentSearchPage from "./pages/tournament/Search.tsx";
 import MatchesReferee from "./pages/referee/MatchesReferee.tsx";
+import UpdateTournament from "./pages/tournament/Update.tsx";
 
 // private route
 export const PrivateRoute = ({ children }: { children: React.ReactNode }) => {
@@ -164,8 +165,7 @@ const router = createBrowserRouter(
             path="create"
             element={
               <CoachRoute>
-                {" "}
-                <CreateTeam />{" "}
+                <CreateTeam />
               </CoachRoute>
             }
           />
@@ -173,8 +173,7 @@ const router = createBrowserRouter(
             path="update/:paramteamname"
             element={
               <CoachRoute>
-                {" "}
-                <UpdateTeam />{" "}
+                <UpdateTeam />
               </CoachRoute>
             }
           />
@@ -202,6 +201,14 @@ const router = createBrowserRouter(
             element={
               <TournamentManagerRoute>
                 <CreateTournament />
+              </TournamentManagerRoute>
+            }
+          />
+          <Route
+            path="update/:paramtourid"
+            element={
+              <TournamentManagerRoute>
+                <UpdateTournament />
               </TournamentManagerRoute>
             }
           />
