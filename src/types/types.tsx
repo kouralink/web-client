@@ -106,7 +106,8 @@ type NotificationType = "info"
 | "match_chalenge"
 | "refree_invite"
 | "invite_to_team"
-| "invite_to_tournement";
+| "invite_to_tournement"
+| "invite_referee_to_tournament";
 export interface Notification {
   id: string;
   from_id: string;
