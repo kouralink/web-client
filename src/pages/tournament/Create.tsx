@@ -31,8 +31,8 @@ import { Button } from "@/components/ui/button";
 import { toast } from "@/components/ui/use-toast";
 import ButtonLoading from "@/components/global/ButtonLoading";
 import { DateTimePicker } from "@/components/ui/datetime-picker";
-import { useDispatch } from "react-redux";
-import { AppDispatch } from "@/state/store";
+import { useDispatch, useSelector } from "react-redux";
+import { AppDispatch, RootState } from "@/state/store";
 import { createTournament } from "@/state/tournament/tournamentSlice";
 
 const MAX_FILE_SIZE = 1024 * 1024 * 2;
@@ -95,6 +95,10 @@ const createTournamentSchema = z.object({
 export type CreateTournamentFormValues = z.infer<typeof createTournamentSchema>;
 
 export default function CreateTournament() {
+  const error = useSelector((state: RootState) => state.tournament.error);
+  const isLoading = useSelector(
+    (state: RootState) => state.tournament.isLoading
+  );
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
   const dispatch = useDispatch<AppDispatch>();
 
@@ -123,7 +127,7 @@ export default function CreateTournament() {
     });
     await dispatch(createTournament(data));
   };
-  // [ ]: errors and isloading status
+  // [x]: errors and isloading status
   // [ ]: navigate to tournament page after created succesfully
 
   return (
@@ -309,10 +313,11 @@ export default function CreateTournament() {
                   )}
                 />
               </div>
+              <FormMessage className="text-red-500">{error}</FormMessage>
 
               <CardFooter className="flex justify-between">
                 <Button variant="outline">Cancel</Button>
-                {status === "loading" ? (
+                {isLoading ? (
                   <ButtonLoading />
                 ) : (
                   <Button type="submit">Create Tournament</Button>
