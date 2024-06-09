@@ -2,7 +2,7 @@
 import { CreateTournamentFormValues } from "@/pages/tournament/Create";
 import { Team, Tournament, User } from "@/types/types";
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { Timestamp } from "firebase/firestore";
+import { Timestamp, updateDoc } from "firebase/firestore";
 import { auth, firestore, storage } from "@/services/firebase";
 import {
   collection,
@@ -124,6 +124,45 @@ const teamSlice = createSlice({
         state.isLoading = false;
         state.error = action.error.message as string;
       });
+
+          // kickTeam
+    builder
+    .addCase(kickTeam.pending, (state) => {
+      state.isLoading = true;
+      state.error = null;
+    })
+    .addCase(kickTeam.fulfilled, (state, action) => {
+      state.isLoading = false;
+      state.error = null;
+      if (typeof action.payload === "object" && action.payload?.teamId) {
+        const teamId: string = action.payload.teamId;
+        state.teamsInfo = state.teamsInfo.filter((teamInfo) => teamInfo.id !== teamId);
+        toast({
+          variant: "default",
+          title: "Team Kicked",
+          description: "Team kicked successfully!",
+          className: "text-primary border-2 border-primary text-start",
+        });
+      } else {
+        state.error = action.payload as string;
+        toast({
+          variant: "default",
+          title: "Team Kick Failed",
+          description: state.error,
+          className: "text-error border-2 border-error text-start",
+        });
+      }
+    })
+    .addCase(kickTeam.rejected, (state, action) => {
+      state.isLoading = false;
+      state.error = action.error.message as string;
+      toast({
+        variant: "default",
+        title: "Team Kick Rejected",
+        description: state.error,
+        className: "text-error border-2 border-error text-start",
+      });
+    });
   },
 });
 
@@ -283,6 +322,59 @@ export const getReferees = createAsyncThunk(
       })
     );
     return refereesData;
+  }
+);
+
+
+export const removeTeamFromTournament = async (
+  tournamentId: string,
+  teamId: string,
+) => {
+  try {
+    // check if the user.uid is the manager of tournamentId
+    const authUID = auth.currentUser?.uid;
+    if (!authUID) {
+      return "User not authenticated!";
+    }
+
+    const tournamentRef = doc(firestore, "tournaments", tournamentId);
+    const tournamentSnap = await getDoc(tournamentRef);
+    if (!tournamentSnap.exists()) {
+      return "Tournament not found!";
+    }
+
+    const tournament = tournamentSnap.data() as Tournament;
+    if (authUID !== tournament.manager_id) {
+      return "You are not the manager of this tournament!";
+    }
+
+    // check if the teamId in tournament
+    if (!tournament.participants.includes(teamId)) {
+      return "Team not in the tournament!";
+    }
+
+    // remove teamId from participants
+    const updatedParticipants = tournament.participants.filter(id => id !== teamId);
+    await updateDoc(tournamentRef, { participants: updatedParticipants });
+
+    return true;
+  } catch (error) {
+    return `Team Kick Failed!`;
+  }
+};
+
+export const kickTeam = createAsyncThunk(
+  "tournament/kickTeam",
+  async ({ teamId, tournamentId }: { teamId: string; tournamentId: string }) => {
+    try {
+      const result = await removeTeamFromTournament(tournamentId, teamId);
+      if (result === true) {
+        return { teamId: teamId };
+      }
+      return result;
+    } catch (error) {
+      return "Team Kick Failed!";
+    }
   }
 );
 
