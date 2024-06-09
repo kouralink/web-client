@@ -48,7 +48,7 @@ const TeamProfileCard: React.FC<TeamProfileCardProps> = ({ team }) => {
 
                         <Avatar className="w-24 h-24 rounded-none object-cover">
                             <AvatarImage src={team.teamLogo} alt="" className="object-cover" />
-                            <AvatarFallback>{teamName && teamName.charAt(0).toUpperCase()}{teamName && teamName.charAt(1).toUpperCase()}</AvatarFallback>
+                            <AvatarFallback className="rounded-none">{teamName && teamName.charAt(0).toUpperCase()}{teamName && teamName.charAt(1).toUpperCase()}</AvatarFallback>
                         </Avatar>
                         <div className="p-5 flex flex-col w-full ">
                             <h1 className="flex flex-col font-bold px-1 capitalize  ">
