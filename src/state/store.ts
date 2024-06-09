@@ -7,6 +7,7 @@ import searchTeamSlice from "./search/searchTeamSlice";
 import searchTournamentSlice from "./search/searchTournamentSlice";
 import notificationSlice from "./notification/notificationSlice";
 import matchSlice from "./match/matchSlice";
+import tournamentSlice from "./tournament/tournamentSlice";
 
 export const store = configureStore({
   reducer: {
@@ -18,6 +19,7 @@ export const store = configureStore({
     tournamentsearch: searchTournamentSlice,
     notification: notificationSlice,
     match: matchSlice,
+    tournament: tournamentSlice,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
