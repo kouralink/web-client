@@ -1,4 +1,4 @@
-import { Info, LogOut, PenLine, Send, UserPlus } from "lucide-react";
+import { Info, LogOut, PenLine, Play, Send, UserPlus } from "lucide-react";
 
 import {
   DropdownMenu,
@@ -85,7 +85,7 @@ export default function TournamentDropDownMenu({
               </DropdownMenuItem>
             </Link>
             <DropdownMenuItem>
-              <PenLine className="mr-2 h-4 w-4" />
+              <Play className="mr-2 h-4 w-4" />
               <span>Start Tournament</span>
               <DropdownMenuShortcut></DropdownMenuShortcut>
             </DropdownMenuItem>
