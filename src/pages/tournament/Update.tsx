@@ -1,0 +1,377 @@
+import {
+    Form,
+    FormControl,
+    FormDescription,
+    FormField,
+    FormItem,
+    FormLabel,
+    FormMessage,
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+
+import { Loader2 } from "lucide-react";
+import { useEffect, useState } from "react";
+
+import { Textarea } from "@/components/ui/textarea";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import {
+    Card,
+    CardContent,
+    CardDescription,
+    CardFooter,
+    CardHeader,
+    CardTitle,
+} from "@/components/ui/card";
+
+import { Button } from "@/components/ui/button";
+import ButtonLoading from "@/components/global/ButtonLoading";
+import { DateTimePicker } from "@/components/ui/datetime-picker";
+import { useDispatch, useSelector } from "react-redux";
+import { AppDispatch, RootState } from "@/state/store";
+import { getTournamentById, updateTournament, UpdateTournamentDataType } from "@/state/tournament/tournamentSlice";
+import { Timestamp } from "firebase/firestore";
+import { useParams } from "react-router-dom";
+
+
+const MAX_FILE_SIZE = 1024 * 1024 * 2;
+const ACCEPTED_IMAGE_MIME_TYPES = [
+    "image/jpeg",
+    "image/jpg",
+    "image/png",
+    "image/webp",
+];
+// const ACCEPTED_IMAGE_TYPES = ["jpeg", "jpg", "png", "webp"];
+// Corrected regular expression to match Google Maps location links
+const googleMapsLinkRegex =
+    /^https:\/\/(www\.)?google\.com\/maps\/place\/[^/]+\/@[0-9.-]+,[0-9.-]+,?[0-9]*z\/data=.*$/;
+
+const updateTournamentSchema = z.object({
+    name: z
+        .string()
+        .min(4, {
+            message: "Tournament name must be at least 4 characters.",
+        })
+        .max(30, {
+            message: "Tournament name must not be longer than 30 characters.",
+        }),
+    location: z.string().regex(googleMapsLinkRegex, {
+        message: "Invalid Google Maps location link",
+    }),
+    description: z
+        .string()
+        .max(160, {
+            message: "Tournament description must be less then 160 characters.",
+        })
+        .min(4, {
+            message: "Tournament description must be more then 4 characters.",
+        }),
+    logo: z
+        .any()
+        .refine((files) => {
+            // Only check the file size if it's a File object
+            return !(files?.[0] instanceof File) || files?.[0]?.size <= MAX_FILE_SIZE;
+        }, `Max image size is 2MB.`)
+        .refine(
+            (files) => !(files?.[0] instanceof File) || ACCEPTED_IMAGE_MIME_TYPES.includes(files?.[0]?.type),
+            "Only .jpg, .jpeg, .png and .webp formats are supported."
+        ),
+    min_members_in_team: z.number().min(2, {
+        message: "Minimum members must be at least 2.",
+    }),
+    max_participants: z
+        .number()
+        .min(3, {
+            message: "Maximum participants must be at least 3.",
+        })
+        .max(128, {
+            message: "Maximum participants must not be more than 128.",
+        }),
+    start_date: z.date().refine((date) => date > new Date(), {
+        message: "Start date must be in the future",
+    }),
+});
+
+export type UpdateTournamentFormValues = z.infer<typeof updateTournamentSchema>;
+
+export default function UpdateTournament() {
+    const { paramtourid } = useParams<{ paramtourid: string }>();
+    const currentTournament = useSelector((state: RootState) => state.tournament.tournament);
+    const error = useSelector((state: RootState) => state.tournament.error);
+    const isLoading = useSelector(
+        (state: RootState) => state.tournament.isLoading
+    );
+    const [selectedImage, setSelectedImage] = useState<File | null>(null);
+    const dispatch = useDispatch<AppDispatch>();
+    const defaultValues = {
+        name: currentTournament.name,
+        location: currentTournament.location,
+        description: currentTournament.description,
+        logo: currentTournament.logo,
+        min_members_in_team: currentTournament.min_members_in_team,
+        max_participants: currentTournament.max_participants,
+        start_date: currentTournament.start_date.toDate(),
+    };
+
+    useEffect(() => {
+        if (currentTournament.id !== paramtourid) {
+            dispatch(getTournamentById(paramtourid as string));
+        }
+    }, [paramtourid, dispatch, currentTournament.id]);
+
+    const form = useForm<UpdateTournamentFormValues>({
+        resolver: zodResolver(updateTournamentSchema),
+        mode: "onSubmit",
+        defaultValues: defaultValues,
+    });
+
+    function toLocalISOString(date: Date) {
+        const offset = date.getTimezoneOffset() * 60000;
+        const localISOTime = (new Date(date.getTime() - offset)).toISOString().slice(0, -1);
+        return localISOTime.split('T')[0];
+    }
+
+    const onSubmit = async (data: UpdateTournamentFormValues) => {
+        if (
+            data.logo !== "h" &&
+            data.logo !== currentTournament.logo &&
+            data.logo !== undefined &&
+            data.logo !== null &&
+            data.logo !== ""
+        ) {
+            data.logo = data.logo[0];
+        }
+        data.start_date = new Date(data.start_date.getTime() - data.start_date.getTimezoneOffset() * 60000);
+
+        // Get the differences between the form values and the initial values
+        const updatedData: Partial<UpdateTournamentDataType> = {};
+        Object.keys(data).forEach((key) => {
+            if (key === 'start_date') {
+                const dataDate = toLocalISOString(data.start_date);
+                const defaultDate = toLocalISOString(defaultValues.start_date);
+                console.log(dataDate, defaultDate)
+                if (dataDate !== defaultDate) {
+                    updatedData.start_date = Timestamp.fromDate(data.start_date);
+                }
+            } else if (data[key as keyof UpdateTournamentFormValues] !== defaultValues[key as keyof UpdateTournamentFormValues]) {
+                updatedData[key as keyof UpdateTournamentFormValues] = data[key as keyof UpdateTournamentFormValues];
+            }
+        });
+        console.log(updatedData)
+
+        // toast({
+        //     title: "You submitted the following values:",
+        //     description: (
+        //         <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
+        //             <code className="text-white">{JSON.stringify(updatedData, null, 2)}</code>
+        //         </pre>
+        //     ),
+        // });
+
+        await dispatch(updateTournament({ id: paramtourid as string, tournament: updatedData }));
+    };
+    // [x]: errors and isloading status
+    // [ ]: navigate to tournament page after created succesfully
+
+    return (
+        <div className="flex justify-center">
+            <Card className="w-[800px]">
+                <CardHeader>
+                    <CardTitle>Update Tournament</CardTitle>
+                    <CardDescription>
+                        {" "}
+                        Update your Tournament and invite teams to join.
+                    </CardDescription>
+                </CardHeader>
+                <CardContent>
+                    <Form {...form}>
+                        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+                            <div className="grid gap-4 py-4">
+                                <div className="flex flex-col items-center px-7  mt-7 mb-8">
+                                    {status === "loading" ? (
+                                        <Loader2 className="h-40 w-40 text-primary animate-spin" />
+                                    ) : (
+                                        <label htmlFor="fileInput">
+                                            <Avatar className="w-36 h-36 flex items-center justify-center">
+                                                <AvatarImage
+                                                    loading="lazy"
+                                                    src={selectedImage ? URL.createObjectURL(
+                                                        selectedImage ? (selectedImage as Blob) : new Blob()
+                                                    ) : currentTournament.logo}
+                                                    className="object-cover"
+                                                />
+                                                <AvatarFallback className="text-6xl">
+                                                    {"T"}
+                                                </AvatarFallback>
+                                            </Avatar>
+                                        </label>
+                                    )}
+                                </div>
+                                <FormField
+                                    control={form.control}
+                                    name="logo"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormControl>
+                                                <Input
+                                                    type="file"
+                                                    className="hidden"
+                                                    id="fileInput"
+                                                    accept="image/*"
+                                                    onBlur={field.onBlur}
+                                                    name={field.name}
+                                                    onChange={(e) => {
+                                                        field.onChange(e.target.files);
+                                                        setSelectedImage(e.target.files?.[0] || null);
+                                                    }}
+                                                />
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+                                <FormField
+                                    control={form.control}
+                                    name="name"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel>Tournament Name</FormLabel>
+                                            <FormControl>
+                                                <Input placeholder="Tournament Name" {...field} />
+                                            </FormControl>
+                                            <FormDescription>
+                                                This is the name of your Tournament, you can change it
+                                                later.
+                                            </FormDescription>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+                                <FormField
+                                    control={form.control}
+                                    name="description"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel>description</FormLabel>
+                                            <FormControl>
+                                                <Textarea
+                                                    placeholder="Tell us a little bit about your Tournament"
+                                                    className="resize-none"
+                                                    {...field}
+                                                />
+                                            </FormControl>
+                                            <FormDescription>
+                                                Briefly describe your Tournament in 160 characters or
+                                                less.
+                                            </FormDescription>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+                                <FormField
+                                    control={form.control}
+                                    name="location"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel>Location</FormLabel>
+                                            <FormControl>
+                                                <Input placeholder="location" {...field} />
+                                            </FormControl>
+                                            <FormDescription>
+                                                This the google map location (url) that the team will
+                                                play at.
+                                            </FormDescription>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+                                <FormMessage className="mb-4"></FormMessage>
+                                <FormField
+                                    control={form.control}
+                                    name="start_date"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel htmlFor="datetime">Start Datetime</FormLabel>
+                                            <FormControl>
+                                                <DateTimePicker
+                                                    granularity="second"
+                                                    jsDate={field.value}
+                                                    onJsDateChange={field.onChange}
+                                                    aria-label="Start Datetime"
+                                                />
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+                                <FormField
+                                    control={form.control}
+                                    name="min_members_in_team"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel>Minimum Members</FormLabel>
+                                            <FormControl>
+                                                <Input
+                                                    type="number"
+                                                    {...field}
+                                                    onChange={(e) =>
+                                                        form.setValue(
+                                                            "min_members_in_team",
+                                                            parseInt(e.target.value)
+                                                        )
+                                                    }
+                                                />
+                                            </FormControl>
+                                            <FormDescription>
+                                                Minimum members required to create a team.
+                                            </FormDescription>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+                                <FormField
+                                    control={form.control}
+                                    name="max_participants"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel>Maximum Participants</FormLabel>
+                                            <FormControl>
+                                                <Input
+                                                    type="number"
+                                                    {...field}
+                                                    onChange={(e) =>
+                                                        form.setValue(
+                                                            "max_participants",
+                                                            parseInt(e.target.value)
+                                                        )
+                                                    }
+                                                />
+                                            </FormControl>
+                                            <FormDescription>
+                                                Maximum participants allowed in the Tournament.
+                                            </FormDescription>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+                            </div>
+                            <FormMessage className="text-red-500">{error}</FormMessage>
+
+                            <CardFooter className="flex justify-between">
+                                <Button variant="outline">Cancel</Button>
+                                {isLoading ? (
+                                    <ButtonLoading />
+                                ) : (
+                                    <Button type="submit">Update Tournament</Button>
+                                )}
+                            </CardFooter>
+                        </form>
+                    </Form>
+                </CardContent>
+            </Card>
+        </div>
+    );
+}
