@@ -27,7 +27,7 @@ const TournamentSearchPage: React.FC = () => {
                 </div>
                 <div className="h-full flex flex-col justify-center gap-2">
                     <Button className="w-full" variant="default" asChild>
-                        <Link to={"/tournament/CreateTournement"}>Create Tournament</Link>
+                        <Link to={"/tournament/CreateTournament"}>Create Tournament</Link>
                     </Button>
                 </div>
             </Card>

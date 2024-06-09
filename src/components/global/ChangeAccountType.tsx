@@ -100,7 +100,7 @@ export function ChangeAccountType() {
                         <SelectItem value="player">Player</SelectItem>
                         <SelectItem value="coach">Coach</SelectItem>
                         <SelectItem value="tournament_manager">
-                          Tournement Manager
+                          Tournament Manager
                         </SelectItem>
                         <SelectItem value="refree">Refree</SelectItem>
                         <SelectItem value="user">User</SelectItem>
