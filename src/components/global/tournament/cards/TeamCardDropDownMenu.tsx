@@ -23,6 +23,9 @@ import {
 } from "@/components/ui/alert-dialog";
 
 import { Link } from "react-router-dom";
+import { AppDispatch, RootState } from "@/state/store";
+import { useDispatch, useSelector } from "react-redux";
+import { kickTeam } from "@/state/tournament/tournamentSlice";
 
 export function TeamDropDownMenu({
   role,
@@ -33,9 +36,13 @@ export function TeamDropDownMenu({
   teamId: string;
   teamName: string;
 }) {
+
+  const tournament = useSelector((state: RootState) => state.tournament.tournament);
+
+  const dispatch = useDispatch<AppDispatch>();
   const handleKickAciton = async () => {
     // confirm kick
-    console.log("kick", teamId);
+    dispatch(kickTeam({ teamId, tournamentId: tournament.id }))
   };
 
   return (
