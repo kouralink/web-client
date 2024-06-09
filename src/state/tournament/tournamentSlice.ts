@@ -1,7 +1,7 @@
 // create store for team manage team have a id and a teamName and a blackList of users that are not allowed to join the team, and a coach that is team leader and createdAt date updateAt date and teamLogo and description and createdBy that is the user that created the team
 import { CreateTournamentFormValues } from "@/pages/tournament/Create";
 import { Team, Tournament, User } from "@/types/types";
-import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { Timestamp } from "firebase/firestore";
 import { auth, firestore, storage } from "@/services/firebase";
 import {
@@ -48,7 +48,7 @@ const initialState: TournamentState = {
   isLoading: false,
   error: null,
   refereesInfo: [],
-  teamsInfo:[],
+  teamsInfo: [],
 };
 
 const teamSlice = createSlice({
@@ -81,6 +81,49 @@ const teamSlice = createSlice({
       state.isLoading = false;
       state.error = action.error.message as string;
     });
+
+    // getTournamentByName
+    builder
+      .addCase(getTournamentByName.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(getTournamentByName.fulfilled, (state, action: PayloadAction<Tournament>) => {
+        state.isLoading = false;
+        state.tournament = action.payload;
+      })
+      .addCase(getTournamentByName.rejected, (state, action) => {
+        state.isLoading = false;
+        state.error = action.error.message as string;
+      });
+
+
+    // getParticipantsTeams
+    builder
+      .addCase(getParticipantsTeams.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(getParticipantsTeams.fulfilled, (state, action: PayloadAction<Team[]>) => {
+        state.isLoading = false;
+        state.teamsInfo = action.payload;
+      })
+      .addCase(getParticipantsTeams.rejected, (state, action) => {
+        state.isLoading = false;
+        state.error = action.error.message as string;
+      });
+
+    // getReferees
+    builder
+      .addCase(getReferees.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(getReferees.fulfilled, (state, action: PayloadAction<User[]>) => {
+        state.isLoading = false;
+        state.refereesInfo = action.payload;
+      })
+      .addCase(getReferees.rejected, (state, action) => {
+        state.isLoading = false;
+        state.error = action.error.message as string;
+      });
   },
 });
 
@@ -193,7 +236,54 @@ export const createTournament = createAsyncThunk(
       }
     }
   }
+);
 
+
+export const getTournamentByName = createAsyncThunk(
+  "tournament/getTournamentByName",
+  async (tournamentName: string, thunkAPI) => {
+    const colRef = collection(firestore, "tournaments");
+    const queryRef = query(colRef, where("name", "==", tournamentName));
+    const snap = await getDocs(queryRef);
+    if (snap.empty) {
+      return thunkAPI.rejectWithValue("Tournament Doesn't Exist!");
+    }
+    const tournament = { ...snap.docs[0].data(), id: snap.docs[0].id } as Tournament;
+
+    // Dispatch getParticipantsTeams and getReferees actions
+    thunkAPI.dispatch(getParticipantsTeams(tournament.participants));
+    thunkAPI.dispatch(getReferees(tournament.refree_ids));
+
+    return tournament;
+  }
+);
+
+export const getParticipantsTeams = createAsyncThunk(
+  "tournament/getParticipantsTeams",
+  async (participantIds: string[]) => {
+    const participantsTeamsData = await Promise.all(
+      participantIds.map(async (id) => {
+        const docRef = doc(firestore, "teams", id);
+        const docSnap = await getDoc(docRef);
+        return { ...docSnap.data(), id: docSnap.id } as Team;
+      })
+    );
+    return participantsTeamsData;
+  }
+);
+
+export const getReferees = createAsyncThunk(
+  "tournament/getReferees",
+  async (refereeIds: string[]) => {
+    const refereesData = await Promise.all(
+      refereeIds.map(async (id) => {
+        const docRef = doc(firestore, "users", id);
+        const docSnap = await getDoc(docRef);
+        return docSnap.data() as User;
+      })
+    );
+    return refereesData;
+  }
 );
 
 export default teamSlice.reducer;
