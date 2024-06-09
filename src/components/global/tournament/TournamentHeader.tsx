@@ -35,7 +35,11 @@ const TournamentHeader: React.FC<TournamentHeaderProps> = (props) => {
       <CardContent className="flex items-center justify-center gap-4 m-0 p-0">
         <span>1</span>
         <Star />
-        <TournamentDropDownMenu tourname={props.name} role={props.role} />
+        <TournamentDropDownMenu
+          tourname={props.name}
+          role={props.role}
+          tourid={props.id}
+        />
       </CardContent>
     </Card>
   );

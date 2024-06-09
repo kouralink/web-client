@@ -1,4 +1,4 @@
-import { Info, LogOut, PenLine, Play, Send, UserPlus } from "lucide-react";
+import { Info, LogOut, PenLine, Play, Plus, Send } from "lucide-react";
 
 import {
   DropdownMenu,
@@ -23,12 +23,18 @@ import {
 } from "@/components/ui/alert-dialog";
 
 import { Link } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { sendRequestToJoinTournament } from "@/state/notification/notificationSlice";
+import { AppDispatch } from "@/state/store";
+import SearchTeamsForInvite from "./SearchTeamsForInvite";
 
 export default function TournamentDropDownMenu({
   tourname,
   role,
+  tourid,
 }: {
   tourname: string;
+  tourid: string;
   role:
     | "user"
     | "coach_inside"
@@ -36,8 +42,10 @@ export default function TournamentDropDownMenu({
     | "tournament_manager"
     | "coach_outside";
 }) {
+  const dispatch = useDispatch<AppDispatch>();
   const handleRequistTojoin = async () => {
     console.log("Request to join 1");
+    await dispatch(sendRequestToJoinTournament({ to: tourid }));
   };
   const handleLeaveTournament = async () => {
     console.log("Leave Tournament");
@@ -71,9 +79,15 @@ export default function TournamentDropDownMenu({
         <DropdownMenuSeparator />
         {role === "tournament_manager" && (
           <DropdownMenuGroup>
-            <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
-              <UserPlus className="mr-2 h-4 w-4" />
-              <span>Invite Team</span>
+            <DropdownMenuItem
+              onSelect={(e) => {
+                e.preventDefault();
+              }}
+            >
+              <Plus className="mr-2 h-4 w-4" />
+              <span>
+                <SearchTeamsForInvite />
+              </span>
               <DropdownMenuShortcut></DropdownMenuShortcut>
             </DropdownMenuItem>
 

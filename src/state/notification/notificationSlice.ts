@@ -235,6 +235,70 @@ const notificationSlice = createSlice({
           variant: "destructive",
         });
       });
+    builder
+      .addCase(sendRequestToJoinTournament.pending, (state) => {
+        state.isLoading = true;
+        state.error = null;
+      })
+      .addCase(sendRequestToJoinTournament.fulfilled, (state, action) => {
+        state.error = null;
+        state.isLoading = false;
+
+        if (action.payload === true) {
+          toast({
+            title: "Request sended",
+            description: "Request to join tournament sended successfully",
+          });
+        } else {
+          state.error = action.payload;
+          toast({
+            title: "Request failed",
+            description: action.payload,
+            variant: "destructive",
+          });
+        }
+      })
+      .addCase(sendRequestToJoinTournament.rejected, (state, action) => {
+        state.error = action.error.message;
+        state.isLoading = false;
+        toast({
+          title: "Request failed",
+          description: action.error.message,
+          variant: "destructive",
+        });
+      });
+    builder
+      .addCase(inviteToJoinTournament.pending, (state) => {
+        state.isLoading = true;
+        state.error = null;
+      })
+      .addCase(inviteToJoinTournament.fulfilled, (state, action) => {
+        state.error = null;
+        state.isLoading = false;
+
+        if (action.payload === true) {
+          toast({
+            title: "Invite sended",
+            description: "Invite to join tournament sended successfully",
+          });
+        } else {
+          state.error = action.payload;
+          toast({
+            title: "Invite failed",
+            description: action.payload,
+            variant: "destructive",
+          });
+        }
+      })
+      .addCase(inviteToJoinTournament.rejected, (state, action) => {
+        state.error = action.error.message;
+        state.isLoading = false;
+        toast({
+          title: "Invite failed",
+          description: action.error.message,
+          variant: "destructive",
+        });
+      });
   },
 });
 /**
@@ -822,7 +886,6 @@ export const sendRequestToJoinTournament = createAsyncThunk(
   }
 );
 
-
 // get tournament id of tournament manager
 export const getTournamentManagerTournament = async () => {
   try {
@@ -831,13 +894,13 @@ export const getTournamentManagerTournament = async () => {
 
     const uid = auth.currentUser?.uid;
     if (!uid) {
-      return "Error getting current user" 
+      return "Error getting current user";
     }
 
     // check if type account of user is tournament managet
     const accountType = store.getState().auth.user?.accountType;
     if (accountType !== "tournement_manager") {
-      return "Error account type is not tournament manager" 
+      return "Error account type is not tournament manager";
     }
 
     // get tournament id where manager_id === uid and status is pending or in_progress
@@ -849,12 +912,12 @@ export const getTournamentManagerTournament = async () => {
     );
     const tournamentsSnapshot = await getDocs(tournamentsQuery);
     if (tournamentsSnapshot.size === 0) {
-      return "No tournament found"
+      return "No tournament found";
     }
     const tournament = tournamentsSnapshot.docs[0];
     return tournament.data() as Tournament;
   } catch (error) {
-    return "Error getting tournament id"
+    return "Error getting tournament id";
   }
 };
 
@@ -863,7 +926,6 @@ export const inviteToJoinTournament = createAsyncThunk(
   "notification/inviteToJoinTournament",
   async (notificationInfo: { to: string }) => {
     try {
-      
       // get tournamnet of auth user
       const tournament = await getTournamentManagerTournament();
       if (typeof tournament === "string") {
@@ -871,18 +933,18 @@ export const inviteToJoinTournament = createAsyncThunk(
       }
 
       // check if to is valid team id
-      
+
       const isValidTID: boolean = await isValidTeamId(notificationInfo.to);
       if (!isValidTID) {
         return "Error team id is not valid";
       }
 
       // check if team already in the tournament
-      
+
       if (tournament.participants.includes(notificationInfo.to)) {
         return "Your team already in the tournament";
       }
-      
+
       // send notification
       const notificationCollection = collection(firestore, "notifications");
       const notificationDoc = await addDoc(notificationCollection, {
@@ -894,7 +956,7 @@ export const inviteToJoinTournament = createAsyncThunk(
         createdAt: Timestamp.now(),
         type: "invite_to_tournement",
       });
-      
+
       // return true is sended succesfully in not return false
       if (notificationDoc.id) {
         return true;

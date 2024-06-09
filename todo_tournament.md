@@ -1,12 +1,13 @@
 ## redux actions
 
-- [ ] : @ilorez : update create tournament form add loading and handle errors and navigate to tournament page
+- [x] : @ilorez : update create tournament form add loading and handle errors
+- [ ] : @ilorez : update create tournament -> navigate to tournament page
 - [ ] : @ilorez : create update tournament page page
 - [ ] : @Abdo-Nsila : get tournament info
 - [ ] : get tournament teamsinfo
 - [ ] : get tournament refreesinfo
-- [ ] : @ilorez : request to join tournament for team
-- [ ] : @ilorez : invite team
+- [x] : @ilorez : request to join tournament for team
+- [x] : @ilorez : invite team
 - [ ] : leave tournament for team (require firebase callback function)
 - [ ] : kick team
 - [ ] : @ilorez : invite refree to tournament
