@@ -1,4 +1,4 @@
-import { Ban, Group } from "lucide-react";
+import { Ban, Users } from "lucide-react";
 
 import {
   DropdownMenu,
@@ -64,7 +64,7 @@ export function TeamDropDownMenu({
         <DropdownMenuGroup>
           <Link to={`/team/page/${teamName}`}>
             <DropdownMenuItem>
-              <Group className="mr-2 h-4 w-4" />
+              <Users className="mr-2 h-4 w-4" />
               <span>Team Page</span>
               <DropdownMenuShortcut>open</DropdownMenuShortcut>
             </DropdownMenuItem>
