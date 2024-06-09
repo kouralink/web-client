@@ -1,4 +1,5 @@
 import {
+  FlameKindling,
   Loader2,
   LogOut,
   Plus,
@@ -64,9 +65,8 @@ export function AccountNavDropdownMenu() {
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-56">
         <DropdownMenuLabel>
-          {authUser?.username ? authUser?.username : "My"} Account <span className="capitalize">({
-            authUser?.accountType
-          })</span>
+          {authUser?.username ? authUser?.username : "My"} Account{" "}
+          <span className="capitalize">({authUser?.accountType})</span>
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
@@ -86,16 +86,20 @@ export function AccountNavDropdownMenu() {
           </Link>
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
-        <DropdownMenuGroup>
           {teamName && (
+        <DropdownMenuGroup>
             <Link to={`/team/page/${teamName}`}>
               <DropdownMenuItem>
                 <Users className="mr-2 h-4 w-4" />
                 <span>Team {teamName}</span>
               </DropdownMenuItem>
             </Link>
+        </DropdownMenuGroup>
+
           )}
           {authUser?.accountType === "coach" && (
+        <DropdownMenuGroup>
+
             <Link to={"/team/create"}>
               <DropdownMenuItem>
                 <Plus className="mr-2 h-4 w-4" />
@@ -103,8 +107,11 @@ export function AccountNavDropdownMenu() {
                 <DropdownMenuShortcut>⌘+T</DropdownMenuShortcut>
               </DropdownMenuItem>
             </Link>
+        </DropdownMenuGroup>
           )}
-          {authUser?.accountType === "tournement_manager" && (
+
+        {authUser?.accountType === "tournement_manager" && (
+          <DropdownMenuGroup>
             <Link to={"/tournament/create"}>
               <DropdownMenuItem>
                 <Plus className="mr-2 h-4 w-4" />
@@ -112,7 +119,16 @@ export function AccountNavDropdownMenu() {
                 <DropdownMenuShortcut>⌘+T</DropdownMenuShortcut>
               </DropdownMenuItem>
             </Link>
-          )}
+            <Link to={"/tournament/page/tournameidhere"}>
+              <DropdownMenuItem>
+                <FlameKindling  className="mr-2 h-4 w-4" />
+                <span>Tournament</span>
+                <DropdownMenuShortcut>⌘+T</DropdownMenuShortcut>
+              </DropdownMenuItem>
+            </Link>
+          </DropdownMenuGroup>
+        )}
+        <DropdownMenuGroup>
           <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
             <RefreshCcw className="mr-2 h-4 w-4" />
             <span>
