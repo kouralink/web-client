@@ -189,7 +189,7 @@ const router = createBrowserRouter(
           }
         >
           <Route
-            path="page/:paramtourname"
+            path="page/:paramtourid"
             element={<TournamentPage />}
             errorElement={<ErrorPage />}
           />
