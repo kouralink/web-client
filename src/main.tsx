@@ -45,11 +45,7 @@ import CreateTeam from "./pages/team/CreateTeam.tsx";
 import UpdateTeam from "./pages/team/UpdateTeam.tsx";
 
 // Tounaments
-import TournamentLayout from "./layouts/TournamentLayout.tsx";
-import TournamentSearchPage from "./pages/Tournament/TournamentSearchPage.tsx";
-import { TournamentPage } from "./pages/Tournament/TournamentPage.tsx";
-import TournamentBrackets from "./pages/Tournament/TournamentBrackets.tsx";
-import CreateTournament from "./pages/Tournament/CreateTournament.tsx";
+
 // users
 import UserProfile from "./pages/profile/UserProfile.tsx";
 import UserSearchPage from "./pages/profile/UserSearchPage.tsx";
@@ -62,6 +58,8 @@ import Contact from "./pages/Contact.tsx";
 
 // 404
 import ErrorPage from "./pages/ErrorPage.tsx";
+import CreateTournament from "./pages/tournament/Create.tsx";
+import { TournamentPage } from "./pages/tournament/Page.tsx";
 
 // private route
 export const PrivateRoute = ({ children }: { children: React.ReactNode }) => {
@@ -186,24 +184,26 @@ const router = createBrowserRouter(
           path="tournament"
           element={
             <PrivateRoute>
-              <TournamentLayout />
+              <DefaultNavLayout />
             </PrivateRoute>
           }
-          errorElement={<ErrorPage />}
         >
-          <Route index element={<TournamentSearchPage />} />
           <Route
-            path="CreateTournement"
+            path="page/:paramtourname"
+            element={<TournamentPage />}
+            errorElement={<ErrorPage />}
+          />
+          <Route
+            path="create"
             element={
               <TournamentManagerRoute>
                 <CreateTournament />
               </TournamentManagerRoute>
             }
           />
-          <Route path="tournamentBrackets" element={<TournamentBrackets />} />
-          <Route path=":tournamentId" element={<TournamentPage />} />
           <Route path="*" element={<ErrorPage />} />
         </Route>
+        {/* -------------- User Routes --------------- */}
         <Route
           path="users"
           element={<DefaultNavLayout />}
