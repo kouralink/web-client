@@ -39,9 +39,9 @@ export default function SearchTeamsForInvite() {
             className="my-10"
           />
 
-          {searchResults.map((result) => {
+          {searchResults.map((result, index) => {
             return (
-              <div>
+              <div key={index}>
                 <TeamSearchCardForInvite
                   result={result.team_info}
                   id={result.id}
