@@ -182,15 +182,18 @@ export interface TournamentStage {
 // ------------- Tournament State -------------
 export interface tournament {
   id: string;
-  tournamentName: string;
-  tournamentLogo: string;
+  name: string;
+  logo: string;
   description: string;
-  startDate: string;
-  endDate: string;
-  createdAt: Timestamp;
-  updatedAt: Timestamp;
-  createdBy: string;
+  start_date: string;
+  end_date: string;
+  created_at: Timestamp;
+  updated_at: Timestamp;
+  created_by: string;
+  refree_ids: string[];
+  location: string;
   participants: string[];
   status: "pending" | "in-progress" | "finish" | "cancled";
-  stages: TournamentStage[];
+  min_members_in_team: number;
+  max_participants: number;
 }
