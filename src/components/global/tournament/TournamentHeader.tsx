@@ -36,7 +36,6 @@ const TournamentHeader: React.FC<TournamentHeaderProps> = (props) => {
         <span>1</span>
         <Star />
         <TournamentDropDownMenu
-          tourname={props.name}
           role={props.role}
           tourid={props.id}
         />
