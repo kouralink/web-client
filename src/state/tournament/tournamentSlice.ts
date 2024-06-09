@@ -18,6 +18,17 @@ import { getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
 import { FirebaseError } from "firebase/app";
 import { toast } from "@/components/ui/use-toast";
 
+
+export interface UpdateTournamentDataType {
+  name?: string;
+  description?: string;
+  logo?: Blob;
+  location?: string;
+  min_members_in_team?: number;
+  max_participants?: number;
+  start_date?: Timestamp;
+}
+
 interface TournamentState {
   tournament: Tournament;
   isLoading: boolean;
@@ -82,16 +93,16 @@ const teamSlice = createSlice({
       state.error = action.error.message as string;
     });
 
-    // getTournamentByName
+    // getTournamentById
     builder
-      .addCase(getTournamentByName.pending, (state) => {
+      .addCase(getTournamentById.pending, (state) => {
         state.isLoading = true;
       })
-      .addCase(getTournamentByName.fulfilled, (state, action: PayloadAction<Tournament>) => {
+      .addCase(getTournamentById.fulfilled, (state, action: PayloadAction<Tournament>) => {
         state.isLoading = false;
         state.tournament = action.payload;
       })
-      .addCase(getTournamentByName.rejected, (state, action) => {
+      .addCase(getTournamentById.rejected, (state, action) => {
         state.isLoading = false;
         state.error = action.error.message as string;
       });
@@ -125,44 +136,83 @@ const teamSlice = createSlice({
         state.error = action.error.message as string;
       });
 
-          // kickTeam
+    // updateTournament
     builder
-    .addCase(kickTeam.pending, (state) => {
-      state.isLoading = true;
-      state.error = null;
-    })
-    .addCase(kickTeam.fulfilled, (state, action) => {
-      state.isLoading = false;
-      state.error = null;
-      if (typeof action.payload === "object" && action.payload?.teamId) {
-        const teamId: string = action.payload.teamId;
-        state.teamsInfo = state.teamsInfo.filter((teamInfo) => teamInfo.id !== teamId);
+      .addCase(updateTournament.pending, (state) => {
+        state.isLoading = true;
+        state.error = null;
+      })
+      .addCase(updateTournament.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.error = null;
+        if (typeof action.payload === "object" && action.payload !== null) {
+          state.tournament = action.payload.tournament;
+          toast({
+            variant: "default",
+            title: "Tournament Updated",
+            description: "Tournament updated successfully!",
+            className: "text-primary border-2 border-primary text-start",
+          });
+        } else {
+          state.tournament = initialState.tournament;
+          state.error = action.payload as string;
+          toast({
+            variant: "default",
+            title: "Tournament Update Failed",
+            description: action.payload as string,
+            className: "text-error border-2 border-error text-start",
+          });
+        }
+      })
+      .addCase(updateTournament.rejected, (state, action) => {
+        state.isLoading = false;
+        state.error = action.error.message as string;
         toast({
           variant: "default",
-          title: "Team Kicked",
-          description: "Team kicked successfully!",
-          className: "text-primary border-2 border-primary text-start",
-        });
-      } else {
-        state.error = action.payload as string;
-        toast({
-          variant: "default",
-          title: "Team Kick Failed",
+          title: "Tournament Update Rejected",
           description: state.error,
           className: "text-error border-2 border-error text-start",
         });
-      }
-    })
-    .addCase(kickTeam.rejected, (state, action) => {
-      state.isLoading = false;
-      state.error = action.error.message as string;
-      toast({
-        variant: "default",
-        title: "Team Kick Rejected",
-        description: state.error,
-        className: "text-error border-2 border-error text-start",
       });
-    });
+
+    // kickTeam
+    builder
+      .addCase(kickTeam.pending, (state) => {
+        state.isLoading = true;
+        state.error = null;
+      })
+      .addCase(kickTeam.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.error = null;
+        if (typeof action.payload === "object" && action.payload?.teamId) {
+          const teamId: string = action.payload.teamId;
+          state.teamsInfo = state.teamsInfo.filter((teamInfo) => teamInfo.id !== teamId);
+          toast({
+            variant: "default",
+            title: "Team Kicked",
+            description: "Team kicked successfully!",
+            className: "text-primary border-2 border-primary text-start",
+          });
+        } else {
+          state.error = action.payload as string;
+          toast({
+            variant: "default",
+            title: "Team Kick Failed",
+            description: state.error,
+            className: "text-error border-2 border-error text-start",
+          });
+        }
+      })
+      .addCase(kickTeam.rejected, (state, action) => {
+        state.isLoading = false;
+        state.error = action.error.message as string;
+        toast({
+          variant: "default",
+          title: "Team Kick Rejected",
+          description: state.error,
+          className: "text-error border-2 border-error text-start",
+        });
+      });
   },
 });
 
@@ -278,21 +328,20 @@ export const createTournament = createAsyncThunk(
 );
 
 
-export const getTournamentByName = createAsyncThunk(
-  "tournament/getTournamentByName",
-  async (tournamentName: string, thunkAPI) => {
-    const colRef = collection(firestore, "tournaments");
-    const queryRef = query(colRef, where("name", "==", tournamentName));
-    const snap = await getDocs(queryRef);
-    if (snap.empty) {
+export const getTournamentById = createAsyncThunk(
+  "tournament/getTournamentById",
+  async (id: string, thunkAPI) => {
+    const docRef = doc(firestore, "tournaments", id);
+    const snap = await getDoc(docRef);
+    if (!snap.exists()) {
       return thunkAPI.rejectWithValue("Tournament Doesn't Exist!");
     }
-    const tournament = { ...snap.docs[0].data(), id: snap.docs[0].id } as Tournament;
+    const tournament = snap.data() as Tournament;
 
     // Dispatch getParticipantsTeams and getReferees actions
     thunkAPI.dispatch(getParticipantsTeams(tournament.participants));
     thunkAPI.dispatch(getReferees(tournament.refree_ids));
-
+    console.log(tournament);
     return tournament;
   }
 );
@@ -322,6 +371,115 @@ export const getReferees = createAsyncThunk(
       })
     );
     return refereesData;
+  }
+);
+
+
+
+export const updateTournament = createAsyncThunk(
+  "tournament/updateTournament",
+  async ({ tournament, id }: { id: string; tournament: UpdateTournamentDataType }) => {
+    try {
+      // check authentication
+      if (!auth.currentUser) {
+        return "This action requires authentication please login first";
+      }
+
+      // check accountType
+      const userRef = doc(firestore, "users", auth.currentUser?.uid);
+      const userSnap = await getDoc(userRef);
+      if (userSnap.exists()) {
+        const user = userSnap.data() as User;
+        if (user.accountType !== "tournament_manager") {
+          return "User is not an tournament_manager";
+        }
+      } else {
+        return "User not found";
+      }
+
+      // check if tournament name is unique
+      const newTournamentData: {
+        name?: string;
+        description?: string;
+        logo?: string;
+        location?: string;
+        min_members_in_team?: number;
+        max_participants?: number;
+        start_date?: Timestamp;
+      } = {};
+      if (tournament.name) {
+        newTournamentData.name = tournament.name;
+      }
+      if (tournament.description) {
+        newTournamentData.description = tournament.description;
+      }
+      if (tournament.location) {
+        newTournamentData.location = tournament.location;
+      }
+      if (tournament.min_members_in_team) {
+        newTournamentData.min_members_in_team = tournament.min_members_in_team;
+      }
+      if (tournament.max_participants) {
+        newTournamentData.max_participants = tournament.max_participants;
+      }
+      if (tournament.start_date) {
+        newTournamentData.start_date = tournament.start_date;
+      }
+      console.log(newTournamentData)
+
+      let logoUrl = "";
+
+      if (tournament.logo) {
+        const storageRef = ref(storage, `Tournament/Logo/${id}`);
+        const snapshot = await uploadBytesResumable(
+          storageRef,
+          tournament.logo as Blob
+        );
+
+        try {
+          logoUrl = await getDownloadURL(snapshot.ref);
+          newTournamentData.logo = logoUrl;
+          toast({
+            variant: "default",
+            title: "Upload Image",
+            description: "Image uploaded successfully!",
+            className: "text-primary border-2 border-primary text-start",
+          });
+        } catch (error) {
+          return "Get Download URL Failed!";
+        }
+      }
+
+      console.log("here is it:", newTournamentData);
+      const docRef = doc(firestore, "tournaments", id);
+      await setDoc(
+        docRef,
+        {
+          updatedAt: Timestamp.now(),
+          ...newTournamentData,
+        },
+        { merge: true }
+      );
+
+      const tournamentInfo = { ...store.getState().tournament.tournament, ...newTournamentData };
+
+      if (tournamentInfo) {
+        const data = {
+          tournament: tournamentInfo,
+        };
+
+        return data;
+      } else {
+        return "Tournament Doesn't created!";
+      }
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (error) {
+      if (error instanceof FirebaseError) {
+        return error.message;
+      } else {
+        return "An error occurred";
+      }
+    }
   }
 );
 
