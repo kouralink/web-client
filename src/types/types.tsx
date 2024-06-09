@@ -180,13 +180,13 @@ export interface TournamentStage {
 }
 
 // ------------- Tournament State -------------
-export interface tournament {
+export interface Tournament {
   id: string;
   name: string;
   logo: string;
   description: string;
-  start_date: string;
-  end_date: string;
+  start_date: Timestamp;
+  end_date: Timestamp;
   created_at: Timestamp;
   updated_at: Timestamp;
   created_by: string;
