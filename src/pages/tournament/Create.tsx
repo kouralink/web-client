@@ -256,6 +256,7 @@ export default function CreateTournament() {
                           granularity="second"
                           jsDate={field.value}
                           onJsDateChange={field.onChange}
+                          aria-label="Start Datetime"
                         />
                       </FormControl>
                       <FormMessage />
