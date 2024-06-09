@@ -224,16 +224,11 @@ const router = createBrowserRouter(
         >
           <Route path="page/:matchId" element={<MatchPage />} />
         </Route>
-        <Route
-          path="/referee"
-          element={
-            <DefaultNavLayout/>
-          }
-        
-        >
 
-          <Route path="/matches/:refreeid" element={<MatchesReferee />} />
+        <Route path="referee" element={<DefaultNavLayout />}>
+          <Route path="matches/:refreeid" element={<MatchesReferee />} />
         </Route>
+
         <Route path="/" element={<DefaultNavFooterLayout />}>
           <Route path="about" element={<About />} />
           <Route path="contact" element={<Contact />} />
