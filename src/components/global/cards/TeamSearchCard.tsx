@@ -3,16 +3,16 @@ import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 
-interface SearchedUser {
+interface SearchedTeam {
   teamLogo: string;
   teamName: string;
 }
 
-interface UserSearchCardProps {
-  result: SearchedUser;
+interface TeamSearchCardProps {
+  result: SearchedTeam;
 }
 
-const UserSearchCard: React.FC<UserSearchCardProps> = ({ result }) => {
+const TeamSearchCard: React.FC<TeamSearchCardProps> = ({ result }) => {
   return (
     <div>
       <Link to={`/team/page/${result.teamName}`}>
@@ -34,4 +34,4 @@ const UserSearchCard: React.FC<UserSearchCardProps> = ({ result }) => {
   );
 };
 
-export default UserSearchCard;
+export default TeamSearchCard;

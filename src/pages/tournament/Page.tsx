@@ -30,6 +30,7 @@ const exampleTournament: Tournament = {
   created_by: "1",
   refree_ids: ["1"],
   participants: ["1"],
+  manager_id: "1",
   status: "pending",
   min_members_in_team: 1,
   max_participants: 1,

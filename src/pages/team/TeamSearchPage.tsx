@@ -47,9 +47,9 @@ const TeamSearchPage: React.FC = () => {
                 placeholder="Search teams..."
               />
               <ul>
-                {searchResults.map((result) => {
+                {searchResults.map((result, index) => {
                   return (
-                    <div>
+                    <div key={index}>
                       <TeamSearchCard result={result.team_info} />
                     </div>
                   );
