@@ -17,7 +17,6 @@ export const TournamentPage = () => {
   const referees = useSelector((state: RootState) => state.tournament.refereesInfo);
   const dispatch = useDispatch<AppDispatch>();
 
-
   useEffect(() => {
     dispatch(getTournamentByName(paramtourid as string));
   }, [paramtourid]);
@@ -48,7 +47,7 @@ export const TournamentPage = () => {
       {paramtourid}
       <TournamentHeader role={role} {...tournament} />
       <TournamentRefereesList referees={referees} />
-      <TournamentTeamsList teams={participantsTeams} isManager={userId === tournament.manager_id} />
+      <TournamentTeamsList teams={participantsTeams}  isManager={userId === tournament.manager_id} />
     </div>
   );
 };
