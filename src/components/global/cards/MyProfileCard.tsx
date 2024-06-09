@@ -96,9 +96,11 @@ const MyProfileCard = () => {
             </div>
           )}
         </div>
+        {(authUser?.accountType === "coach" || authUser?.accountType === "player") &&  (
         <div className=" lg:w-1/2">
           <TeamProfileCard team={team}/>
         </div>
+        )}
       </CardContent>
     </Card>
   );
