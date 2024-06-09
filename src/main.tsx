@@ -61,6 +61,7 @@ import ErrorPage from "./pages/ErrorPage.tsx";
 import CreateTournament from "./pages/tournament/Create.tsx";
 import { TournamentPage } from "./pages/tournament/Page.tsx";
 import TournamentSearchPage from "./pages/tournament/Search.tsx";
+import MatchesReferee from "./pages/referee/MatchesReferee.tsx";
 
 // private route
 export const PrivateRoute = ({ children }: { children: React.ReactNode }) => {
@@ -222,6 +223,16 @@ const router = createBrowserRouter(
           errorElement={<ErrorPage />}
         >
           <Route path="page/:matchId" element={<MatchPage />} />
+        </Route>
+        <Route
+          path="/referee"
+          element={
+            <DefaultNavLayout/>
+          }
+        
+        >
+
+          <Route path="/matches/:refreeid" element={<MatchesReferee />} />
         </Route>
         <Route path="/" element={<DefaultNavFooterLayout />}>
           <Route path="about" element={<About />} />
