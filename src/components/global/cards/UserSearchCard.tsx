@@ -13,15 +13,15 @@ const UserSearchCard: React.FC<UserSearchCardProps> = ({ result }) => {
     <div>
       <Link to={`/users/profile/${result.username}`}>
         <div className="flex justify-between items-center px-5">
-          <div className="flex items-center py-5">
+          <div className="flex items-center py-5 gap-2">
 
             <Avatar className="w-24 h-24 rounded-full object-cover">
               <AvatarImage src={result.avatar} alt="" className="object-cover" />
               <AvatarFallback>{result.username.charAt(0).toUpperCase()}{result.username.charAt(1).toUpperCase()}</AvatarFallback>
             </Avatar>
 
-            <h1 className="flex flex-col font-bold px-1">
-              {result?.firstName} {result?.lastName}
+            <h1 className="flex flex-col font-bold px-1 capitalize">
+              {result.username}
             </h1>
           </div>
           <Button>View Profile</Button>
