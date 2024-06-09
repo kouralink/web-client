@@ -29,11 +29,9 @@ import { AppDispatch } from "@/state/store";
 import SearchTeamsForInvite from "./SearchTeamsForInvite";
 
 export default function TournamentDropDownMenu({
-  tourname,
   role,
   tourid,
 }: {
-  tourname: string;
   tourid: string;
   role:
     | "user"
@@ -91,7 +89,7 @@ export default function TournamentDropDownMenu({
               <DropdownMenuShortcut></DropdownMenuShortcut>
             </DropdownMenuItem>
 
-            <Link to={`/tournament/update/${tourname}`}>
+            <Link to={`/tournament/update/${tourid}`}>
               <DropdownMenuItem>
                 <PenLine className="mr-2 h-4 w-4" />
                 <span>Update Tournament</span>

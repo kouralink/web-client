@@ -15,7 +15,7 @@
 - [ ] : @ilorez : get tournament notification for tournament manager redux
 - [ ] : @ilorez : add notification to notifiaction aside
 - [ ] : @ilorez : link notification actions with redux
-- [ ] : @Abdo-Nsila : update tournament info
+- [x] : @Abdo-Nsila : update tournament info
 - [ ] : change account type logic for tournament_manager
 
 status : pending => in progress => finish || failed
