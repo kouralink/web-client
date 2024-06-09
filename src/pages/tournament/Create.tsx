@@ -31,6 +31,9 @@ import { Button } from "@/components/ui/button";
 import { toast } from "@/components/ui/use-toast";
 import ButtonLoading from "@/components/global/ButtonLoading";
 import { DateTimePicker } from "@/components/ui/datetime-picker";
+import { useDispatch } from "react-redux";
+import { AppDispatch } from "@/state/store";
+import { createTournament } from "@/state/tournament/tournamentSlice";
 
 const MAX_FILE_SIZE = 1024 * 1024 * 2;
 const ACCEPTED_IMAGE_MIME_TYPES = [
@@ -93,6 +96,7 @@ export type CreateTournamentFormValues = z.infer<typeof createTournamentSchema>;
 
 export default function CreateTournament() {
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
+  const dispatch = useDispatch<AppDispatch>();
 
   const form = useForm<CreateTournamentFormValues>({
     resolver: zodResolver(createTournamentSchema),
@@ -117,7 +121,10 @@ export default function CreateTournament() {
         </pre>
       ),
     });
+    await dispatch(createTournament(data));
   };
+  // [ ]: errors and isloading status
+  // [ ]: navigate to tournament page after created succesfully
 
   return (
     <div className="flex justify-center">
@@ -258,7 +265,16 @@ export default function CreateTournament() {
                     <FormItem>
                       <FormLabel>Minimum Members</FormLabel>
                       <FormControl>
-                        <Input type="number" {...field} onChange={(e)=>form.setValue("min_members",parseInt(e.target.value))} />
+                        <Input
+                          type="number"
+                          {...field}
+                          onChange={(e) =>
+                            form.setValue(
+                              "min_members",
+                              parseInt(e.target.value)
+                            )
+                          }
+                        />
                       </FormControl>
                       <FormDescription>
                         Minimum members required to create a team.
@@ -274,7 +290,16 @@ export default function CreateTournament() {
                     <FormItem>
                       <FormLabel>Maximum Participants</FormLabel>
                       <FormControl>
-                        <Input type="number" {...field} onChange={(e)=>form.setValue("max_participants",parseInt(e.target.value))} />
+                        <Input
+                          type="number"
+                          {...field}
+                          onChange={(e) =>
+                            form.setValue(
+                              "max_participants",
+                              parseInt(e.target.value)
+                            )
+                          }
+                        />
                       </FormControl>
                       <FormDescription>
                         Maximum participants allowed in the Tournament.
