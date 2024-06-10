@@ -13,6 +13,7 @@ import NotificationCard from "./cards/NotificationCard";
 import {
   getRecievedNotifications,
   getTeamRequestNotifications,
+  getTournamentNotifications,
 } from "@/state/notification/notificationSlice";
 import { useEffect } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -45,7 +46,7 @@ const NotificationASideSheet = () => {
       dispatch(getTeamRequestNotifications());
     }
     if (accoutType === "tournament_manager") {
-      dispatch(getTeamRequestNotifications());
+      dispatch(getTournamentNotifications());
     }
   }, [accoutType, authUserUID, dispatch]);
 
@@ -55,7 +56,7 @@ const NotificationASideSheet = () => {
         <div className="relative">
 
         {
-          (RecievedNotifications.length > 0 || teamNotifications.notifications.length > 0) ? (
+          (RecievedNotifications.length > 0 || teamNotifications.notifications.length > 0 || tournamentNotifications.notifications.length > 0) ? (
             
             <BellDot className="mt-2 rounded-lg hover:text-gray-900 focus:text-gray-900 hover:bg-gray-200 focus:bg-gray-200 focus:outline-none focus:shadow-outline" />
           ):(
@@ -94,7 +95,7 @@ const NotificationASideSheet = () => {
                   <TabsTrigger value="team">Team</TabsTrigger>
                 )}
                 {accoutType === "tournament_manager" && (
-                  <TabsTrigger value="team">Tournament</TabsTrigger>
+                  <TabsTrigger value="tournament">Tournament</TabsTrigger>
                 )}
               </TabsList>
             )}
@@ -134,7 +135,7 @@ const NotificationASideSheet = () => {
             </TabsContent>
           )}
           {accoutType === "tournament_manager" && (
-            <TabsContent value="team">
+            <TabsContent value="tournament">
               {tournamentNotifications.error && <div>{tournamentNotifications.error}</div>}
               {tournamentNotifications.notifications.length > 0 && (
                 <ScrollArea className="felx flex-col h-[480px]  w-full ">
