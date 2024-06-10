@@ -5,6 +5,7 @@ import {
   Plus,
   RefreshCcw,
   Settings,
+  Timer,
   User,
   Users,
 } from "lucide-react";
@@ -97,6 +98,19 @@ export function AccountNavDropdownMenu() {
         </DropdownMenuGroup>
 
           )}
+
+          {authUser?.accountType === "refree" && (
+        <DropdownMenuGroup>
+
+            <Link to={`/referee/matches/1`}>
+              <DropdownMenuItem>
+                <Timer className="mr-2 h-4 w-4" />
+                <span>Match</span>
+              </DropdownMenuItem>
+            </Link>
+        </DropdownMenuGroup>
+          )}
+
           {authUser?.accountType === "coach" && (
         <DropdownMenuGroup>
 
