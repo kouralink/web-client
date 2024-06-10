@@ -63,6 +63,7 @@ import { TournamentPage } from "./pages/tournament/Page.tsx";
 import TournamentSearchPage from "./pages/tournament/Search.tsx";
 import MatchesReferee from "./pages/referee/MatchesReferee.tsx";
 import UpdateTournament from "./pages/tournament/Update.tsx";
+import { SingleElimination } from "./pages/tournament/testBrackets.tsx";
 
 // private route
 export const PrivateRoute = ({ children }: { children: React.ReactNode }) => {
@@ -191,6 +192,7 @@ const router = createBrowserRouter(
         >
           <Route index element={<TournamentSearchPage />} />
           <Route path="search" element={<TournamentSearchPage />} />
+          <Route path="test" element={<SingleElimination />} />
           <Route
             path="page/:paramtourid"
             element={<TournamentPage />}

@@ -5,6 +5,7 @@ import {
   Plus,
   RefreshCcw,
   Settings,
+  TestTube,
   Timer,
   User,
   Users,
@@ -163,7 +164,13 @@ export function AccountNavDropdownMenu() {
             <DropdownMenuShortcut>⌘+C</DropdownMenuShortcut>
           </DropdownMenuItem>
         </DropdownMenuGroup>
-
+        <Link to={"tournament/test"}>
+          <DropdownMenuItem>
+            <TestTube className="mr-2 h-4 w-4" />
+            <span>Test brackets</span>
+            <DropdownMenuShortcut>⇧⌘Q</DropdownMenuShortcut>
+          </DropdownMenuItem>
+          </Link>
         <DropdownMenuSeparator />
         <Link to="/">
           {authLoading ? (
