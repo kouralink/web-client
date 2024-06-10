@@ -43,7 +43,7 @@ const MatchRecordCardIteam: React.FC<Match> = (props) => {
               alt={props.team1.name + " logo"}
               className="object-cover"
             />
-            <AvatarFallback>{props.team1.name.charAt(0)}</AvatarFallback>
+            <AvatarFallback>{props.team1.name?.charAt(0)}</AvatarFallback>
           </Avatar>
           <h2 className="">{props.team1.name}</h2>
         </div>
@@ -70,7 +70,7 @@ const MatchRecordCardIteam: React.FC<Match> = (props) => {
               alt={props.team1.name + " logo"}
               className="object-cover"
             />
-            <AvatarFallback>{props.team2.name.charAt(0)}</AvatarFallback>
+            <AvatarFallback>{props.team2.name?.charAt(0)}</AvatarFallback>
           </Avatar>
           <h2>{props.team2.name}</h2>
         </div>
