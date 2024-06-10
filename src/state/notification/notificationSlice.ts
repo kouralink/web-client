@@ -195,6 +195,10 @@ const notificationSlice = createSlice({
           state.notifications = state.notifications.filter(
             (notification) => notification.id !== action.meta.arg.id
           );
+          state.tournamentNotifications.notifications =
+            state.tournamentNotifications.notifications.filter(
+              (notification) => notification.id !== action.meta.arg.id
+            );
           // console.log("done");
           toast({
             title: "Action updated",
@@ -346,7 +350,7 @@ const notificationSlice = createSlice({
  * getCoachTeamId function
  * This function is used to get the team id where the the authinticated user is the coach of the team
  * @returns {Promise<string>} teamId
- *
+ * @returns {string} error
  */
 export const getCoachTeamId = async () => {
   try {
@@ -370,6 +374,46 @@ export const getCoachTeamId = async () => {
     return teamId;
   } catch (error) {
     return { error: "You Don't have a Team Yet" };
+  }
+};
+
+/**
+ * getTournamentManagerTournament function
+ * This function is used to get the tournament where the authinticated user is the manager of the tournament
+ * @returns {Promise<Tournament>} tournament
+ * @returns {string} error
+ */
+export const getTournamentManagerTournament = async () => {
+  try {
+    // check if user is authinticated
+    // get user id
+
+    const uid = auth.currentUser?.uid;
+    if (!uid) {
+      return "Error getting current user";
+    }
+
+    // check if type account of user is tournament managet
+    const accountType = store.getState().auth.user?.accountType;
+    if (accountType !== "tournament_manager") {
+      return "Error account type is not tournament manager";
+    }
+
+    // get tournament id where manager_id === uid and status is pending or in_progress
+    const tournamentCollection = collection(firestore, "tournaments");
+    const tournamentsQuery = query(
+      tournamentCollection,
+      where("manager_id", "==", uid),
+      where("status", "in", ["pending", "in_progress"])
+    );
+    const tournamentsSnapshot = await getDocs(tournamentsQuery);
+    if (tournamentsSnapshot.size === 0) {
+      return "No tournament found";
+    }
+    const tournament = tournamentsSnapshot.docs[0];
+    return tournament.data() as Tournament;
+  } catch (error) {
+    return "Error getting tournament id";
   }
 };
 
@@ -681,12 +725,7 @@ export const updateNotificationAction = createAsyncThunk(
         return `already ${ntf.action}ed`;
       }
 
-      if (
-        [
-          "request_to_join_tournament",
-          "invite_referee_to_tournament",
-        ].includes(notificationInfo.type)
-      ) {
+      if (["invite_referee_to_tournament"].includes(notificationInfo.type)) {
         // console.log("this actions not supported yet");
         return "this actions not supported yet";
       }
@@ -760,8 +799,7 @@ export const updateNotificationAction = createAsyncThunk(
         } else {
           return updated;
         }
-      }
-      if (notificationInfo.type === "match_chalenge") {
+      } else if (notificationInfo.type === "match_chalenge") {
         // check if the to_id === teamId
         const teamId = await getCoachTeamId();
         if (typeof teamId === "object" && teamId.error) {
@@ -779,8 +817,7 @@ export const updateNotificationAction = createAsyncThunk(
         } else {
           return updated;
         }
-      }
-      if (notificationInfo.type == "refree_invite") {
+      } else if (notificationInfo.type == "refree_invite") {
         // check if user auth account type
         const accountType = store.getState().auth.user?.accountType;
         if (accountType !== "refree") {
@@ -796,8 +833,7 @@ export const updateNotificationAction = createAsyncThunk(
         } else {
           return updated;
         }
-      }
-      if (notificationInfo.type === "invite_to_tournament"){
+      } else if (notificationInfo.type === "invite_to_tournament") {
         // check if user auth account type
         const accountType = store.getState().auth.user?.accountType;
         if (accountType !== "coach") {
@@ -811,7 +847,30 @@ export const updateNotificationAction = createAsyncThunk(
         if (teamId !== notificationInfo.to_id) {
           return "You are not the coach of this team";
         }
-        
+
+        const updated = await updateNotificationActionToTakedAction(
+          ntf.id,
+          ntf.action
+        );
+        if (updated === true) {
+          return true;
+        } else {
+          return updated;
+        }
+      } else if (notificationInfo.type === "request_to_join_tournament") {
+        // check if user auth account type
+        const accountType = store.getState().auth.user?.accountType;
+        if (accountType !== "tournament_manager") {
+          return "Account type is not tournament manager";
+        }
+        // check if to id === tournament manager id
+        const tournament = await getTournamentManagerTournament();
+        if (typeof tournament === "string") {
+          return tournament;
+        }
+        if (tournament.id !== notificationInfo.to_id) {
+          return "You are not the manager of this tournament";
+        }
         const updated = await updateNotificationActionToTakedAction(
           ntf.id,
           ntf.action
@@ -953,41 +1012,6 @@ export const sendRequestToJoinTournament = createAsyncThunk(
   }
 );
 
-// get tournament id of tournament manager
-export const getTournamentManagerTournament = async () => {
-  try {
-    // check if user is authinticated
-    // get user id
-
-    const uid = auth.currentUser?.uid;
-    if (!uid) {
-      return "Error getting current user";
-    }
-
-    // check if type account of user is tournament managet
-    const accountType = store.getState().auth.user?.accountType;
-    if (accountType !== "tournament_manager") {
-      return "Error account type is not tournament manager";
-    }
-
-    // get tournament id where manager_id === uid and status is pending or in_progress
-    const tournamentCollection = collection(firestore, "tournaments");
-    const tournamentsQuery = query(
-      tournamentCollection,
-      where("manager_id", "==", uid),
-      where("status", "in", ["pending", "in_progress"])
-    );
-    const tournamentsSnapshot = await getDocs(tournamentsQuery);
-    if (tournamentsSnapshot.size === 0) {
-      return "No tournament found";
-    }
-    const tournament = tournamentsSnapshot.docs[0];
-    return tournament.data() as Tournament;
-  } catch (error) {
-    return "Error getting tournament id";
-  }
-};
-
 // send invite to join team form tournament manager to team
 export const inviteToJoinTournament = createAsyncThunk(
   "notification/inviteToJoinTournament",
@@ -1040,6 +1064,7 @@ export const getTournamentNotifications = createAsyncThunk(
   "notification/getTournamentNotifications",
   async () => {
     try {
+      console.log("what i shoul be visible");
       // get uid
       const uid = auth.currentUser?.uid;
       if (!uid) {
@@ -1048,6 +1073,7 @@ export const getTournamentNotifications = createAsyncThunk(
 
       // get tournament of auth user
       const tournament = await getTournamentManagerTournament();
+      console.log("tournament is :", tournament);
       if (typeof tournament === "string") {
         return { error: tournament };
       }
