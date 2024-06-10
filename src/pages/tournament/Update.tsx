@@ -34,7 +34,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "@/state/store";
 import { getTournamentById, updateTournament, UpdateTournamentDataType } from "@/state/tournament/tournamentSlice";
 import { Timestamp } from "firebase/firestore";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
 
 const MAX_FILE_SIZE = 1024 * 1024 * 2;
@@ -106,6 +106,7 @@ export default function UpdateTournament() {
     );
     const [selectedImage, setSelectedImage] = useState<File | null>(null);
     const dispatch = useDispatch<AppDispatch>();
+    const navigate = useNavigate();
     const defaultValues = {
         name: currentTournament.name,
         location: currentTournament.location,
@@ -127,6 +128,11 @@ export default function UpdateTournament() {
         mode: "onSubmit",
         defaultValues: defaultValues,
     });
+
+
+    const handelCancel = () => {
+        navigate("/tournament/search");
+    };
 
     function toLocalISOString(date: Date) {
         const offset = date.getTimezoneOffset() * 60000;
@@ -178,7 +184,7 @@ export default function UpdateTournament() {
 
     return (
         <div className="flex justify-center">
-            <Card className="w-[800px]">
+            <Card className="w-full md:w-[800px]">
                 <CardHeader>
                     <CardTitle>Update Tournament</CardTitle>
                     <CardDescription>
@@ -361,7 +367,7 @@ export default function UpdateTournament() {
                             <FormMessage className="text-red-500">{error}</FormMessage>
 
                             <CardFooter className="flex justify-between">
-                                <Button variant="outline">Cancel</Button>
+                                <Button type="button" variant="outline" onClick={handelCancel}>Cancel</Button>
                                 {isLoading ? (
                                     <ButtonLoading />
                                 ) : (
