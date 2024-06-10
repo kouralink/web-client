@@ -28,6 +28,8 @@ import { logout } from "@/state/auth/authSlice";
 import { ChangeAccountType } from "./ChangeAccountType";
 import { useEffect, useState } from "react";
 import { getMemberTeamName } from "@/state/team/teamSlice";
+import { getTournamentManagerTournament } from "@/state/notification/notificationSlice";
+import { Tournament } from "@/types/types";
 
 export function AccountNavDropdownMenu() {
   const authLoading = useSelector((state: RootState) => state.auth.loading);
@@ -37,6 +39,7 @@ export function AccountNavDropdownMenu() {
   const accountType = authUser?.accountType;
   const uid = auth?.uid;
   const [teamName, setTeamName] = useState<string | null>(null);
+  const [tournament, setTournament] = useState<Tournament | null>(null);
 
   useEffect(() => {
     if (uid && (accountType === "coach" || accountType === "player")) {
@@ -46,6 +49,16 @@ export function AccountNavDropdownMenu() {
           return;
         }
         setTeamName(teamName);
+      });
+    } else if (uid && accountType === "tournament_manager") {
+      getTournamentManagerTournament().then((tournament) => {
+        if (!tournament) {
+          console.log("Error getting tournament manager tournament");
+          return;
+        }
+        if (typeof tournament === "object" && tournament !== null) {
+          setTournament(tournament);
+        }
       });
     }
   }, [accountType, uid]);
@@ -87,33 +100,30 @@ export function AccountNavDropdownMenu() {
           </Link>
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
-          {teamName && (
-        <DropdownMenuGroup>
+        {teamName && (
+          <DropdownMenuGroup>
             <Link to={`/team/page/${teamName}`}>
               <DropdownMenuItem>
                 <Users className="mr-2 h-4 w-4" />
                 <span>Team {teamName}</span>
               </DropdownMenuItem>
             </Link>
-        </DropdownMenuGroup>
+          </DropdownMenuGroup>
+        )}
 
-          )}
-
-          {authUser?.accountType === "refree" && (
-        <DropdownMenuGroup>
-
+        {authUser?.accountType === "refree" && (
+          <DropdownMenuGroup>
             <Link to={`/referee/matches/1`}>
               <DropdownMenuItem>
                 <Timer className="mr-2 h-4 w-4" />
                 <span>Match</span>
               </DropdownMenuItem>
             </Link>
-        </DropdownMenuGroup>
-          )}
+          </DropdownMenuGroup>
+        )}
 
-          {authUser?.accountType === "coach" && (
-        <DropdownMenuGroup>
-
+        {authUser?.accountType === "coach" && (
+          <DropdownMenuGroup>
             <Link to={"/team/create"}>
               <DropdownMenuItem>
                 <Plus className="mr-2 h-4 w-4" />
@@ -121,8 +131,8 @@ export function AccountNavDropdownMenu() {
                 <DropdownMenuShortcut>⌘+T</DropdownMenuShortcut>
               </DropdownMenuItem>
             </Link>
-        </DropdownMenuGroup>
-          )}
+          </DropdownMenuGroup>
+        )}
 
         {authUser?.accountType === "tournament_manager" && (
           <DropdownMenuGroup>
@@ -133,10 +143,10 @@ export function AccountNavDropdownMenu() {
                 <DropdownMenuShortcut>⌘+T</DropdownMenuShortcut>
               </DropdownMenuItem>
             </Link>
-            <Link to={"/tournament/page/tournameidhere"}>
+            <Link to={`/tournament/page/${tournament?.id}`}>
               <DropdownMenuItem>
-                <FlameKindling  className="mr-2 h-4 w-4" />
-                <span>Tournament</span>
+                <FlameKindling className="mr-2 h-4 w-4" />
+                <span>Tournament ({tournament?.name})</span>
                 <DropdownMenuShortcut>⌘+T</DropdownMenuShortcut>
               </DropdownMenuItem>
             </Link>
