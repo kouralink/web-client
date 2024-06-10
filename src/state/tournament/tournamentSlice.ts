@@ -146,7 +146,7 @@ const teamSlice = createSlice({
         state.isLoading = false;
         state.error = null;
         if (typeof action.payload === "object" && action.payload !== null) {
-          state.tournament = action.payload.tournament;
+          state.tournament = { ...state.tournament, ...action.payload.tournament };
           toast({
             variant: "default",
             title: "Tournament Updated",
@@ -244,7 +244,6 @@ export const getAuthUserManagerTournament = async () => {
     });
     return tournament;
   } catch (er) {
-    console.log(er);
     return "An error occurred, In checking if user have tournament!";
   }
 };
@@ -268,7 +267,6 @@ export const createTournament = createAsyncThunk(
 
       // get tournament id
       const tournamentid = doc(collection(firestore, "tournaments")).id;
-      console.log("Tournament ID:", tournamentid);
       // upload image
       const storageRef = ref(storage, `Tournament/Logos/${tournamentid}`);
 
@@ -281,7 +279,6 @@ export const createTournament = createAsyncThunk(
       try {
         logoUrl = await getDownloadURL(snapshot.ref);
       } catch (error) {
-        console.log(error);
         return "Get Download URL Failed!";
       }
       // create tournament
@@ -310,11 +307,9 @@ export const createTournament = createAsyncThunk(
       const docRef = doc(firestore, "tournaments", tournamentid);
       const docSnap = await getDoc(docRef);
       if (docSnap.exists()) {
-        console.log("Document data:", docSnap.data());
         return docSnap.data() as Tournament;
       } else {
         // doc.data() will be undefined in this case
-        console.log("No such document!");
         return "Could Get Tournament Data!";
       }
     } catch (error) {
@@ -341,7 +336,6 @@ export const getTournamentById = createAsyncThunk(
     // Dispatch getParticipantsTeams and getReferees actions
     thunkAPI.dispatch(getParticipantsTeams(tournament.participants));
     thunkAPI.dispatch(getReferees(tournament.refree_ids));
-    console.log(tournament);
     return tournament;
   }
 );
@@ -376,108 +370,82 @@ export const getReferees = createAsyncThunk(
 
 
 
+// Helper function to check authentication
+async function checkAuthentication() {
+  if (!auth.currentUser) {
+    throw new Error("This action requires authentication please login first");
+  }
+}
+
+// Helper function to check account type
+async function checkAccountType() {
+  if (!auth.currentUser?.uid) {
+    throw new Error("User is not authenticated");
+  }
+  const userRef = doc(firestore, "users", auth.currentUser.uid);
+  const userSnap = await getDoc(userRef);
+  if (userSnap.exists()) {
+    const user = userSnap.data() as User;
+    if (user.accountType !== "tournament_manager") {
+      throw new Error("User is not an tournament_manager");
+    }
+  } else {
+    throw new Error("User not found");
+  }
+}
+
+// Helper function to upload logo
+async function uploadLogo(id: string, logo: Blob) {
+  const storageRef = ref(storage, `Tournament/Logo/${id}`);
+  const snapshot = await uploadBytesResumable(storageRef, logo);
+  return await getDownloadURL(snapshot.ref);
+}
+
 export const updateTournament = createAsyncThunk(
   "tournament/updateTournament",
   async ({ tournament, id }: { id: string; tournament: UpdateTournamentDataType }) => {
     try {
-      // check authentication
-      if (!auth.currentUser) {
-        return "This action requires authentication please login first";
-      }
+      await checkAuthentication();
+      await checkAccountType();
 
-      // check accountType
-      const userRef = doc(firestore, "users", auth.currentUser?.uid);
-      const userSnap = await getDoc(userRef);
-      if (userSnap.exists()) {
-        const user = userSnap.data() as User;
-        if (user.accountType !== "tournament_manager") {
-          return "User is not an tournament_manager";
-        }
-      } else {
-        return "User not found";
-      }
+      let newTournamentData = { ...tournament };
 
-      // check if tournament name is unique
-      const newTournamentData: {
+
+      interface FirestoreTournamentDataType {
         name?: string;
-        description?: string;
         logo?: string;
+        description?: string;
         location?: string;
         min_members_in_team?: number;
         max_participants?: number;
         start_date?: Timestamp;
-      } = {};
-      if (tournament.name) {
-        newTournamentData.name = tournament.name;
       }
-      if (tournament.description) {
-        newTournamentData.description = tournament.description;
-      }
-      if (tournament.location) {
-        newTournamentData.location = tournament.location;
-      }
-      if (tournament.min_members_in_team) {
-        newTournamentData.min_members_in_team = tournament.min_members_in_team;
-      }
-      if (tournament.max_participants) {
-        newTournamentData.max_participants = tournament.max_participants;
-      }
-      if (tournament.start_date) {
-        newTournamentData.start_date = tournament.start_date;
-      }
-      console.log(newTournamentData)
-
-      let logoUrl = "";
+      // Create a new variable with a compatible type
+      let firestoreTournamentData: FirestoreTournamentDataType = {
+        ...newTournamentData,
+        logo: typeof newTournamentData.logo === 'string' ? newTournamentData.logo : ''
+      };
 
       if (tournament.logo) {
-        const storageRef = ref(storage, `Tournament/Logo/${id}`);
-        const snapshot = await uploadBytesResumable(
-          storageRef,
-          tournament.logo as Blob
-        );
-
-        try {
-          logoUrl = await getDownloadURL(snapshot.ref);
-          newTournamentData.logo = logoUrl;
-          toast({
-            variant: "default",
-            title: "Upload Image",
-            description: "Image uploaded successfully!",
-            className: "text-primary border-2 border-primary text-start",
-          });
-        } catch (error) {
-          return "Get Download URL Failed!";
-        }
+        const logoUrl = await uploadLogo(id, tournament.logo as Blob);
+        firestoreTournamentData.logo = logoUrl;
+        toast({
+          variant: "default",
+          title: "Upload Image",
+          description: "Image uploaded successfully!",
+          className: "text-primary border-2 border-primary text-start",
+        });
       }
 
-      console.log("here is it:", newTournamentData);
-      const docRef = doc(firestore, "tournaments", id);
-      await setDoc(
-        docRef,
-        {
-          updatedAt: Timestamp.now(),
-          ...newTournamentData,
-        },
-        { merge: true }
-      );
-
-      const tournamentInfo = { ...store.getState().tournament.tournament, ...newTournamentData };
-
-      if (tournamentInfo) {
-        const data = {
-          tournament: tournamentInfo,
-        };
-
-        return data;
-      } else {
-        return "Tournament Doesn't created!";
-      }
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      // Use firestoreTournamentData in the update function
+      const tournamentRef = doc(firestore, "tournaments", id);
+      await updateDoc(tournamentRef, { ...firestoreTournamentData });
+      return { id, tournament: firestoreTournamentData };
     } catch (error) {
-      if (error instanceof FirebaseError) {
+      if (error instanceof Error) {
         return error.message;
       } else {
-        return "An error occurred";
+        return 'An error occurred';
       }
     }
   }

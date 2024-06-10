@@ -160,7 +160,7 @@ export default function UpdateTeam() {
     }
   }, [error, navigate, status, team.teamName]);
   return (
-    <Card className="w-[800px]">
+    <Card className="w-full md:w-[800px]">
       <CardHeader>
         <CardTitle>Create Team</CardTitle>
         <CardDescription>

@@ -34,6 +34,7 @@ import { DateTimePicker } from "@/components/ui/datetime-picker";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "@/state/store";
 import { createTournament } from "@/state/tournament/tournamentSlice";
+import { useNavigate } from "react-router-dom";
 
 const MAX_FILE_SIZE = 1024 * 1024 * 2;
 const ACCEPTED_IMAGE_MIME_TYPES = [
@@ -101,6 +102,8 @@ export default function CreateTournament() {
   );
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
   const dispatch = useDispatch<AppDispatch>();
+  const navigate = useNavigate();
+
 
   const form = useForm<CreateTournamentFormValues>({
     resolver: zodResolver(createTournamentSchema),
@@ -115,6 +118,11 @@ export default function CreateTournament() {
       start_date: new Date(), // default to today
     },
   });
+
+  const handelCancel = () => {
+    navigate("/tournament/search");
+  };
+
   const onSubmit = async (data: CreateTournamentFormValues) => {
     data.logo = data.logo[0];
     toast({
@@ -132,7 +140,7 @@ export default function CreateTournament() {
 
   return (
     <div className="flex justify-center">
-      <Card className="w-[800px]">
+      <Card className="w-full md:w-[800px]">
         <CardHeader>
           <CardTitle>Create Tournament</CardTitle>
           <CardDescription>
@@ -317,7 +325,7 @@ export default function CreateTournament() {
               <FormMessage className="text-red-500">{error}</FormMessage>
 
               <CardFooter className="flex justify-between">
-                <Button variant="outline">Cancel</Button>
+                <Button type="button" variant="outline" onClick={handelCancel}>Cancel</Button>
                 {isLoading ? (
                   <ButtonLoading />
                 ) : (
