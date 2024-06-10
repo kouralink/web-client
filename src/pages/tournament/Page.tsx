@@ -7,6 +7,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "@/state/store";
 import { getTournamentById } from "@/state/tournament/tournamentSlice";
 import { getCoachTeamId } from "@/state/notification/notificationSlice";
+import TournementInfoCard from "@/components/global/tournament/cards/TournementInfoCard";
 
 export const TournamentPage = () => {
   const { paramtourid } = useParams<{ paramtourid: string }>();
@@ -73,12 +74,21 @@ export const TournamentPage = () => {
   return (
     <div className="flex flex-col gap-8 mt-5 w-full container">
       <TournamentHeader role={role} {...tournament} />
-      <p>
+      {/* <p>
         TODO LAK YA LHMIZ HIHIHI "|:D" : Add tournament info card contain
         tournament details (tournament manager)&&(min members in team
         required)&&(current participant / max particiapnat ) (start date) &&
         (location) && (description) && (status) && (created at)
-      </p>
+      </p> */}
+      <TournementInfoCard teams={participantsTeams.length}
+        refree={referees.length}
+        maxparticipant={tournament.max_participants}
+        create_at={tournament.created_at}
+        bio={tournament.description}
+        start={tournament.start_date}
+        location={tournament.location}
+        manager={tournament.manager_id} />
+
       <TournamentRefereesList referees={referees} />
       <TournamentTeamsList
         teams={participantsTeams}
