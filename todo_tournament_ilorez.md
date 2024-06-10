@@ -56,6 +56,7 @@ status : pending => in progress => finish || failed
   - [ ] update zod validation for create and update 0/3
   - [ ] update redux checks 0/4
   - [ ] update firebase functions 0/4
+- [ ] make start in === the time when the referee start the match or set in progress
 
 
 ## change account type for tournament_manager

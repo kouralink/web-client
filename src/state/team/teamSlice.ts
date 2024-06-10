@@ -1136,7 +1136,7 @@ export const dispandUserFromTeamBlackList = createAsyncThunk(
   }
 );
 
-const getTeamDataByTeamId = async (teamId: string) => {
+export const getTeamDataByTeamId = async (teamId: string) => {
   try {
     const docRef = doc(firestore, "teams", teamId);
     const docSnap = await getDoc(docRef);
@@ -1174,7 +1174,16 @@ export const getTeamMatchesHistory = createAsyncThunk(
         // TODO: update this stupid function
         const team1_data = await getTeamDataByTeamId(thismatch.team1.id);
         const team2_data = await getTeamDataByTeamId(thismatch.team2.id);
-
+        if (!team1_data) {
+          // console.log("11111 no team data found");
+          // console.log("team1 id:",thismatch)
+          continue;
+        }
+        if (!team2_data) {
+          // console.log("22222 no team data found");
+          // console.log("team2 id:",thismatch)
+          continue;
+        }
         // get team1 data
         if (team1_data) {
           thismatch.team1 = {

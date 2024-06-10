@@ -233,7 +233,7 @@ const router = createBrowserRouter(
         </Route>
 
         <Route path="referee" element={<DefaultNavLayout />}>
-          <Route path="matches/:refreeid" element={<MatchesReferee />} />
+          <Route path="matches/:refereeid" element={<MatchesReferee />} />
         </Route>
 
         <Route path="/" element={<DefaultNavFooterLayout />}>

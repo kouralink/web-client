@@ -113,10 +113,10 @@ export function AccountNavDropdownMenu() {
 
         {authUser?.accountType === "refree" && (
           <DropdownMenuGroup>
-            <Link to={`/referee/matches/1`}>
+            <Link to={`/referee/matches/${uid}`}>
               <DropdownMenuItem>
                 <Timer className="mr-2 h-4 w-4" />
-                <span>Match</span>
+                <span>Matches</span>
               </DropdownMenuItem>
             </Link>
           </DropdownMenuGroup>
