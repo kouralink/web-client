@@ -94,6 +94,7 @@ export interface UserState {
   uid: string;
   status: "idle" | "loading" | "failed";
   error: string | null | undefined;
+  refereeMatches: Match[];
 }
 
 export type Action = "accept" | "decline" | "view";
