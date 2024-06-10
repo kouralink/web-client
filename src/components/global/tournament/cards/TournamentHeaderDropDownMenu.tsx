@@ -1,4 +1,4 @@
-import { Info, LogOut, PenLine, Play, Plus, Send } from "lucide-react";
+import { Info, LogOut, PenLine, Play, Plus, Send, UserPlus } from "lucide-react";
 
 import {
   DropdownMenu,
@@ -27,6 +27,7 @@ import { useDispatch } from "react-redux";
 import { sendRequestToJoinTournament } from "@/state/notification/notificationSlice";
 import { AppDispatch } from "@/state/store";
 import SearchTeamsForInvite from "./SearchTeamsForInvite";
+import SearchRefereesForInvite from "./SearchRefereesForInvite";
 
 export default function TournamentDropDownMenu({
   role,
@@ -85,6 +86,17 @@ export default function TournamentDropDownMenu({
               <Plus className="mr-2 h-4 w-4" />
               <span>
                 <SearchTeamsForInvite />
+              </span>
+              <DropdownMenuShortcut></DropdownMenuShortcut>
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              onSelect={(e) => {
+                e.preventDefault();
+              }}
+            >
+              <UserPlus className="mr-2 h-4 w-4" />
+              <span>
+                <SearchRefereesForInvite />
               </span>
               <DropdownMenuShortcut></DropdownMenuShortcut>
             </DropdownMenuItem>
