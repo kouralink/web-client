@@ -918,16 +918,16 @@ export const sendRequestToJoinTournament = createAsyncThunk(
 
       // check if team id exist already in a tournament participants that is not finished or canceled
 
-      const tournamentCollection = collection(firestore, "tournaments");
-      const tournamentsQuery = query(
-        tournamentCollection,
-        where("participants", "array-contains", teamId),
-        where("status", "in", ["pending", "in_progress"])
-      );
-      const tournamentsSnapshot = await getDocs(tournamentsQuery);
-      if (tournamentsSnapshot.size > 0) {
-        return "Your team already in a tournament that is not finished or canceled";
-      }
+      // const tournamentCollection = collection(firestore, "tournaments");
+      // const tournamentsQuery = query(
+      //   tournamentCollection,
+      //   where("participants", "array-contains", teamId),
+      //   where("status", "in", ["pending", "in_progress"])
+      // );
+      // const tournamentsSnapshot = await getDocs(tournamentsQuery);
+      // if (tournamentsSnapshot.size > 0) {
+      //   return "Your team already in a tournament that is not finished or canceled";
+      // }
 
       // send notification to tournament
 
