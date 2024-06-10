@@ -96,7 +96,7 @@ export const searchByUserNameAndTypeAccount = createAsyncThunk(
         usersCol,
         where("username", ">=", searchData.username),
         where("username", "<=", searchData.username + "\uf8ff"),
-        where("accountType", "==", "refree"),
+        where("accountType", "==", searchData.typeAccount),
         limit(10)
       );
       // console.log("searching")
