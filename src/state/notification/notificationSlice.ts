@@ -344,6 +344,38 @@ const notificationSlice = createSlice({
         state.tournamentNotifications.error = action.error.message;
         state.tournamentNotifications.isLoading = false;
       });
+    builder
+      .addCase(inviteRefereeToTournament.pending, (state) => {
+        state.isLoading = true;
+        state.error = null;
+      })
+      .addCase(inviteRefereeToTournament.fulfilled, (state, action) => {
+        state.error = null;
+        state.isLoading = false;
+
+        if (action.payload === true) {
+          toast({
+            title: "Invite sended",
+            description: "Invite to join tournament sended successfully",
+          });
+        } else {
+          state.error = action.payload;
+          toast({
+            title: "Invite failed",
+            description: action.payload,
+            variant: "destructive",
+          });
+        }
+      })
+      .addCase(inviteRefereeToTournament.rejected, (state, action) => {
+        state.error = action.error.message;
+        state.isLoading = false;
+        toast({
+          title: "Invite failed",
+          description: action.error.message,
+          variant: "destructive",
+        });
+      });
   },
 });
 /**
@@ -725,10 +757,7 @@ export const updateNotificationAction = createAsyncThunk(
         return `already ${ntf.action}ed`;
       }
 
-      if (["invite_referee_to_tournament"].includes(notificationInfo.type)) {
-        // console.log("this actions not supported yet");
-        return "this actions not supported yet";
-      }
+      
 
       // check if to_id == uid for type info and invite to team
       if (["info", "invite_to_team"].includes(notificationInfo.type)) {
@@ -880,6 +909,21 @@ export const updateNotificationAction = createAsyncThunk(
         } else {
           return updated;
         }
+      } else if (notificationInfo.type === "invite_referee_to_tournament") {
+        // check if auth user accountType is referee
+        const accountType = store.getState().auth.user?.accountType;
+        if (accountType !== "refree") {
+          return "Account type is not referee";
+        }
+        // check if to_id === referee id
+        if (notificationInfo.to_id !== uid) {
+          return "You are not the referee";
+        }
+        const updated = await updateNotificationActionToTakedAction(
+          ntf.id,
+          ntf.action
+        );
+        return updated;
       }
       return "Error updating notification action";
     } catch (error) {
@@ -1102,6 +1146,52 @@ export const getTournamentNotifications = createAsyncThunk(
       return { notis: notifications };
     } catch (error) {
       return { error: "Error getting tournament notifications" };
+    }
+  }
+);
+
+// invite referee to tournament
+export const inviteRefereeToTournament = createAsyncThunk(
+  "notification/inviteRefereeToTournament",
+  async (notificationInfo: { to: string }) => {
+    try {
+      // get tournament of auth user
+      const tournament = await getTournamentManagerTournament();
+      if (typeof tournament === "string") {
+        return tournament;
+      }
+      // check is notificationInfo.to is valid user nad have accountType === refree
+      const userRef = doc(firestore, "users", notificationInfo.to);
+      const userDoc = await getDoc(userRef);
+      if (!userDoc.exists()) {
+        return "Error getting user";
+      }
+      const userInfo = userDoc.data();
+      if (!userInfo) {
+        return "Error getting user info";
+      }
+      if (userInfo.accountType !== "refree") {
+        return "Error user account type is not refree";
+      }
+      // send notification
+      const notificationCollection = collection(firestore, "notifications");
+      const notificationDoc = await addDoc(notificationCollection, {
+        to_id: notificationInfo.to,
+        title: "Invite to tournament",
+        message: `You invited to Tournament ${tournament.name} as referee`,
+        from_id: tournament.id,
+        action: null,
+        createdAt: Timestamp.now(),
+        type: "invite_referee_to_tournament",
+      });
+
+      // return true is sended succesfully in not return false
+      if (notificationDoc.id) {
+        return true;
+      }
+      return "Error sending invite to referee";
+    } catch (error) {
+      return "Error sending invite to referee";
     }
   }
 );
