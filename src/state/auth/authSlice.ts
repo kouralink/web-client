@@ -28,6 +28,7 @@ import { changeAccountFormValues } from "@/components/global/ChangeAccountType";
 import { store } from "../store";
 
 import { httpsCallable } from "firebase/functions";
+import { getTournamentManagerTournament } from "../notification/notificationSlice";
 
 interface AuthState {
   user: UserInterface | null;
@@ -659,8 +660,7 @@ export const changeAccountType = createAsyncThunk(
         }
         if (currentUserAccountType === "user") {
           // do no thing
-        }
-        else if (
+        } else if (
           currentUserAccountType === "coach" ||
           currentUserAccountType === "player"
         ) {
@@ -682,12 +682,27 @@ export const changeAccountType = createAsyncThunk(
               "coachs_edit",
             ])
           );
+
           const querySnapshot = await getDocs(q);
           if (!querySnapshot.empty) {
             return "You are refree in a match, you can not change your account type";
           }
+          // referee can't change account type if it was in a tournament referees
+          const tournamentsRef = collection(firestore, "tournaments");
+          const tournamentsQuery = query(
+            tournamentsRef,
+            where("refree_ids", "array-contains", uid)
+          );
+          const tournamentsQuerySnapshot = await getDocs(tournamentsQuery);
+          if (!tournamentsQuerySnapshot.empty) {
+            return "You are refree in a tournament, you can not change your account type";
+          }
         } else if (currentUserAccountType === "tournament_manager") {
-          console.log("todo here");
+          // check if there is any tournament not finished that the user is manager of it
+          const tour = await getTournamentManagerTournament();
+          if (typeof tour === "object" && tour !== null) {
+            return "You are tournament manager of a tournament, you can not change your account type";
+          }
         } else {
           return "Account type not supported";
         }

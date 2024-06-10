@@ -53,3 +53,13 @@ status : pending => in progress => finish || failed
 
 ## Triggers should update
 - [ ] teamName and username should not contain spaces
+  - [ ] update zod validation for create and update 0/3
+  - [ ] update redux checks 0/4
+  - [ ] update firebase functions 0/4
+
+
+## change account type for tournament_manager
+- [x] update redux
+- [x] update callback function
+- [x] update referee redux
+- [x] update referee callback function
