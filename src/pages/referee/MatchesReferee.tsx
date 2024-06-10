@@ -72,13 +72,13 @@ const matches: Match[] = [
         team1: combinedTeamMatches[0],
         team2: combinedTeamMatches[1],
         refree: { id: "ref1", isAgreed: true },
-        createdAt: Timestamp.now() ,
+        createdAt: Timestamp.now(),
         updatedAt: Timestamp.now(),
         startIn: null,
         endedAt: null,
         location: "Stadium A",
         status: "pending",
-        type: "tournement"
+        type: "tournament"
     },
     {
         id: "match2",
@@ -91,7 +91,7 @@ const matches: Match[] = [
         endedAt: null,
         location: "Stadium B",
         status: "pending",
-        type: "tournement"
+        type: "tournament"
     },
     {
         id: "match3",
