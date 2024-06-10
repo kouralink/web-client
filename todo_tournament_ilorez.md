@@ -9,15 +9,16 @@
 - [x] : @Abdo-Nsila : get tournament refreesinfo
 - [x] : @ilorez : request to join tournament for team
 - [x] : @ilorez : invite team
-- [ ] : leave tournament for team (require firebase callback function)
 - [x] : @Abdo-Nsila : kick team
-- [ ] : @ilorez : invite refree to tournament
-- [ ] : @ilorez : leave tournament for refree !(in progress)
+- [x] : @ilorez : invite refree to tournament
 - [x] : @ilorez : get tournament notification for tournament manager redux
 - [x] : @ilorez : add notification to notifiaction aside
 - [x] : @ilorez : link notification actions with redux
 - [x] : @Abdo-Nsila : update tournament info
-- [ ] : change account type logic for tournament_manager
+- [x] : @ilorez : change account type logic for tournament_manager
+- [ ] : leave tournament for refree !(in progress) (require firebase callback function)
+- [ ] : leave tournament for team !(in progress) (require firebase callback function)
+- [ ] : Geat referee matches + link it with UI
 
 status : pending => in progress => finish || failed
 
@@ -29,19 +30,18 @@ status : pending => in progress => finish || failed
   - accept invitation (add refree id to refrees_ids)
 - [x] team:
   - accept invitation (add teamid to particiapants)
-- [ ] leave tournament for team (remove teamid from particiapants)
 - [x] kick team (remove teamid from particiapants)
-- [ ]  change account type logic for tournament_manager
+- [x]  change account type logic for tournament_manager
+- [ ] leave tournament for team (remove teamid from particiapants)
+- [ ] leave tournament for refree (remove refreeid from refrees_ids)
 
 ## Tournamnet firesore rules
-
 - [ ] allow read for all
 - [ ] allow write: if request.auth.uid == resource.data.manager_id
 
 ## Rules For Update
-
 - [ ] Refree can't change account if it was in a tournament
-- [ ] Team can't join team if the member of team under tournament min members
+- [ ] Team can't join tournament if the member of team under tournament min members
 - [ ] only tournament manager can change tournament info
 - [ ] no one can change in tournament info if it was in progress or finished
 
