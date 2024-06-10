@@ -28,7 +28,7 @@ export const TournamentPage = () => {
 
   useEffect(() => {
     dispatch(getTournamentById(paramtourid as string));
-  }, [paramtourid]);
+  }, [dispatch, paramtourid]);
 
   useEffect(() => {
     if (userInfo) {

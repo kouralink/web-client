@@ -573,6 +573,12 @@ export const createTeam = createAsyncThunk(
       if (!auth.currentUser) {
         return "This action requires authentication please login first";
       }
+      // check team name should be lowercase 4 to 30 caraceters regix
+      const teamNameRegex = /^[a-z0-9_]{4,30}$/;
+      if (!teamNameRegex.test(team.teamName)) {
+        return "Team name should be lowercase 4 to 30 caracters!";
+      }
+
       // console.log(1);
       // check accountType
       const userRef = doc(firestore, "users", auth.currentUser.uid);
@@ -732,7 +738,11 @@ export const updateTeam = createAsyncThunk(
 
       // console.log(2);
       if (team.teamName) {
-        team.teamName = team.teamName.toLowerCase();
+        // check team name should be lowercase 4 to 30 caraceters regix
+        const teamNameRegex = /^[a-z0-9_]{4,30}$/;
+        if (!teamNameRegex.test(team.teamName)) {
+          return "Team name should be lowercase 4 to 30 caracters!";
+        }
         const isUnique = await isItUniqueTeamName(team.teamName);
         if (!isUnique) {
           return "Team Name Not Unique";

@@ -35,9 +35,9 @@ import { Loader2 } from "lucide-react";
 const profileFormSchema = z.object({
   username: z
     .string()
-    .regex(/^[a-z0-9]+$/, {
+    .regex(/^[a-z0-9_]+$/, {
       message:
-        "Team name must be lowercase and contain only letters and numbers.",
+        "Team name must be lowercase and contain only letters and numbers and undersocres.",
     })
     .min(1, {
       message: "Username must be at least 4 characters.",
