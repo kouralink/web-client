@@ -131,7 +131,7 @@ export default function UpdateTournament() {
 
 
     const handelCancel = () => {
-        navigate("/tournament/search");
+        navigate(`/tournament/page/${currentTournament.id}`);
     };
 
     function toLocalISOString(date: Date) {
@@ -166,7 +166,7 @@ export default function UpdateTournament() {
                 updatedData[key as keyof UpdateTournamentFormValues] = data[key as keyof UpdateTournamentFormValues];
             }
         });
-        console.log(updatedData)
+        // console.log(updatedData)
 
         // toast({
         //     title: "You submitted the following values:",
@@ -178,9 +178,10 @@ export default function UpdateTournament() {
         // });
 
         await dispatch(updateTournament({ id: paramtourid as string, tournament: updatedData }));
+        if (!error && !isLoading && currentTournament.id) {
+            navigate("/tournament/page/" + currentTournament.id);
+          }
     };
-    // [x]: errors and isloading status
-    // [ ]: navigate to tournament page after created succesfully
 
     return (
         <div className="flex justify-center">
