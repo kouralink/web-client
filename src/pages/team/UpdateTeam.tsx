@@ -47,7 +47,7 @@ const ACCEPTED_IMAGE_MIME_TYPES = [
 const createTeamSchema = z.object({
   teamName: z
     .string()
-    .regex(/^[a-z0-9]+$/, {
+    .regex(/^[a-z0-9_]+$/, {
       message: "Team name must be lowercase and contain only letters and numbers.",
     })
     .min(4, {
