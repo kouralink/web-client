@@ -35,6 +35,8 @@ status : pending => in progress => finish || failed
 - [x]  change account type logic for tournament_manager
 - [ ] leave tournament for team (remove teamid from particiapants)
 - [ ] leave tournament for refree (remove refreeid from refrees_ids)
+- [ ] cancel tournament in pending status remove all requests and invitations
+- [ ] set tournament in canceled status
 
 ## Tournamnet firesore rules
 - [ ] allow read for all
@@ -42,23 +44,23 @@ status : pending => in progress => finish || failed
 - [ ] disable write for all in in progress or finished or canceled tournament status
 
 ## Rules For Update
-- [ ] Refree can't change account if it was in a tournament
-- [ ] Team can't join tournament if the member of team under tournament min members
+- [x] Refree can't change account if it was in a tournament
+- [x] Team can't join tournament if the member of team under tournament min members
 - [ ] only tournament manager can change tournament info
 - [ ] no one can change in tournament info if it was in progress or finished
 
 
 ## Front end rules should update
 - [ ] the only tournament manager can open update page
-- [ ] teamName and username should not contain spaces
+- [x] teamName and username should not contain spaces
 
 
 ## Triggers should update
-- [ ] teamName and username should not contain spaces
+- [x] teamName and username should not contain spaces
   - [x] update zod validation for create and update 0/3
   - [x] update redux checks 0/4
-  - [ ] update firebase functions 0/4
-- [ ] make start in === the time when the referee start the match or set in progress
+  - [x] update firebase functions 0/4
+- [x] make start in === the time when the referee start the match or set in progress
 
 
 ## change account type for tournament_manager
