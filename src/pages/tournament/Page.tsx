@@ -74,10 +74,10 @@ export const TournamentPage = () => {
     <div className="flex flex-col gap-8 mt-5 w-full container">
       <TournamentHeader role={role} {...tournament} />
       <p>
-        TODO YA ABDELAH HIHIHI: Add tournament info card contain tournament details (tournament
-        manager)&&(min members in team required)&&(current participant / max
-        particiapnat ) (start date) && (location) && (description) && (status)
-        && (created at)
+        TODO LAK YA LHMIZ HIHIHI "|:D" : Add tournament info card contain
+        tournament details (tournament manager)&&(min members in team
+        required)&&(current participant / max particiapnat ) (start date) &&
+        (location) && (description) && (status) && (created at)
       </p>
       <TournamentRefereesList referees={referees} />
       <TournamentTeamsList
