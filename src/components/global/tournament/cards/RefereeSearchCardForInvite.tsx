@@ -1,8 +1,9 @@
 import { Separator } from "@/components/ui/separator";
 import { User } from "@/types/types";
 import { Button } from "@/components/ui/button";
-// import { useDispatch } from "react-redux";
-// import { AppDispatch } from "@/state/store";
+import { inviteRefereeToTournament } from "@/state/notification/notificationSlice";
+import { useDispatch } from "react-redux";
+import { AppDispatch } from "@/state/store";
 
 interface RefereeSearchCardForInviteProps {
   result: User;
@@ -10,10 +11,10 @@ interface RefereeSearchCardForInviteProps {
 }
 
 const RefereeSearchCardForInvite: React.FC<RefereeSearchCardForInviteProps> = ({ result,id }) => {
-//   const dispatch = useDispatch<AppDispatch>();
+  const dispatch = useDispatch<AppDispatch>();
   const handleInvie = async () => {
     console.log("Invite",id);
-    // dispatch(inviteToTeam({ to: id }));
+    dispatch(inviteRefereeToTournament({ to: id }));
   };
   return (
     <div>
