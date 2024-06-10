@@ -310,6 +310,18 @@ const GetUserAccountInfo = async () => {
         ? auth.currentUser.email.split("@")[0].toLowerCase()
         : Math.random().toString(36).substring(7).toLowerCase();
 
+      const usernameregex = /^[a-z0-9_]+$/;
+      if (!usernameregex.test(username)) {
+        username = username.replace(/[^a-z0-9_]/g, "");
+      }
+      // username should be between 4 and 30 caracters
+      if (username.length < 4) {
+        username =
+          username + Math.random().toString(36).substring(7).toLowerCase();
+      } else if (username.length > 30) {
+        username = username.substring(0, 30);
+      }
+
       // check if yourname is available by checking if the username is already taken
       let isUsernameAvailable = await checkUsernameAvailability(username);
       while (!isUsernameAvailable) {
@@ -584,7 +596,17 @@ export const updateUserData = createAsyncThunk(
     try {
       if (auth.currentUser) {
         if (user.username) {
-          user.username = user.username.toLowerCase();
+          // check if it a valid username 30 4 lowercae regix
+          const usernameregex = /^[a-z0-9_]+$/;
+          if (!usernameregex.test(user.username)) {
+            return "Username should contain only lowercase letters, numbers and underscores";
+          }
+          // username should be between 4 and 30 caracters
+          if (user.username.length < 4) {
+            return "Username should be at least 4 characters";
+          } else if (user.username.length > 30) {
+            return "Username should be at most 30 characters";
+          }
           const isUsernameAvailable = await checkUsernameAvailability(
             user.username
           );
