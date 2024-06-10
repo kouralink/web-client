@@ -6,48 +6,84 @@ import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "@/state/store";
 import { getTournamentById } from "@/state/tournament/tournamentSlice";
+import { getCoachTeamId } from "@/state/notification/notificationSlice";
 
 export const TournamentPage = () => {
   const { paramtourid } = useParams<{ paramtourid: string }>();
   const userId = useSelector((state: RootState) => state.auth?.uid);
   const userInfo = useSelector((state: RootState) => state.auth?.user);
-  const [role, setRole] = useState<"user" | "coach_inside" | "coach_outside" | "refree" | "tournament_manager">("user");
-  const tournament = useSelector((state: RootState) => state.tournament.tournament);
-  const participantsTeams = useSelector((state: RootState) => state.tournament.teamsInfo);
-  const referees = useSelector((state: RootState) => state.tournament.refereesInfo);
+  const [role, setRole] = useState<
+    "user" | "coach_inside" | "coach_outside" | "refree" | "tournament_manager"
+  >("user");
+  const tournament = useSelector(
+    (state: RootState) => state.tournament.tournament
+  );
+  const participantsTeams = useSelector(
+    (state: RootState) => state.tournament.teamsInfo
+  );
+  const referees = useSelector(
+    (state: RootState) => state.tournament.refereesInfo
+  );
   const dispatch = useDispatch<AppDispatch>();
 
   useEffect(() => {
     dispatch(getTournamentById(paramtourid as string));
   }, [paramtourid]);
 
-
   useEffect(() => {
     if (userInfo) {
       const accountType = userInfo.accountType;
-      let role: "user" | "coach_inside" | "coach_outside" | "refree" | "tournament_manager" = "user";
-      if (accountType === 'user' || accountType === 'player') {
-        role = 'user';
-      } else if (accountType === 'coach') {
-        role = tournament.participants.includes(userId) ? 'coach_inside' : 'coach_outside';
-      } else if (accountType === 'refree') {
-        role = tournament.refree_ids.includes(userId) ? 'refree' : 'user';
-      } else if (accountType === 'tournament_manager') { // tournament_manager => tournament_manager
-        role = tournament.manager_id === userId ? 'tournament_manager' : 'user';
+      let role:
+        | "user"
+        | "coach_inside"
+        | "coach_outside"
+        | "refree"
+        | "tournament_manager" = "user";
+      if (accountType === "user" || accountType === "player") {
+        role = "user";
+        setRole(role);
+      } else if (accountType === "coach") {
+        getCoachTeamId()
+          .then((teamid) => {
+            if (
+              typeof teamid === "string" &&
+              tournament.participants.includes(teamid)
+            ) {
+              role = "coach_inside";
+              setRole(role);
+            } else {
+              setRole("coach_outside");
+            }
+          })
+          .catch(() => {
+            role = "user";
+            setRole(role);
+          });
+      } else if (accountType === "refree") {
+        role = tournament.refree_ids.includes(userId) ? "refree" : "user";
+        setRole(role);
+      } else if (accountType === "tournament_manager") {
+        // tournament_manager => tournament_manager
+        role = tournament.manager_id === userId ? "tournament_manager" : "user";
+        setRole(role);
       }
-      setRole(role);
     }
-  }, [userInfo, tournament]);
-
-
-
+  }, [userInfo, tournament, userId]);
 
   return (
     <div className="flex flex-col gap-8 mt-5 w-full container">
-      {paramtourid}
       <TournamentHeader role={role} {...tournament} />
+      <p>
+        TODO YA ABDELAH HIHIHI: Add tournament info card contain tournament details (tournament
+        manager)&&(min members in team required)&&(current participant / max
+        particiapnat ) (start date) && (location) && (description) && (status)
+        && (created at)
+      </p>
       <TournamentRefereesList referees={referees} />
-      <TournamentTeamsList teams={participantsTeams} isManager={userId === tournament.manager_id} />
+      <TournamentTeamsList
+        teams={participantsTeams}
+        isManager={userId === tournament.manager_id}
+      />
     </div>
   );
 };
