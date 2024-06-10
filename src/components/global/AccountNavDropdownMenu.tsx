@@ -143,13 +143,15 @@ export function AccountNavDropdownMenu() {
                 <DropdownMenuShortcut>⌘+T</DropdownMenuShortcut>
               </DropdownMenuItem>
             </Link>
-            <Link to={`/tournament/page/${tournament?.id}`}>
-              <DropdownMenuItem>
-                <FlameKindling className="mr-2 h-4 w-4" />
-                <span>Tournament ({tournament?.name})</span>
-                <DropdownMenuShortcut>⌘+T</DropdownMenuShortcut>
-              </DropdownMenuItem>
-            </Link>
+            {tournament?.id && (
+              <Link to={`/tournament/page/${tournament?.id}`}>
+                <DropdownMenuItem>
+                  <FlameKindling className="mr-2 h-4 w-4" />
+                  <span>Tournament ({tournament?.name})</span>
+                  <DropdownMenuShortcut></DropdownMenuShortcut>
+                </DropdownMenuItem>
+              </Link>
+            )}
           </DropdownMenuGroup>
         )}
         <DropdownMenuGroup>
@@ -180,7 +182,7 @@ export function AccountNavDropdownMenu() {
             >
               <LogOut className="mr-2 h-4 w-4" />
               <span>Log out</span>
-              {/* <DropdownMenuShortcut>⇧⌘Q</DropdownMenuShortcut> */}
+              <DropdownMenuShortcut>⇧⌘Q</DropdownMenuShortcut>
             </DropdownMenuItem>
           )}
         </Link>

@@ -1,9 +1,9 @@
 ## redux actions
 
 - [x] : @ilorez : update create tournament form add loading and handle errors
-- [ ] : @ilorez : update create tournament -> navigate to tournament page
+- [x] : @ilorez : update create tournament -> navigate to tournament page
 - [x] : @Abdo-Nsila : create update tournament page page
-- [ ] : navigate to tournament page after update
+- [x] : @ilorez : navigate to tournament page after update
 - [x] : @Abdo-Nsila : get tournament info
 - [x] : @Abdo-Nsila : get tournament teamsinfo
 - [x] : @Abdo-Nsila : get tournament refreesinfo
@@ -18,7 +18,8 @@
 - [x] : @ilorez : change account type logic for tournament_manager
 - [ ] : leave tournament for refree !(in progress) (require firebase callback function)
 - [ ] : leave tournament for team !(in progress) (require firebase callback function)
-- [ ] : Geat referee matches + link it with UI
+- [x] : @Wahmane-Hamza : Create referee matches UI
+- [x] : @ilorez : get matches list and link it with UI
 
 status : pending => in progress => finish || failed
 
@@ -38,6 +39,7 @@ status : pending => in progress => finish || failed
 ## Tournamnet firesore rules
 - [ ] allow read for all
 - [ ] allow write: if request.auth.uid == resource.data.manager_id
+- [ ] disable write for all in in progress or finished or canceled tournament status
 
 ## Rules For Update
 - [ ] Refree can't change account if it was in a tournament

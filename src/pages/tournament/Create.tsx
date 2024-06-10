@@ -28,7 +28,6 @@ import {
 } from "@/components/ui/card";
 
 import { Button } from "@/components/ui/button";
-import { toast } from "@/components/ui/use-toast";
 import ButtonLoading from "@/components/global/ButtonLoading";
 import { DateTimePicker } from "@/components/ui/datetime-picker";
 import { useDispatch, useSelector } from "react-redux";
@@ -103,8 +102,6 @@ export default function CreateTournament() {
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
   const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
-
-
   const form = useForm<CreateTournamentFormValues>({
     resolver: zodResolver(createTournamentSchema),
     mode: "onSubmit",
@@ -125,18 +122,21 @@ export default function CreateTournament() {
 
   const onSubmit = async (data: CreateTournamentFormValues) => {
     data.logo = data.logo[0];
-    toast({
-      title: "You submitted the following values:",
-      description: (
-        <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
-          <code className="text-white">{JSON.stringify(data, null, 2)}</code>
-        </pre>
-      ),
-    });
+    // toast({
+    //   title: "You submitted the following values:",
+    //   description: (
+    //     <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
+    //       <code className="text-white">{JSON.stringify(data, null, 2)}</code>
+    //     </pre>
+    //   ),
+    // });
     await dispatch(createTournament(data));
+
+    if (!error && !isLoading) {
+      navigate("/tournament/search");
+    }
   };
-  // [x]: errors and isloading status
-  // [ ]: navigate to tournament page after created succesfully
+
 
   return (
     <div className="flex justify-center">
@@ -325,7 +325,9 @@ export default function CreateTournament() {
               <FormMessage className="text-red-500">{error}</FormMessage>
 
               <CardFooter className="flex justify-between">
-                <Button type="button" variant="outline" onClick={handelCancel}>Cancel</Button>
+                <Button type="button" variant="outline" onClick={handelCancel}>
+                  Cancel
+                </Button>
                 {isLoading ? (
                   <ButtonLoading />
                 ) : (
