@@ -9,9 +9,11 @@ import {
 import { Separator } from "@/components/ui/separator";
 import ListItem from "../../ListIteam";
 import { Timestamp } from "firebase/firestore";
-import { Navigation } from "lucide-react";
+import { Loader2, Navigation } from "lucide-react";
 import TournementManagerCard from "./TournementManagerCard";
 import { User } from "@/types/types";
+import { useSelector } from "react-redux";
+import { RootState } from "@/state/store";
 // import TournementManagerCard from "./TournementManagerCard";
 
 interface TournementInfoProps {
@@ -39,15 +41,24 @@ const TournementInfo: React.FC<TournementInfoProps> = ({
     create_at?.seconds || 0,
     create_at?.nanoseconds || 0
   );
+  const isLoading = useSelector(
+    (state: RootState) => state.tournament.isLoading
+  );
   const start_at = new Timestamp(start?.seconds || 0, start?.nanoseconds || 0);
   return (
-    <Card className="w-full xl:w-[550px] flex flex-col h-full gap-2">
-      <CardHeader>
-        <CardTitle>Tournement Details</CardTitle>
-        <CardDescription className="text-muted-foreground">
-          {bio}
-        </CardDescription>
-      </CardHeader>
+    <Card className="w-full flex flex-col h-full gap-2">
+      <div className="flex justify-between items-center h-fit w-full">
+        <CardHeader>
+          <CardTitle>Tournement Details</CardTitle>
+          <CardDescription className="text-muted-foreground">
+            {bio}
+          </CardDescription>
+        </CardHeader>
+        <div className="px-6">
+
+        {isLoading && <Loader2 className="mr-2 h-6 w-6 animate-spin" />}
+        </div>
+      </div>
       <CardContent className="flex flex-col gap-4">
         <div className="flex w-full gap-2 items-center">
           <ListItem
