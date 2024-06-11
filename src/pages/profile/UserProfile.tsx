@@ -23,7 +23,7 @@ export default function UserProfile() {
   }, [dispatch, username]);
 
   return (
-    <div className="flex flex-col lg:flex-row w-full maxh-screen lg:h-screen items-center">
+    <div className="flex flex-col lg:flex-row w-full maxh-screen lg:h-fit items-center">
 
       <div className="p-5 h-full w-full lg:w-1/3 flex justify-center items-center half-image">
 

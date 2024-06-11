@@ -88,7 +88,7 @@ const MyProfileCard = () => {
             </li>
           </ul>
           {authUser?.accountType === "coach" && authU.uid !== userS.uid && (
-            <div className="w-full flex justify-end">
+            <div className="w-full flex justify-start">
               <Button onClick={handelInvite}>
                 {" "}
                 <UserPlus className="mr-2 h-4 w-4" /> Invite To Team
