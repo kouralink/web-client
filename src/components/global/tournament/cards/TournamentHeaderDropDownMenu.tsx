@@ -175,6 +175,7 @@ export default function TournamentDropDownMenu({
                   onSelect={(e) => {
                     e.preventDefault();
                   }}
+                  className="text-red-500"
                 >
                   <LogOut className="mr-2 h-4 w-4" />
 
@@ -219,6 +220,7 @@ export default function TournamentDropDownMenu({
                   onSelect={(e) => {
                     e.preventDefault();
                   }}
+                  className="text-red-500"
                 >
                   <LogOut className="mr-2 h-4 w-4" />
 
