@@ -19,6 +19,9 @@ export const TournamentPage = () => {
   const tournament = useSelector(
     (state: RootState) => state.tournament.tournament
   );
+  const managerInfo = useSelector(
+    (state: RootState) => state.tournament.managerInfo
+  );
   const participantsTeams = useSelector(
     (state: RootState) => state.tournament.teamsInfo
   );
@@ -87,7 +90,7 @@ export const TournamentPage = () => {
         bio={tournament.description}
         start={tournament.start_date}
         location={tournament.location}
-        manager={tournament.manager_id} />
+        manager={managerInfo} />
 
       <TournamentRefereesList referees={referees} />
       <TournamentTeamsList

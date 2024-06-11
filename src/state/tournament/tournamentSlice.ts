@@ -18,7 +18,6 @@ import { getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
 import { FirebaseError } from "firebase/app";
 import { toast } from "@/components/ui/use-toast";
 
-
 export interface UpdateTournamentDataType {
   name?: string;
   description?: string;
@@ -34,7 +33,8 @@ interface TournamentState {
   isLoading: boolean;
   error: string | null;
   refereesInfo: User[];
-  teamsInfo: Team[]
+  teamsInfo: Team[];
+  managerInfo: User | null;
 }
 
 const initialState: TournamentState = {
@@ -58,6 +58,7 @@ const initialState: TournamentState = {
   },
   isLoading: false,
   error: null,
+  managerInfo: null,
   refereesInfo: [],
   teamsInfo: [],
 };
@@ -98,25 +99,30 @@ const teamSlice = createSlice({
       .addCase(getTournamentById.pending, (state) => {
         state.isLoading = true;
       })
-      .addCase(getTournamentById.fulfilled, (state, action: PayloadAction<Tournament>) => {
-        state.isLoading = false;
-        state.tournament = action.payload;
-      })
+      .addCase(
+        getTournamentById.fulfilled,
+        (state, action: PayloadAction<Tournament>) => {
+          state.isLoading = false;
+          state.tournament = action.payload;
+        }
+      )
       .addCase(getTournamentById.rejected, (state, action) => {
         state.isLoading = false;
         state.error = action.error.message as string;
       });
-
 
     // getParticipantsTeams
     builder
       .addCase(getParticipantsTeams.pending, (state) => {
         state.isLoading = true;
       })
-      .addCase(getParticipantsTeams.fulfilled, (state, action: PayloadAction<Team[]>) => {
-        state.isLoading = false;
-        state.teamsInfo = action.payload;
-      })
+      .addCase(
+        getParticipantsTeams.fulfilled,
+        (state, action: PayloadAction<Team[]>) => {
+          state.isLoading = false;
+          state.teamsInfo = action.payload;
+        }
+      )
       .addCase(getParticipantsTeams.rejected, (state, action) => {
         state.isLoading = false;
         state.error = action.error.message as string;
@@ -127,10 +133,13 @@ const teamSlice = createSlice({
       .addCase(getReferees.pending, (state) => {
         state.isLoading = true;
       })
-      .addCase(getReferees.fulfilled, (state, action: PayloadAction<User[]>) => {
-        state.isLoading = false;
-        state.refereesInfo = action.payload;
-      })
+      .addCase(
+        getReferees.fulfilled,
+        (state, action: PayloadAction<User[]>) => {
+          state.isLoading = false;
+          state.refereesInfo = action.payload;
+        }
+      )
       .addCase(getReferees.rejected, (state, action) => {
         state.isLoading = false;
         state.error = action.error.message as string;
@@ -146,7 +155,10 @@ const teamSlice = createSlice({
         state.isLoading = false;
         state.error = null;
         if (typeof action.payload === "object" && action.payload !== null) {
-          state.tournament = { ...state.tournament, ...action.payload.tournament };
+          state.tournament = {
+            ...state.tournament,
+            ...action.payload.tournament,
+          };
           toast({
             variant: "default",
             title: "Tournament Updated",
@@ -186,7 +198,9 @@ const teamSlice = createSlice({
         state.error = null;
         if (typeof action.payload === "object" && action.payload?.teamId) {
           const teamId: string = action.payload.teamId;
-          state.teamsInfo = state.teamsInfo.filter((teamInfo) => teamInfo.id !== teamId);
+          state.teamsInfo = state.teamsInfo.filter(
+            (teamInfo) => teamInfo.id !== teamId
+          );
           toast({
             variant: "default",
             title: "Team Kicked",
@@ -213,8 +227,49 @@ const teamSlice = createSlice({
           className: "text-error border-2 border-error text-start",
         });
       });
+    builder
+      .addCase(getManagerInfo.pending, (state) => {
+        state.isLoading = true;
+        state.error = null;
+      })
+      .addCase(getManagerInfo.fulfilled, (state, action) => {
+        state.isLoading = false;
+        if (typeof action.payload === "string") {
+          state.error = action.payload;
+          // toast({
+          //   title: "Error",
+          //   description: action.payload,
+          //   variant: "destructive",
+          // });
+        } else {
+          state.managerInfo = action.payload;
+        }
+      })
+      .addCase(getManagerInfo.rejected, (state, action) => {
+        state.isLoading = false;
+        state.error = action.error.message as string;
+      });
   },
 });
+
+export const getManagerInfo = createAsyncThunk(
+  "match/getManagerInfo",
+  async (managerid: string) => {
+    try {
+      const managerRef = doc(firestore, "users", managerid);
+      const managerSnap = await getDoc(managerRef);
+      if (managerSnap.exists()) {
+        const managerData = managerSnap.data() as User;
+        return managerData;
+      } else {
+        return "Refree not found!";
+      }
+    } catch (error) {
+      console.error(error);
+      return "Getting manager info failed!";
+    }
+  }
+);
 
 export const getAuthUserManagerTournament = async () => {
   try {
@@ -322,7 +377,6 @@ export const createTournament = createAsyncThunk(
   }
 );
 
-
 export const getTournamentById = createAsyncThunk(
   "tournament/getTournamentById",
   async (id: string, thunkAPI) => {
@@ -336,6 +390,7 @@ export const getTournamentById = createAsyncThunk(
     // Dispatch getParticipantsTeams and getReferees actions
     thunkAPI.dispatch(getParticipantsTeams(tournament.participants));
     thunkAPI.dispatch(getReferees(tournament.refree_ids));
+    thunkAPI.dispatch(getManagerInfo(tournament.manager_id));
     return tournament;
   }
 );
@@ -367,8 +422,6 @@ export const getReferees = createAsyncThunk(
     return refereesData;
   }
 );
-
-
 
 // Helper function to check authentication
 async function checkAuthentication() {
@@ -403,13 +456,18 @@ async function uploadLogo(id: string, logo: Blob) {
 
 export const updateTournament = createAsyncThunk(
   "tournament/updateTournament",
-  async ({ tournament, id }: { id: string; tournament: UpdateTournamentDataType }) => {
+  async ({
+    tournament,
+    id,
+  }: {
+    id: string;
+    tournament: UpdateTournamentDataType;
+  }) => {
     try {
       await checkAuthentication();
       await checkAccountType();
 
-      let newTournamentData = { ...tournament };
-
+      const newTournamentData = { ...tournament };
 
       interface FirestoreTournamentDataType {
         name?: string;
@@ -421,9 +479,12 @@ export const updateTournament = createAsyncThunk(
         start_date?: Timestamp;
       }
       // Create a new variable with a compatible type
-      let firestoreTournamentData: FirestoreTournamentDataType = {
+      const firestoreTournamentData: FirestoreTournamentDataType = {
         ...newTournamentData,
-        logo: typeof newTournamentData.logo === 'string' ? newTournamentData.logo : ''
+        logo:
+          typeof newTournamentData.logo === "string"
+            ? newTournamentData.logo
+            : "",
       };
 
       if (tournament.logo) {
@@ -445,16 +506,15 @@ export const updateTournament = createAsyncThunk(
       if (error instanceof Error) {
         return error.message;
       } else {
-        return 'An error occurred';
+        return "An error occurred";
       }
     }
   }
 );
 
-
 export const removeTeamFromTournament = async (
   tournamentId: string,
-  teamId: string,
+  teamId: string
 ) => {
   try {
     // check if the user.uid is the manager of tournamentId
@@ -480,7 +540,9 @@ export const removeTeamFromTournament = async (
     }
 
     // remove teamId from participants
-    const updatedParticipants = tournament.participants.filter(id => id !== teamId);
+    const updatedParticipants = tournament.participants.filter(
+      (id) => id !== teamId
+    );
     await updateDoc(tournamentRef, { participants: updatedParticipants });
 
     return true;
@@ -491,7 +553,13 @@ export const removeTeamFromTournament = async (
 
 export const kickTeam = createAsyncThunk(
   "tournament/kickTeam",
-  async ({ teamId, tournamentId }: { teamId: string; tournamentId: string }) => {
+  async ({
+    teamId,
+    tournamentId,
+  }: {
+    teamId: string;
+    tournamentId: string;
+  }) => {
     try {
       const result = await removeTeamFromTournament(tournamentId, teamId);
       if (result === true) {
