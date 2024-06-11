@@ -1,4 +1,12 @@
-import { Info, LogOut, PenLine, Play, Plus, Send, UserPlus } from "lucide-react";
+import {
+  Info,
+  LogOut,
+  PenLine,
+  Play,
+  Plus,
+  Send,
+  UserPlus,
+} from "lucide-react";
 
 import {
   DropdownMenu,
@@ -28,6 +36,11 @@ import { sendRequestToJoinTournament } from "@/state/notification/notificationSl
 import { AppDispatch } from "@/state/store";
 import SearchTeamsForInvite from "./SearchTeamsForInvite";
 import SearchRefereesForInvite from "./SearchRefereesForInvite";
+import {
+  leaveTournamentForReferee,
+  leaveTournamentForTeam,
+  removeTournament,
+} from "@/state/tournament/tournamentSlice";
 
 export default function TournamentDropDownMenu({
   role,
@@ -48,9 +61,16 @@ export default function TournamentDropDownMenu({
   };
   const handleLeaveTournament = async () => {
     console.log("Leave Tournament");
+    dispatch(leaveTournamentForTeam({ tournamentId: tourid }));
   };
   const handleLeaveTournamentForRefree = async () => {
     console.log("Leave Tournament for Refree");
+    dispatch(leaveTournamentForReferee(tourid));
+  };
+
+  const handelCancelTournament = async () => {
+    console.log("Cancel Tournament");
+    dispatch(removeTournament(tourid));
   };
 
   return (
@@ -113,6 +133,36 @@ export default function TournamentDropDownMenu({
               <span>Start Tournament</span>
               <DropdownMenuShortcut></DropdownMenuShortcut>
             </DropdownMenuItem>
+            <AlertDialog>
+              <AlertDialogTrigger className="w-full">
+                {" "}
+                <DropdownMenuItem
+                  onSelect={(e) => {
+                    e.preventDefault();
+                  }}
+                  className="text-red-500"
+                >
+                  <LogOut className="mr-2 h-4 w-4" />
+
+                  <span>Calncel Tournament</span>
+                  <DropdownMenuShortcut></DropdownMenuShortcut>
+                </DropdownMenuItem>
+              </AlertDialogTrigger>
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                  <AlertDialogDescription>
+                    This action cannot be undone, Tournament will be deleted
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel>Cancel</AlertDialogCancel>
+                  <AlertDialogAction onClick={handelCancelTournament}>
+                    Continue
+                  </AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
           </DropdownMenuGroup>
         )}
 
