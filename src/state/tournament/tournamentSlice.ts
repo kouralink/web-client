@@ -732,7 +732,7 @@ export const leaveTournamentForTeam = createAsyncThunk(
       );
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const result: any = await leaveTournamentForTeamCloudFunction({
-        teamId: teamId,
+        teamid: teamId,
         tournamentId: tournamentId,
       });
       if (result.data.success) {
