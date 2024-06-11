@@ -404,7 +404,7 @@ const teamSlice = createSlice({
       .addCase(getTeamMatchesHistory.pending, (state) => {
         state.status = "loading";
         state.error = null;
-        // console.log("getting matches history");
+
       })
       .addCase(getTeamMatchesHistory.fulfilled, (state, action) => {
         state.status = "idle";
@@ -517,7 +517,7 @@ const getTeamMembers = async (docID: string) => {
 
 export const getTeamByTeamName = createAsyncThunk(
   "team/getTeamByTeamName",
-  async (teamName: string) => {
+  async (teamName: string,thunkAPI) => {
     try {
       const colRef = collection(firestore, "teams");
       const queryRef = query(colRef, where("teamName", "==", teamName));
@@ -543,6 +543,8 @@ export const getTeamByTeamName = createAsyncThunk(
         team: teamData,
       };
 
+      thunkAPI.dispatch(getTeamMatchesHistory({teamId:teamData.id}))
+      thunkAPI.dispatch(updateBlackListInfos())
       return data;
     } catch (error) {
       return "Team couldn't be fetched!";
@@ -1077,13 +1079,35 @@ export const updateBlackListInfos = createAsyncThunk(
   "team/updateBlackListInfos",
   async () => {
     try {
+      // check if the user is authenticated and the uid is the coach of team
+      const authUID = auth.currentUser?.uid;
+      if (!authUID) {
+        return [];
+      }
+      // check account type
+      const accountType = store.getState().auth.user?.accountType;
+      if (!accountType || accountType !== "coach") {
+        return [];
+      }
+      // cheack next ref /teams/teamid/members/memberid.role == coach
+      const teamId = store.getState().team.team.id;
+      const teamRef = doc(firestore, "teams", teamId);
+      const memberRef = doc(teamRef, "members", authUID);
+      const memberSnap = await getDoc(memberRef);
+      if (!memberSnap.exists()) {
+        return [];
+      }
+      const data = memberSnap.data() as Member;
+      if (data.role !== "coach") {
+        return [];
+      }
       const blackList = store.getState().team.team.blackList;
       if (!blackList) {
         return [];
       }
       const blackListInfos: { user_info: User; uid: string }[] = [];
       await Promise.all(
-        blackList.map(async (uid) => {
+        blackList.map(async (uid:string) => {
           const userRef = doc(firestore, "users", uid);
           const userSnap = await getDoc(userRef);
           if (userSnap.exists()) {
@@ -1213,7 +1237,9 @@ export const getTeamMatchesHistory = createAsyncThunk(
         matches.push(thismatch);
       }
       if (matches.length === 0) {
-        // console.log("no matches found");
+        console.log("no matches found");
+      } else {
+        console.log("matches founded")
       }
       // console.log(matches);
       return { matches };
