@@ -1,8 +1,6 @@
 import { AppDispatch, RootState } from "@/state/store";
 import {
   getTeamByTeamName,
-  getTeamMatchesHistory,
-  updateBlackListInfos,
 } from "@/state/team/teamSlice";
 import { Match } from "@/types/types";
 import { useEffect, useState } from "react";
@@ -21,9 +19,7 @@ export const TeamPage = () => {
   const members = useSelector((state: RootState) => state.team.members);
   const error = useSelector((state: RootState) => state.team.error);
   const navigate = useNavigate();
-  const accountType = useSelector(
-    (state: RootState) => state.auth.user?.accountType
-  );
+  
   const userId = useSelector((state: RootState) => state.auth?.uid);
   const matchesHistory = useSelector(
     (state: RootState) => state.team.MatchesHistory
@@ -35,18 +31,18 @@ export const TeamPage = () => {
   );
 
   // updating team matches history
-  useEffect(() => {
-    console.log("updating team matches history");
-    dispatch(getTeamMatchesHistory({ teamId: team.id }));
-  }, [dispatch, team.id]);
+  // useEffect(() => {
+  //   console.log("updating team matches history");
+  //   dispatch(getTeamMatchesHistory({ teamId: team.id }));
+  // }, [dispatch, team.id]);
 
   // update black list
-  useEffect(() => {
-    console.log("updateing black list");
-    if (accountType === "coach") {
-      dispatch(updateBlackListInfos());
-    }
-  }, [dispatch, team.blackList, accountType]);
+  // useEffect(() => {
+  //   console.log("updateing black list");
+  //   if (accountType === "coach") {
+  //     dispatch(updateBlackListInfos());
+  //   }
+  // }, [dispatch, team.blackList, accountType]);
   // set role
   useEffect(() => {
     if (userId === coach?.uid) {
