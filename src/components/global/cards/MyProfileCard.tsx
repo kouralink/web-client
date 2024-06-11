@@ -35,7 +35,7 @@ const MyProfileCard = () => {
       <CardHeader>
         <div className="flex items-center justify-between py-5">
           <p className="text-3xl lg:text-8xl font-bold capitalize">
-            {userState.firstName} {userState.lastName} <span className="text-5xl">({authUser?.accountType})</span>
+            {userState.firstName} {userState.lastName} <span className="text-5xl">({userState?.accountType})</span>
           </p>
           {match && (
             <Link to="/settings">
@@ -96,10 +96,10 @@ const MyProfileCard = () => {
             </div>
           )}
         </div>
-        {(authUser?.accountType === "coach" || authUser?.accountType === "player") &&  (
-        <div className=" lg:w-1/2">
-          <TeamProfileCard team={team}/>
-        </div>
+        {(userState?.accountType === "coach" || userState?.accountType === "player") && (
+          <div className=" lg:w-1/2">
+            <TeamProfileCard team={team} />
+          </div>
         )}
       </CardContent>
     </Card>
