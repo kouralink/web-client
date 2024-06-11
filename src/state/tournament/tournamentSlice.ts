@@ -1,9 +1,9 @@
 // create store for team manage team have a id and a teamName and a blackList of users that are not allowed to join the team, and a coach that is team leader and createdAt date updateAt date and teamLogo and description and createdBy that is the user that created the team
 import { CreateTournamentFormValues } from "@/pages/tournament/Create";
-import { Team, Tournament, User } from "@/types/types";
+import { Member, Team, Tournament, User } from "@/types/types";
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { Timestamp, updateDoc } from "firebase/firestore";
-import { auth, firestore, storage } from "@/services/firebase";
+import { auth, firestore, functions, storage } from "@/services/firebase";
 import {
   collection,
   doc,
@@ -17,6 +17,8 @@ import { store } from "../store";
 import { getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
 import { FirebaseError } from "firebase/app";
 import { toast } from "@/components/ui/use-toast";
+import { httpsCallable } from "firebase/functions";
+import { getCoachTeamId } from "../notification/notificationSlice";
 
 export interface UpdateTournamentDataType {
   name?: string;
@@ -248,6 +250,96 @@ const teamSlice = createSlice({
       .addCase(getManagerInfo.rejected, (state, action) => {
         state.isLoading = false;
         state.error = action.error.message as string;
+      });
+    builder
+      .addCase(leaveTournamentForTeam.pending, (state) => {
+        state.isLoading = true;
+        state.error = null;
+      })
+      .addCase(leaveTournamentForTeam.fulfilled, (state, action) => {
+        state.isLoading = false;
+        if (typeof action.payload === "string") {
+          state.error = action.payload;
+          toast({
+            title: "Error",
+            description: action.payload,
+            variant: "destructive",
+          });
+        } else {
+          toast({
+            title: "Success",
+            description: "Team Left Tournament Successfully",
+          });
+        }
+      })
+      .addCase(leaveTournamentForTeam.rejected, (state, action) => {
+        state.isLoading = false;
+        state.error = action.error.message as string;
+        toast({
+          title: "Error",
+          description: state.error,
+          variant: "destructive",
+        });
+      });
+    builder
+      .addCase(leaveTournamentForReferee.pending, (state) => {
+        state.isLoading = true;
+        state.error = null;
+      })
+      .addCase(leaveTournamentForReferee.fulfilled, (state, action) => {
+        state.isLoading = false;
+        if (typeof action.payload === "string") {
+          state.error = action.payload;
+          toast({
+            title: "Error",
+            description: action.payload,
+            variant: "destructive",
+          });
+        } else {
+          toast({
+            title: "Success",
+            description: "Referee Left Tournament Successfully",
+          });
+        }
+      })
+      .addCase(leaveTournamentForReferee.rejected, (state, action) => {
+        state.isLoading = false;
+        state.error = action.error.message as string;
+        toast({
+          title: "Error",
+          description: state.error,
+          variant: "destructive",
+        });
+      });
+    builder
+      .addCase(removeTournament.pending, (state) => {
+        state.isLoading = true;
+        state.error = null;
+      })
+      .addCase(removeTournament.fulfilled, (state, action) => {
+        state.isLoading = false;
+        if (typeof action.payload === "string") {
+          state.error = action.payload;
+          toast({
+            title: "Error",
+            description: action.payload,
+            variant: "destructive",
+          });
+        } else {
+          toast({
+            title: "Success",
+            description: "Tournament Removed Successfully",
+          });
+        }
+      })
+      .addCase(removeTournament.rejected, (state, action) => {
+        state.isLoading = false;
+        state.error = action.error.message as string;
+        toast({
+          title: "Error",
+          description: state.error,
+          variant: "destructive",
+        });
       });
   },
 });
@@ -568,6 +660,199 @@ export const kickTeam = createAsyncThunk(
       return result;
     } catch (error) {
       return "Team Kick Failed!";
+    }
+  }
+);
+
+// leave tournament for team this action got two paramas teamid and tournamentid
+// check auth user and get uid
+// is uid the coach of teamid
+// get tournament
+// is team in the tournament
+// is tournament in pending status
+// call a callback function leaveTournamentForTeam
+
+export const leaveTournamentForTeam = createAsyncThunk(
+  "tournament/leaveTournamentForTeam",
+  async (
+    {
+      tournamentId,
+    }: {
+      tournamentId: string;
+    },
+    thunkAPI
+  ) => {
+    try {
+      // check if the user.uid is the manager of tournamentId
+      const authUID = auth.currentUser?.uid;
+      if (!authUID) {
+        return "User not authenticated!";
+      }
+      const teamId = await getCoachTeamId()
+      if (typeof teamId === "object" && teamId.error) {
+        return teamId.error;
+      }
+
+      const teamRef = doc(firestore, "teams", teamId);
+      const teamSnap = await getDoc(teamRef);
+      if (!teamSnap.exists()) {
+        return "Team not found!";
+      }
+      // check if uid is the coach by checking members subcollection uid role in team doc
+      const coachMemberDoc = doc(teamRef, "members", authUID);
+      const coachMemberSnap = await getDoc(coachMemberDoc);
+      if (!coachMemberSnap.exists()) {
+        return "You are not the coach of this team!";
+      }
+      // check role
+      const coachMemberData = coachMemberSnap.data() as Member;
+      if (coachMemberData.role !== "coach") {
+        return "You are not the coach of this team!";
+      }
+
+      // const team = teamSnap.data() as Team;
+      const tournamentRef = doc(firestore, "tournaments", tournamentId);
+      const tournamentSnap = await getDoc(tournamentRef);
+      if (!tournamentSnap.exists()) {
+        return "Tournament not found!";
+      }
+
+      const tournament = tournamentSnap.data() as Tournament;
+      if (!tournament.participants.includes(teamId)) {
+        return "Team not in the tournament!";
+      }
+
+      if (tournament.status !== "pending") {
+        return "Tournament is not in pending status!";
+      }
+
+      const leaveTournamentForTeamCloudFunction = httpsCallable(
+        functions,
+        "leaveTournamentForTeam"
+      );
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const result: any = await leaveTournamentForTeamCloudFunction({
+        teamId: teamId,
+        tournamentId: tournamentId,
+      });
+      if (result.data.success) {
+        thunkAPI.dispatch(getParticipantsTeams(tournament.participants));
+        return true;
+      } else {
+        console.log("error not returned");
+
+        return result.message as string;
+      }
+    } catch (error) {
+      if (error instanceof FirebaseError) {
+        return error.message;
+      } else {
+        return "An error occurred";
+      }
+    }
+  }
+);
+
+// leave tournament for referee take tournament id
+// check auth user and get uid
+// is referee in the tournament
+// is tournament in pending status
+// call a callback function leaveTournamentForReferee
+
+export const leaveTournamentForReferee = createAsyncThunk(
+  "tournament/leaveTournamentForReferee",
+  async (tournamentId: string, thunkAPI) => {
+    try {
+      // check if the user.uid is the manager of tournamentId
+      const authUID = auth.currentUser?.uid;
+      if (!authUID) {
+        return "User not authenticated!";
+      }
+
+      const tournamentRef = doc(firestore, "tournaments", tournamentId);
+      const tournamentSnap = await getDoc(tournamentRef);
+      if (!tournamentSnap.exists()) {
+        return "Tournament not found!";
+      }
+
+      const tournament = tournamentSnap.data() as Tournament;
+      if (!tournament.refree_ids.includes(authUID)) {
+        return "Referee not in the tournament!";
+      }
+
+      if (tournament.status !== "pending") {
+        return "Tournament is not in pending status!";
+      }
+
+      const leaveTournamentForRefereeCloudFunction = httpsCallable(
+        functions,
+        "leaveTournamentForReferee"
+      );
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const result: any = await leaveTournamentForRefereeCloudFunction({
+        tournamentId: tournamentId,
+      });
+      if (result.data.success) {
+        thunkAPI.dispatch(getReferees(tournament.refree_ids));
+        return true;
+      } else {
+        return result.message as string;
+      }
+    } catch (error) {
+      if (error instanceof FirebaseError) {
+        return error.message;
+      } else {
+        return "An error occurred";
+      }
+    }
+  }
+);
+
+// remove tournament take tournament id
+// check auth user and get uid
+// is uid the manager of tournament
+// call a callback function removeTournament
+
+export const removeTournament = createAsyncThunk(
+  "tournament/removeTournament",
+  async (tournamentId: string) => {
+    try {
+      // check if the user.uid is the manager of tournamentId
+      const authUID = auth.currentUser?.uid;
+      if (!authUID) {
+        return "User not authenticated!";
+      }
+
+      const tournamentRef = doc(firestore, "tournaments", tournamentId);
+      const tournamentSnap = await getDoc(tournamentRef);
+      if (!tournamentSnap.exists()) {
+        return "Tournament not found!";
+      }
+
+      const tournament = tournamentSnap.data() as Tournament;
+      if (authUID !== tournament.manager_id) {
+        return "You are not the manager of this tournament!";
+      }
+
+      const removeTournamentCloudFunction = httpsCallable(
+        functions,
+        "removeTournament"
+      );
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const result: any = await removeTournamentCloudFunction({
+        tournamentId: tournamentId,
+      });
+      if (result.data.success) {
+        return true;
+      } else {
+        return result.message as string;
+      }
+    } catch (error) {
+      if (error instanceof FirebaseError) {
+        return error.message;
+      } else {
+        return "An error occurred";
+      }
     }
   }
 );
