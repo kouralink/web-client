@@ -5,14 +5,22 @@ import { Action, Notification } from "@/types/types";
 import { useDispatch } from "react-redux";
 import { AppDispatch } from "@/state/store";
 import { updateNotificationAction } from "@/state/notification/notificationSlice";
+import { formatDistanceToNow } from "date-fns/formatDistanceToNow"
+import { Timestamp } from 'firebase/firestore';
 
 const NotificationCard = (props: Notification) => {
   const dispatch = useDispatch<AppDispatch>();
-  const handelAction = async (actionType:Action) => {
+  const handelAction = async (actionType: Action) => {
     console.log(actionType);
-    dispatch(updateNotificationAction({id:props.id, action:actionType}));
+    dispatch(updateNotificationAction({ id: props.id, action: actionType }));
 
   }
+  const timestamp = new Timestamp(
+    props?.createdAt?.seconds,
+    props?.createdAt?.nanoseconds
+  );
+
+
 
   return (
     <div className="flex justify-between p-5">
@@ -20,9 +28,9 @@ const NotificationCard = (props: Notification) => {
         <h4 className="text-sm font-medium leading-none">{props.title}</h4>
         <p className="text-md ">{props.message}</p>
         <div className="text-sm text-muted-foreground">
-          {/* {formatDistanceToNow(new Date('2024-05-27'), {
-                        addSuffix: true,
-                      })} */}
+          {formatDistanceToNow(new Date(timestamp.toDate().toISOString()), {
+            addSuffix: true,
+          })}
         </div>
       </div>
       {props.type !== "info" ? (
@@ -45,6 +53,7 @@ const NotificationCard = (props: Notification) => {
           />
         </div>
       )}
+
     </div>
   );
 };
