@@ -25,11 +25,11 @@ export default function UserProfile() {
   return (
     <div className="flex flex-col lg:flex-row w-full maxh-screen lg:h-fit items-center">
 
-      <div className="p-5 h-full w-full lg:w-1/3 flex justify-center items-center half-image">
+      <div className="p-5 h-fit w-full lg:w-1/3 flex justify-center items-center half-image">
 
-        <Avatar className="rounded-none w-full h-2/3 border-white border-8">
+        <Avatar className="rounded-none w-fit h-fit border-white border-8">
           <AvatarImage src={userState.avatar} alt={userState.username + " logo"} className="object-cover"/>
-          <AvatarFallback className="text-6xl rounded-none p-32">{userState.username.charAt(0).toUpperCase()}{userState.username.charAt(1).toUpperCase()}</AvatarFallback>
+          <AvatarFallback className="text-6xl rounded-none p-36 lg:p-52">{userState.username.charAt(0).toUpperCase()}{userState.username.charAt(1).toUpperCase()}</AvatarFallback>
         </Avatar>
 
       </div>  
