@@ -20,9 +20,9 @@
 - [x] : @ilorez : get matches list and link it with UI
 - [ ] : @Abdo-Nsila : filter matches by status
 - [ ] : infinity scroll for matches
-- [ ] : @ilorez : leave tournament for team !(in progress) (require firebase callback function)
-- [ ] : @ilorez : leave tournament for refree !(in progress) (require firebase callback function)
-- [ ] : @ilorez : cancel tournament
+- [x] : @ilorez : leave tournament for team !(in progress) (require firebase callback function)
+- [x] : @ilorez : leave tournament for refree !(in progress) (require firebase callback function)
+- [x] : @ilorez : cancel tournament (remove it)
 - [ ] : fix UI & repsponsive of tournament page
       status : pending => in progress => finish || failed
 
@@ -36,10 +36,9 @@
   - accept invitation (add teamid to particiapants)
 - [x] kick team (remove teamid from particiapants)
 - [x] change account type logic for tournament_manager
-- [ ] leave tournament for team (remove teamid from particiapants)
-- [ ] leave tournament for refree (remove refreeid from refrees_ids)
-- [ ] cancel tournament in pending status remove all requests and invitations
-- [ ] set tournament in canceled status
+- [x] leave tournament for team (remove teamid from particiapants)
+- [x] leave tournament for refree (remove refreeid from refrees_ids)
+- [x] remove tournamnet
 
 ## Tournamnet firesore rules
 
