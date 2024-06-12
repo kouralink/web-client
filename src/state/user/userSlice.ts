@@ -9,7 +9,8 @@ import {
   where,
   query,
   limit,
-  orderBy
+  orderBy,
+  Query
 } from "firebase/firestore";
 import { firestore } from "@/services/firebase";
 
@@ -168,7 +169,7 @@ export const getUserByUsername = createAsyncThunk(
 
 export const getRefereeMatchesAndInfo = createAsyncThunk(
   "user/getRefereeMatches",
-  async (uid: string) => {
+  async ({ uid, status }: { uid: string, status: string }) => {
     try {
       // get userinfo
       const docRef = doc(firestore, "users", uid);
@@ -177,50 +178,44 @@ export const getRefereeMatchesAndInfo = createAsyncThunk(
         throw new Error("User not found");
       }
       const user = docSnap.data() as User;
+
       // get matches order by status pending and in_progress first after that others limit 20
-      const queryRef = query(
+      let queryRef: Query = query(
         collection(firestore, "matches"),
         where("refree.id", "==", uid),
         where("refree.isAgreed", "==", true),
         orderBy("status", "desc"),
         limit(20)
       );
-      
+
+      if (status !== 'all') {
+        queryRef = query(
+          queryRef,
+          where("status", "==", status)
+        );
+      }
+
       const snap = await getDocs(queryRef);
       const matches: Match[] = [];
-      // console.log("get: 3");
       for (const doc of snap.docs) {
         const thismatch = doc.data() as Match;
-        // console.log("this match:",thismatch)
-        // TODO: update this stupid function
         const team1_data = await getTeamDataByTeamId(thismatch.team1.id);
         const team2_data = await getTeamDataByTeamId(thismatch.team2.id);
-        if (!team1_data) {
-          // console.log("11111 no team data found");
-          // console.log("team1 id:",thismatch)
-          continue;
-        }
-        if ( !team2_data) {
-          // console.log("22222 no team data found");
-          // console.log("team2 id:",thismatch)
+        if (!team1_data || !team2_data) {
           continue;
         }
         // get team1 data
-        if (team1_data) {
-          thismatch.team1 = {
-            ...thismatch.team1,
-            name: team1_data.teamName,
-            logo: team1_data.teamLogo,
-          };
-        }
+        thismatch.team1 = {
+          ...thismatch.team1,
+          name: team1_data.teamName,
+          logo: team1_data.teamLogo,
+        };
         // get team2 data
-        if (team2_data) {
-          thismatch.team2 = {
-            ...thismatch.team2,
-            name: team2_data.teamName,
-            logo: team2_data.teamLogo,
-          };
-        }
+        thismatch.team2 = {
+          ...thismatch.team2,
+          name: team2_data.teamName,
+          logo: team2_data.teamLogo,
+        };
         matches.push(thismatch);
       }
       if (matches.length === 0) {
@@ -228,7 +223,7 @@ export const getRefereeMatchesAndInfo = createAsyncThunk(
       }
       return { matches, user };
     } catch (error) {
-      console.log("get matches errro : ",error)
+      console.log("get matches error : ", error)
       throw new Error("Failed to fetch matches data");
     }
   }

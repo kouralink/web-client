@@ -7,6 +7,14 @@ export type sidebarNavItemType = {
   icon: keyof typeof dynamicIconImports;
 };
 
+export type FilterMatchStatus =
+  | "pending"
+  | "in_progress"
+  | "finish"
+  | "cancled"
+  | "all"
+  | null;
+
 export interface Member {
   uid: string;
   joinedAt: Timestamp;
@@ -103,13 +111,13 @@ export type Action = "accept" | "decline" | "view";
 // }
 
 type NotificationType = "info"
-| "request_to_join_team"
-| "request_to_join_tournament"
-| "match_chalenge"
-| "refree_invite"
-| "invite_to_team"
-| "invite_to_tournament"
-| "invite_referee_to_tournament";
+  | "request_to_join_team"
+  | "request_to_join_tournament"
+  | "match_chalenge"
+  | "refree_invite"
+  | "invite_to_team"
+  | "invite_to_tournament"
+  | "invite_referee_to_tournament";
 export interface Notification {
   id: string;
   from_id: string;
@@ -146,7 +154,7 @@ export interface MatchFirestore {
   team1: TeamMatch;
   team2: TeamMatch;
   refree: {
-    id: string|null;
+    id: string | null;
     isAgreed: boolean;
   };
   createdAt: Timestamp;
@@ -154,7 +162,7 @@ export interface MatchFirestore {
   startIn: Timestamp | null;
   endedAt: Timestamp | null;
   location: string | null;
-  status:MatchStatus;
+  status: MatchStatus;
   type: "tournament" | "classic_match";
 }
 
@@ -171,7 +179,7 @@ export interface Match {
   startIn: Timestamp | null;
   endedAt: Timestamp | null;
   location: string | null;
-  status:MatchStatus;
+  status: MatchStatus;
   type: "tournament" | "classic_match";
 }
 // tournament
@@ -193,7 +201,7 @@ export interface Tournament {
   created_at: Timestamp;
   updated_at: Timestamp;
   created_by: string;
-  manager_id:string;
+  manager_id: string;
   refree_ids: string[];
   location: string;
   participants: string[];
