@@ -12,6 +12,9 @@ const TournamentSearchPage: React.FC = () => {
     const searchResults = useSelector(
         (state: RootState) => state.tournamentsearch.searchResults
     );
+    const isLoading = useSelector(
+        (state: RootState) => state.tournamentsearch.isLoading
+    );
     const [searchValue, setSearchValue] = useState<string>("");
 
     useEffect(() => {
@@ -46,15 +49,21 @@ const TournamentSearchPage: React.FC = () => {
                                 onChange={(e) => setSearchValue(e.target.value)}
                                 placeholder="Search tournaments..."
                             />
-                            <ul>
-                                {searchResults.map((result, index) => {
-                                    return (
-                                        <div key={index}>
-                                            <TournamentSearchCard result={result.tournament_info} />
-                                        </div>
-                                    );
-                                })}
-                            </ul>
+                            {
+                                isLoading ?
+                                    <div className='h-full w-full flex justify-center items-center'>
+                                        <img src="/logo.svg" className="h-8 me-3 mt-36 animate-spin" alt="Koulaink Logo" />
+                                    </div> :
+                                    <ul>
+                                        {searchResults.map((result, index) => {
+                                            return (
+                                                <div key={index}>
+                                                    <TournamentSearchCard result={result.tournament_info} />
+                                                </div>
+                                            );
+                                        })}
+                                    </ul>
+                            }
                         </div>
                     </div>
                 </div>
