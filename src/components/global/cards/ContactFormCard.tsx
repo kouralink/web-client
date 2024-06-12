@@ -2,7 +2,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import emailjs from "@emailjs/browser";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-// import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { Loader2 } from "lucide-react";
 import { RootState } from "@/state/store";
 import { useSelector } from "react-redux";
@@ -10,10 +10,11 @@ import { Button } from "@/components/ui/button";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Textarea } from "@/components/ui/textarea";
 import { useRef } from "react";
+import { toast } from "@/components/ui/use-toast";
 
 export default function ContactFormCard() {
   const authError = useSelector((state: RootState) => state.auth.error);
-//   const navigate = useNavigate();
+  const navigate = useNavigate();
   const authLoading = useSelector((state: RootState) => state.auth.loading);
   const form = useRef() as React.MutableRefObject<HTMLFormElement>;
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
@@ -40,11 +41,20 @@ export default function ContactFormCard() {
       .then(
         () => {
           console.log("SUCCESS!");
-            // navigate("/");
-
+          toast({
+            title: "Message sent successfully",
+            description: "We will get back to you as soon as possible",
+            variant: "default",
+          });
+          navigate("/");
         },
         (error) => {
           console.log("FAILED...", error.text);
+          toast({
+            title: "Message not sent",
+            description: "Please try again later",
+            variant: "destructive",
+          });
         }
       );
 
