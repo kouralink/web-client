@@ -1,4 +1,4 @@
-import { Action, Notification, Team, Tournament } from "@/types/types";
+import { Action, Member, Notification, Team, Tournament } from "@/types/types";
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import {
   getDocs,
@@ -403,6 +403,20 @@ export const getCoachTeamId = async () => {
     if (!teamId) {
       return { error: "Error getting coach team id" };
     }
+    // check if memeber is the coach of team
+    const teamRef = doc(firestore, "teams", teamId);
+    const memberRef = doc(teamRef, "members", userUid);
+    const memberDoc = await getDoc(memberRef);
+    if (!memberDoc.exists()) {
+      return { error: "Error getting member" };
+    }
+    const memberData = memberDoc.data() as Member;
+    if (!memberData) {
+      return { error: "Error getting member data" };
+    }
+    if (memberData.role !== "coach") {
+      return { error: "Error member is not coach" };
+    }
     return teamId;
   } catch (error) {
     return { error: "You Don't have a Team Yet" };
@@ -756,8 +770,6 @@ export const updateNotificationAction = createAsyncThunk(
       if (notificationInfo.action === ntf.action) {
         return `already ${ntf.action}ed`;
       }
-
-      
 
       // check if to_id == uid for type info and invite to team
       if (["info", "invite_to_team"].includes(notificationInfo.type)) {
