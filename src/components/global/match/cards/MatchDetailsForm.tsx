@@ -2,8 +2,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
-
-
 import {
   Form,
   FormControl,
@@ -35,7 +33,6 @@ import { getUser } from "@/state/user/userSlice";
 import MatchMemberCard from "./MatchMemberCard";
 import { Timestamp } from "firebase/firestore";
 import { updateMatchDetails } from "@/state/match/matchSlice";
-
 
 // Corrected regular expression to match Google Maps location links
 const googleMapsLinkRegex =
@@ -93,7 +90,7 @@ export function MatchDetailsForm(props: MatchDetailsFormProps) {
       ),
     });
     console.log(Timestamp.fromDate(data.startin));
-    await dispatch(updateMatchDetails({matchData:data,who: "coach"}))
+    await dispatch(updateMatchDetails({ matchData: data, who: "coach" }));
   };
 
   const selelct = (v: string) => {
@@ -124,6 +121,7 @@ export function MatchDetailsForm(props: MatchDetailsFormProps) {
                       granularity="second"
                       jsDate={field.value}
                       onJsDateChange={field.onChange}
+                      hourCycle={24}
                     />
                   </FormControl>
                   <FormMessage />
