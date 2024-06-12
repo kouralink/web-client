@@ -17,6 +17,7 @@ import {
   or,
   orderBy,
   limit,
+  and,
 } from "firebase/firestore";
 
 import { Match, Member, Team, TeamState, User } from "../../types/types";
@@ -517,7 +518,7 @@ const getTeamMembers = async (docID: string) => {
 
 export const getTeamByTeamName = createAsyncThunk(
   "team/getTeamByTeamName",
-  async (teamName: string,thunkAPI) => {
+  async (teamName: string, thunkAPI) => {
     try {
       const colRef = collection(firestore, "teams");
       const queryRef = query(colRef, where("teamName", "==", teamName));
@@ -543,7 +544,7 @@ export const getTeamByTeamName = createAsyncThunk(
         team: teamData,
       };
 
-      thunkAPI.dispatch(getTeamMatchesHistory({teamId:teamData.id}))
+      thunkAPI.dispatch(getTeamMatchesHistory({ teamId: teamData.id }))
       thunkAPI.dispatch(updateBlackListInfos())
       return data;
     } catch (error) {
@@ -1107,7 +1108,7 @@ export const updateBlackListInfos = createAsyncThunk(
       }
       const blackListInfos: { user_info: User; uid: string }[] = [];
       await Promise.all(
-        blackList.map(async (uid:string) => {
+        blackList.map(async (uid: string) => {
           const userRef = doc(firestore, "users", uid);
           const userSnap = await getDoc(userRef);
           if (userSnap.exists()) {
@@ -1188,63 +1189,50 @@ export const getTeamDataByTeamId = async (teamId: string) => {
 // get team matchs history
 export const getTeamMatchesHistory = createAsyncThunk(
   "team/getTeamMatchesHistory",
-  async ({ teamId }: { teamId: string }) => {
+  async ({ teamId, status = 'all' }: { teamId: string, status?: string }) => {
     try {
-      // console.log("get:", 1);
+
       const colRef = collection(firestore, "matches");
-      const queryRef = query(
+      let queryRef = query(
         colRef,
-        or(where("team1.id", "==", teamId), where("team2.id", "==", teamId)),
         orderBy("createdAt", "desc"),
         limit(20)
       );
-      // console.log("get: 2");
+
+      if (status !== 'all') {
+        console.log(status)
+        queryRef = query(queryRef,
+          and(
+            or(where("team1.id", "==", teamId), where("team2.id", "==", teamId)),
+            where("status", "==", status),
+          ),);
+      } else {
+        queryRef = query(queryRef, or(where("team1.id", "==", teamId), where("team2.id", "==", teamId)),);
+      }
+
       const snap = await getDocs(queryRef);
       const matches: Match[] = [];
-      // console.log("get: 3");
       for (const doc of snap.docs) {
         const thismatch = doc.data() as Match;
-        // console.log("this match:",thismatch)
-        // TODO: update this stupid function
         const team1_data = await getTeamDataByTeamId(thismatch.team1.id);
         const team2_data = await getTeamDataByTeamId(thismatch.team2.id);
-        if (!team1_data) {
-          // console.log("11111 no team data found");
-          // console.log("team1 id:",thismatch)
+        if (!team1_data || !team2_data) {
           continue;
         }
-        if (!team2_data) {
-          // console.log("22222 no team data found");
-          // console.log("team2 id:",thismatch)
-          continue;
-        }
-        // get team1 data
-        if (team1_data) {
-          thismatch.team1 = {
-            ...thismatch.team1,
-            name: team1_data.teamName,
-            logo: team1_data.teamLogo,
-          };
-        }
-        // get team2 data
-        if (team2_data) {
-          thismatch.team2 = {
-            ...thismatch.team2,
-            name: team2_data.teamName,
-            logo: team2_data.teamLogo,
-          };
-        }
+        thismatch.team1 = {
+          ...thismatch.team1,
+          name: team1_data.teamName,
+          logo: team1_data.teamLogo,
+        };
+        thismatch.team2 = {
+          ...thismatch.team2,
+          name: team2_data.teamName,
+          logo: team2_data.teamLogo,
+        };
         matches.push(thismatch);
       }
-      if (matches.length === 0) {
-        console.log("no matches found");
-      } else {
-        console.log("matches founded")
-      }
-      // console.log(matches);
       return { matches };
     } catch (error) {
-      // console.log(error);
       return { matches: [] };
     }
   }
