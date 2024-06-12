@@ -9,11 +9,10 @@ import { Bolt } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useMatch } from "react-router-dom";
 import { inviteToTeam } from "@/state/notification/notificationSlice";
-import TeamProfileCard from "@/components/global/cards/TeamProfileCard"
-
+import TeamProfileCard from "@/components/global/cards/TeamProfileCard";
 
 const MyProfileCard = () => {
-  const team = useSelector((state: RootState) => state.team.team);
+  const team = useSelector((state: RootState) => state.user.team);
   const userS = useSelector((state: RootState) => state.user);
   const authU = useSelector((state: RootState) => state.auth);
   const userState = userS.user;
@@ -35,7 +34,8 @@ const MyProfileCard = () => {
       <CardHeader>
         <div className="flex items-center justify-between py-5">
           <p className="text-3xl lg:text-8xl font-bold capitalize">
-            {userState.firstName} {userState.lastName} <span className="text-5xl">({userState?.accountType})</span>
+            {userState.firstName} {userState.lastName}{" "}
+            <span className="text-5xl">({userState?.accountType})</span>
           </p>
           {match && (
             <Link to="/settings">
@@ -73,8 +73,12 @@ const MyProfileCard = () => {
               <span className="px-4 flex gap-2">
                 {userState.phoneNumbers
                   ? userState.phoneNumbers.map((n) => {
-                    return <Card key={n} className="px-2 py-1">{n}</Card>
-                  })
+                      return (
+                        <Card key={n} className="px-2 py-1">
+                          {n}
+                        </Card>
+                      );
+                    })
                   : "add phone number in settings"}
               </span>
             </li>
@@ -96,9 +100,10 @@ const MyProfileCard = () => {
             </div>
           )}
         </div>
-        {(userState?.accountType === "coach" || userState?.accountType === "player") && (
+        {(userState?.accountType === "coach" ||
+          userState?.accountType === "player") && (
           <div className=" lg:w-1/2">
-            <TeamProfileCard team={team} />
+            {team && <TeamProfileCard team={team} />}
           </div>
         )}
       </CardContent>
