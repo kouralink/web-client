@@ -120,17 +120,23 @@ export const TeamPage = () => {
             <h2>Match History</h2>
             <Tabs defaultValue="all" className="space-y-4">
               <TabsList>
-                <TabsTrigger onClick={() => setStatus("all")} value="all">All</TabsTrigger>
-                <TabsTrigger onClick={() => setStatus("pending")} value="pending">Pending</TabsTrigger>
-                <TabsTrigger onClick={() => setStatus("in_progress")} value="in_progress">In Progress</TabsTrigger>
-                <TabsTrigger onClick={() => setStatus("finish")} value="finish">Finish</TabsTrigger>
-                <TabsTrigger onClick={() => setStatus("cancled")} value="cancled">Cancled</TabsTrigger>
+                {["all", "pending", "in_progress", "finish", "cancled"].map(
+                  (status) => (
+                    <TabsTrigger
+                      key={status}
+                      onClick={() => setStatus(status as FilterMatchStatus)}
+                      value={status}
+                    >
+                      {status.charAt(0).toUpperCase() + status.slice(1)}
+                    </TabsTrigger>
+                  )
+                )}
               </TabsList>
             </Tabs>
             {
               isLoading ?
                 <div className='h-full w-full flex justify-center items-center'>
-                  <img src="/logo.svg" className="h-8 me-3 animate-spin" alt="Koulaink Logo" />
+                  <img src="/logo.svg" className="h-8 me-3 my-5 animate-spin" alt="Koulaink Logo" />
                 </div>
                 :
                 <>
