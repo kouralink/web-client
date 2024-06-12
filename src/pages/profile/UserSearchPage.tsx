@@ -12,6 +12,9 @@ const UserSearchPage: React.FC = () => {
   const searchResults = useSelector(
     (state: RootState) => state.usersearch.searchResults
   );
+  const isLoading = useSelector(
+    (state: RootState) => state.usersearch.isLoading
+  );
   const [searchValue, setSearchValue] = useState<string>("");
 
   useEffect(() => {
@@ -45,15 +48,23 @@ const UserSearchPage: React.FC = () => {
                 onChange={(e) => setSearchValue(e.target.value)}
                 placeholder="Search users..."
               />
-              <ul>
-                {searchResults.map((result, index) => {
-                  return (
-                    <div key={index}>
-                      <UserSearchCard result={result.user_info} />
-                    </div>
-                  );
-                })}
-              </ul>
+              {
+                isLoading ?
+                  <div className='h-full w-full flex justify-center items-center'>
+                    <img src="/logo.svg" className="h-8 me-3 mt-36 animate-spin" alt="Koulaink Logo" />
+                  </div> :
+                  <ul>
+                    {
+                      searchResults.map((result, index) => {
+                        return (
+                          <div key={index}>
+                            <UserSearchCard result={result.user_info} />
+                          </div>
+                        );
+                      })
+                    }
+                  </ul>
+              }
             </div>
           </div>
         </div>
