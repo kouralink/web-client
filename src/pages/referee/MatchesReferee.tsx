@@ -5,29 +5,32 @@ import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "@/state/store";
 import { Card } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Match } from "@/types/types";
+import { FilterMatchStatus, Match } from "@/types/types";
 // import { TeamMatch } from "@/types/types";
 // import { Timestamp } from "firebase/firestore";
 import { useParams } from "react-router-dom";
 import { getRefereeMatchesAndInfo } from "@/state/user/userSlice";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 // import { Match } from "@/types/types";
+
 
 
 const MatchesReferee = () => {
     // const userState = useSelector((state: RootState) => state.auth.user);
-    const {refereeid} = useParams<{refereeid:string}>();
+    const { refereeid } = useParams<{ refereeid: string }>();
+    const [status, setStatus] = useState<FilterMatchStatus>("all");
     const user = useSelector((state: RootState) => state.user.user);
     const matches = useSelector((state: RootState) => state.user.refereeMatches);
     const error = useSelector((state: RootState) => state.user.error);
     const isLoading = useSelector((state: RootState) => state.user.status === "loading");
     const dispatch = useDispatch<AppDispatch>();
 
-    useEffect(()=>{
-        if (refereeid) {
-            dispatch(getRefereeMatchesAndInfo(refereeid));
+    useEffect(() => {
+        if (refereeid && status !== null) {
+            dispatch(getRefereeMatchesAndInfo({ uid: refereeid, status: status }));
         }
-    },[dispatch, refereeid])
+    }, [dispatch, refereeid, status])
 
 
     // [ ] : update user info and matches list by call dispatch getmatches and infos of user
@@ -40,24 +43,38 @@ const MatchesReferee = () => {
     return (
         <div className="flex flex-col gap-8">
             <RefreeHeader avatar={user?.avatar ?? null} firstName={user?.firstName ?? null} lastName={user?.lastName ?? null} />
-            <div>
-                fileter matches by status here
-                <p>{error}</p>
-                <br />
-                {isLoading && <p>Loading...</p>}
-            </div>
-            
-            <div>
-                <div className="gap-4 w-full flex justify-end ">
-                    <ScrollArea>
-                        <Card className="flex flex-col gap-2  p-4 w-full lg:w-fit">
-                            <h2>Match History</h2>
-                            {matches.map((match: Match) => (
-                                <MatchRefreeCard key={match.id} {...match} />
-                            ))}
-                        </Card>
-                    </ScrollArea>
-                </div>
+            <p>{error}</p>
+
+
+            <div className="gap-4 w-full">
+                <ScrollArea>
+                    <Card className="flex flex-col gap-2 p-4 w-full lgkk:w-fit">
+                        <h2>Match History</h2>
+                        <Tabs defaultValue="all" className="space-y-4">
+                            <TabsList>
+                                <TabsTrigger onClick={() => setStatus("all")} value="all">All</TabsTrigger>
+                                <TabsTrigger onClick={() => setStatus("pending")} value="pending">Pending</TabsTrigger>
+                                <TabsTrigger onClick={() => setStatus("in_progress")} value="in_progress">In Progress</TabsTrigger>
+                                <TabsTrigger onClick={() => setStatus("finish")} value="finish">Finish</TabsTrigger>
+                                <TabsTrigger onClick={() => setStatus("cancled")} value="cancled">Cancled</TabsTrigger>
+                            </TabsList>
+                        </Tabs>
+                        {
+                            isLoading ?
+                                <div className='h-full w-full flex justify-center items-center'>
+                                    <img src="/logo.svg" className="h-8 me-3 animate-spin" alt="Koulaink Logo" />
+                                </div>
+                                :
+                                <>
+                                    {
+                                        matches.map((match: Match) => (
+                                            <MatchRefreeCard key={match.id} {...match} />
+                                        ))
+                                    }
+                                </>
+                        }
+                    </Card>
+                </ScrollArea>
             </div>
         </div>
     );
