@@ -5,7 +5,7 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
-import { Bell, BellDot, Loader2 } from "lucide-react";
+import { Bell, BellDot, Loader2, RefreshCcw } from "lucide-react";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "@/state/store";
@@ -19,6 +19,7 @@ import { useEffect } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { cn } from "@/lib/utils";
 import { Separator } from "../ui/separator";
+import { Button } from "../ui/button";
 
 const NotificationASideSheet = () => {
   const RecievedNotifications = useSelector(
@@ -50,6 +51,18 @@ const NotificationASideSheet = () => {
     }
   }, [accoutType, authUserUID, dispatch]);
 
+  const handelRefreshNotifications = async () => {
+    if (!authUserUID) return;
+    dispatch(getRecievedNotifications());
+    if (accoutType === "coach") {
+      dispatch(getTeamRequestNotifications());
+    }
+    if (accoutType === "tournament_manager") {
+      dispatch(getTournamentNotifications());
+    }
+  }
+
+
   return (
     <Sheet>
       <SheetTrigger asChild>
@@ -67,13 +80,13 @@ const NotificationASideSheet = () => {
       </SheetTrigger>
       <SheetContent className=" max-h-screen ">
         <SheetHeader className="py-10">
-          <SheetTitle className="flex justify-between w-full flex-row-reverse">
+          <SheetTitle className="flex justify-between w-full items-center flex-row-reverse">
             <span>
-              {(isLoading || teamNotifications.isLoading) && (
+              {(isLoading || teamNotifications.isLoading) ? (
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              )}
+              ):<Button variant={"outline"} onClick={handelRefreshNotifications}><RefreshCcw className="w-4 h-4"/></Button>}
             </span>{" "}
-            <span>Notification</span>
+            <span>Notifications</span>
           </SheetTitle>
         </SheetHeader>
         <Tabs defaultValue="user" className="h-full">
