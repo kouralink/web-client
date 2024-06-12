@@ -845,6 +845,27 @@ export const getMemberTeamId = async (uid: string) => {
   }
 };
 
+export const getMemberTeam = async (uid: string) => {
+  // search in the members of all teams to get member with uid and return the teamName
+  try {
+    const teamid = await getMemberTeamId(uid);
+    if (!teamid) {
+      return null;
+    }
+    const docRef = doc(firestore, "teams", teamid);
+    const docSnap = await getDoc(docRef);
+    if (docSnap.exists()) {
+      return docSnap.data() as Team;
+    } else {
+      return null;
+    }
+  } catch (error) {
+    // console.log("nul 3");
+    // console.log(error);
+    return null;
+  }
+};
+
 export const getMemberTeamName = async (uid: string) => {
   try {
     const colRef = collectionGroup(firestore, "members");

@@ -103,6 +103,7 @@ export interface UserState {
   status: "idle" | "loading" | "failed";
   error: string | null | undefined;
   refereeMatches: Match[];
+  team: Team | null;
 }
 
 export type Action = "accept" | "decline" | "view";

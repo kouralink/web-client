@@ -10,13 +10,14 @@ import {
   query,
   limit,
   orderBy,
-  Query
+  Query,
 } from "firebase/firestore";
 import { firestore } from "@/services/firebase";
 
 // types
 import { User, UserState, Match } from "../../types/types";
-import { getTeamDataByTeamId } from "../team/teamSlice";
+import { getMemberTeam, getTeamDataByTeamId } from "../team/teamSlice";
+import { store } from "../store";
 
 const initialState: UserState = {
   user: {
@@ -35,6 +36,7 @@ const initialState: UserState = {
   status: "idle",
   error: null,
   refereeMatches: [],
+  team: null,
 };
 
 const userSlice = createSlice({
@@ -112,6 +114,9 @@ const userSlice = createSlice({
         state.status = "failed";
         state.error = action.error.message;
       });
+    builder.addCase(GetUserTeam.fulfilled, (state, action) => {
+      state.team = action.payload;
+    });
   },
 });
 
@@ -132,7 +137,7 @@ export const getUser = createAsyncThunk("user/getUser", async (uid: string) => {
 
 export const getUserByUsername = createAsyncThunk(
   "user/getUserByUsername",
-  async (username: string) => {
+  async (username: string, thunkAPI) => {
     try {
       const q = query(
         collection(firestore, "users"),
@@ -141,6 +146,7 @@ export const getUserByUsername = createAsyncThunk(
       const querySnapshot = await getDocs(q);
       if (!querySnapshot.empty) {
         const data = querySnapshot.docs[0];
+        thunkAPI.dispatch(GetUserTeam(data.id));
         return { uid: data.id, user: data.data() as User };
       }
       return null;
@@ -169,7 +175,7 @@ export const getUserByUsername = createAsyncThunk(
 
 export const getRefereeMatchesAndInfo = createAsyncThunk(
   "user/getRefereeMatches",
-  async ({ uid, status }: { uid: string, status: string }) => {
+  async ({ uid, status }: { uid: string; status: string }) => {
     try {
       // get userinfo
       const docRef = doc(firestore, "users", uid);
@@ -188,11 +194,8 @@ export const getRefereeMatchesAndInfo = createAsyncThunk(
         limit(20)
       );
 
-      if (status !== 'all') {
-        queryRef = query(
-          queryRef,
-          where("status", "==", status)
-        );
+      if (status !== "all") {
+        queryRef = query(queryRef, where("status", "==", status));
       }
 
       const snap = await getDocs(queryRef);
@@ -223,8 +226,26 @@ export const getRefereeMatchesAndInfo = createAsyncThunk(
       }
       return { matches, user };
     } catch (error) {
-      console.log("get matches error : ", error)
+      console.log("get matches error : ", error);
       throw new Error("Failed to fetch matches data");
+    }
+  }
+);
+
+export const GetUserTeam = createAsyncThunk(
+  "user/getUserTeam",
+  async (uid: string) => {
+    try {
+      // is account type of user coach or player
+      const accountType = store.getState().user.user.accountType;
+      if (!["coach", "player"].includes(accountType)) {
+        return null;
+      }
+      // get team
+      const team = getMemberTeam(uid);
+      return team;
+    } catch (error) {
+      throw new Error("Failed to fetch user team data");
     }
   }
 );
