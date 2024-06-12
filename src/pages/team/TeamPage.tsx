@@ -1,8 +1,9 @@
 import { AppDispatch, RootState } from "@/state/store";
 import {
   getTeamByTeamName,
+  getTeamMatchesHistory,
 } from "@/state/team/teamSlice";
-import { Match } from "@/types/types";
+import { FilterMatchStatus, Match } from "@/types/types";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
@@ -11,6 +12,8 @@ import MemberCard from "@/components/global/cards/MemberCard";
 import TeamHeader from "@/components/global/TeamHeader";
 import { Card } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+
 
 export const TeamPage = () => {
   const { paramteamname } = useParams<{ paramteamname: string }>();
@@ -19,22 +22,27 @@ export const TeamPage = () => {
   const members = useSelector((state: RootState) => state.team.members);
   const error = useSelector((state: RootState) => state.team.error);
   const navigate = useNavigate();
-  
+
   const userId = useSelector((state: RootState) => state.auth?.uid);
   const matchesHistory = useSelector(
     (state: RootState) => state.team.MatchesHistory
   );
-
+  const isLoading = useSelector(
+    (state: RootState) => state.team.status === "loading"
+  );
+  const [status, setStatus] = useState<FilterMatchStatus>(null);
   const [role, setRole] = useState<"coach" | "member" | "user">("user");
   const [coach, setCoach] = useState(
     members.find((member) => member.role === "coach")
   );
 
   // updating team matches history
-  // useEffect(() => {
-  //   console.log("updating team matches history");
-  //   dispatch(getTeamMatchesHistory({ teamId: team.id }));
-  // }, [dispatch, team.id]);
+  useEffect(() => {
+    console.log("updating team matches history");
+    if (status !== null) {
+      dispatch(getTeamMatchesHistory({ teamId: team.id, status: status }));
+    }
+  }, [dispatch, team.id, status]);
 
   // update black list
   // useEffect(() => {
@@ -110,22 +118,42 @@ export const TeamPage = () => {
         <div className="gap-4 w-full flex justify-end ">
           <Card className="flex flex-col gap-2  p-4 w-full lg:w-fit">
             <h2>Match History</h2>
-            {matchesHistory.length === 0 ? (
-              <div className="text-muted-foreground ps-6">
-                No Matches History Found
-              </div>
-            ) : (
-              <ScrollArea className="h-96 w-full">
-                <div className="flex flex-col gap-4 pr-6 w-full">
-                  {matchesHistory.map((match: Match) => (
-                    <MatchRecordCardIteam key={match.id} {...match} />
-                  ))}
+            <Tabs defaultValue="all" className="space-y-4">
+              <TabsList>
+                <TabsTrigger onClick={() => setStatus("all")} value="all">All</TabsTrigger>
+                <TabsTrigger onClick={() => setStatus("pending")} value="pending">Pending</TabsTrigger>
+                <TabsTrigger onClick={() => setStatus("in_progress")} value="in_progress">In Progress</TabsTrigger>
+                <TabsTrigger onClick={() => setStatus("finish")} value="finish">Finish</TabsTrigger>
+                <TabsTrigger onClick={() => setStatus("cancled")} value="cancled">Cancled</TabsTrigger>
+              </TabsList>
+            </Tabs>
+            {
+              isLoading ?
+                <div className='h-full w-full flex justify-center items-center'>
+                  <img src="/logo.svg" className="h-8 me-3 animate-spin" alt="Koulaink Logo" />
                 </div>
-              </ScrollArea>
-            )}
+                :
+                <>
+                  {
+                    matchesHistory.length === 0 ? (
+                      <div className="text-muted-foreground ps-6">
+                        No Matches History Found
+                      </div>
+                    ) : (
+                      <ScrollArea className="h-96 w-full">
+                        <div className="flex flex-col gap-4 pr-6 w-full">
+                          {matchesHistory.map((match: Match) => (
+                            <MatchRecordCardIteam key={match.id} {...match} />
+                          ))}
+                        </div>
+                      </ScrollArea>
+                    )
+                  }
+                </>
+            }
           </Card>
         </div>
       </div>
-    </div>
+    </div >
   );
 };
