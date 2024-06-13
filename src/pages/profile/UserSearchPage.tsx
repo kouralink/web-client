@@ -1,11 +1,11 @@
-import { searchByUserName } from "@/state/search/searchUsersSlice";
+import { searchByUserName, setLastDoc, setSearchResults } from "@/state/search/searchUsersSlice";
 import { AppDispatch, RootState } from "@/state/store";
 import { useDispatch, useSelector } from "react-redux";
 import { Input } from "@/components/ui/input";
 import UsersImg from "/feautreContent/im5.png";
 import UserSearchCard from "@/components/global/cards/UserSearchCard";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 const UserSearchPage: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -15,9 +15,32 @@ const UserSearchPage: React.FC = () => {
   const isLoading = useSelector(
     (state: RootState) => state.usersearch.isLoading
   );
+  const lastDoc = useSelector(
+    (state: RootState) => state.usersearch.lastDoc
+  );
   const [searchValue, setSearchValue] = useState<string>("");
+  const observerRef = useRef(null);
+  const firstRender = useRef(true);
 
   useEffect(() => {
+    if (firstRender.current || isLoading || searchResults.length === 0) {
+      firstRender.current = false;
+      return;
+    }
+    const observer = new IntersectionObserver(([entry]) => {
+      if (entry.isIntersecting && lastDoc) {
+        dispatch(searchByUserName(searchValue));
+      }
+    });
+    if (observerRef.current) {
+      observer.observe(observerRef.current);
+    }
+    return () => observer.disconnect();
+  }, [isLoading, searchResults.length, dispatch, lastDoc]);
+
+  useEffect(() => {
+    dispatch(setSearchResults([]));
+    dispatch(setLastDoc(null));
     dispatch(searchByUserName(searchValue));
   }, [dispatch, searchValue]);
 
@@ -48,23 +71,24 @@ const UserSearchPage: React.FC = () => {
                 onChange={(e) => setSearchValue(e.target.value)}
                 placeholder="Search users..."
               />
+              <ul>
+                {
+                  searchResults.map((result, index) => {
+                    return (
+                      <div key={index}>
+                        <UserSearchCard result={result.user_info} />
+                      </div>
+                    );
+                  })
+                }
+              </ul>
               {
-                isLoading ?
-                  <div className='h-full w-full flex justify-center items-center'>
-                    <img src="/logo.svg" className="h-8 me-3 mt-36 animate-spin" alt="Koulaink Logo" />
-                  </div> :
-                  <ul>
-                    {
-                      searchResults.map((result, index) => {
-                        return (
-                          <div key={index}>
-                            <UserSearchCard result={result.user_info} />
-                          </div>
-                        );
-                      })
-                    }
-                  </ul>
+                isLoading &&
+                <div className='h-full w-full flex justify-center items-center'>
+                  <img src="/logo.svg" className="h-8 me-3 mt-20 animate-spin" alt="Koulaink Logo" />
+                </div>
               }
+              {lastDoc && <div ref={observerRef} style={{ height: '20px', visibility: 'visible' }} />}
             </div>
           </div>
         </div>
