@@ -1,7 +1,8 @@
 import { User } from "@/types/types";
-import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { getDocs, collection, where, query, limit } from "firebase/firestore";
+import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { getDocs, collection, where, query, limit, startAfter } from "firebase/firestore";
 import { firestore } from "@/services/firebase";
+import { RootState } from "../store";
 
 interface SearchedUser {
   uid: string;
@@ -12,18 +13,27 @@ interface SearchUserState {
   isLoading: boolean;
   error: string | null | undefined;
   searchResults: SearchedUser[];
+  lastDoc: any;
 }
 
 const initialUserState: SearchUserState = {
   isLoading: false,
   error: null,
   searchResults: [],
+  lastDoc: null,
 };
 
 const searchUserSlice = createSlice({
   name: "searchusers",
   initialState: initialUserState,
-  reducers: {},
+  reducers: {
+    setSearchResults: (state, action: PayloadAction<SearchedUser[] | []>) => {
+      state.searchResults = action.payload;
+    },
+    setLastDoc: (state, action) => {
+      state.lastDoc = action.payload;
+    },
+  },
   extraReducers: (builder) => {
     builder.addCase(searchByUserName.pending, (state) => {
       state.isLoading = true;
@@ -32,7 +42,11 @@ const searchUserSlice = createSlice({
       state.isLoading = false;
       state.error = null;
       if (typeof action.payload === "object" && action.payload !== null) {
-        state.searchResults = action.payload.users;
+        action.payload.users.forEach((newUser) => {
+          if (!state.searchResults.find((user) => user.uid === newUser.uid)) {
+            state.searchResults.push(newUser);
+          }
+        });
       }
     }).addCase(searchByUserName.rejected, (state, action) => {
       state.isLoading = false;
@@ -47,29 +61,42 @@ const searchUserSlice = createSlice({
       state.isLoading = false;
       state.error = null;
       if (typeof action.payload === "object" && action.payload !== null) {
-        state.searchResults = action.payload.users;
+        action.payload.users.forEach((newUser) => {
+          if (!state.searchResults.find((user) => user.uid === newUser.uid)) {
+            state.searchResults.push(newUser);
+          }
+        });
       }
     }).addCase(searchByUserNameAndTypeAccount.rejected, (state, action) => {
       state.isLoading = false;
       state.error = action.error.message;
     });
-    
+
 
   },
 });
 
 export const searchByUserName = createAsyncThunk(
   "search/searchByUserName",
-  async (username: string) => {
+  async (username: string, thunkAPI) => {
     try {
       const usersCol = collection(firestore, "users");
-      // where username like username limit 10
-      const q = query(
+      const lastDoc = (thunkAPI.getState() as RootState).usersearch.lastDoc;
+
+      let q = query(
         usersCol,
         where("username", ">=", username),
         where("username", "<=", username + "\uf8ff"),
-        limit(10)
+        limit(4)
       );
+
+      if (lastDoc) {
+        q = query(
+          q,
+          startAfter(lastDoc)
+        );
+      }
+
       const querySnapshot = await getDocs(q);
       const users: SearchedUser[] = [];
       querySnapshot.forEach((doc) => {
@@ -78,6 +105,7 @@ export const searchByUserName = createAsyncThunk(
           uid: doc.id,
         });
       });
+      thunkAPI.dispatch(setLastDoc(querySnapshot.docs[querySnapshot.docs.length - 1]));
       return { users: users };
     } catch (error) {
       throw new Error("Error fetching users");
@@ -88,18 +116,26 @@ export const searchByUserName = createAsyncThunk(
 // search users by username and typeaccount
 export const searchByUserNameAndTypeAccount = createAsyncThunk(
   "search/searchByUserNameAndTypeAccount",
-  async (searchData: { username: string; typeAccount: string }) => {
+  async (searchData: { username: string; typeAccount: string }, thunkAPI) => {
     try {
       const usersCol = collection(firestore, "users");
-      // where username like username limit 10
-      const q = query(
+      const lastDoc = (thunkAPI.getState() as RootState).usersearch.lastDoc;
+
+      let q = query(
         usersCol,
         where("username", ">=", searchData.username),
         where("username", "<=", searchData.username + "\uf8ff"),
         where("accountType", "==", searchData.typeAccount),
         limit(10)
       );
-      // console.log("searching")
+
+      if (lastDoc) {
+        q = query(
+          q,
+          startAfter(lastDoc)
+        );
+      }
+
       const querySnapshot = await getDocs(q);
       const users: SearchedUser[] = [];
       querySnapshot.forEach((doc) => {
@@ -110,13 +146,14 @@ export const searchByUserNameAndTypeAccount = createAsyncThunk(
           uid: doc.id,
         });
       });
-      // console.log('users',users)
+
+      thunkAPI.dispatch(setLastDoc(querySnapshot.docs[querySnapshot.docs.length - 1]));
       return { users: users };
     } catch (error) {
-      // console.log(error)
       throw new Error("Error fetching users");
     }
   }
 );
 
+export const { setSearchResults, setLastDoc } = searchUserSlice.actions;
 export default searchUserSlice.reducer;

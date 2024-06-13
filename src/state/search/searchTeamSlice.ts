@@ -1,7 +1,8 @@
 import { Team } from "@/types/types";
-import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { getDocs, collection, where, query, limit } from "firebase/firestore";
+import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { getDocs, collection, where, query, limit, startAfter } from "firebase/firestore";
 import { firestore } from "@/services/firebase";
+import { RootState } from "../store";
 
 interface SearchedTeam {
   id: string;
@@ -12,18 +13,27 @@ interface SearchTeamState {
   isLoading: boolean;
   error: string | null | undefined;
   searchResults: SearchedTeam[];
+  lastDoc: any; // Add this line to track the last document
 }
 
 const initialTeamState: SearchTeamState = {
   isLoading: false,
   error: null,
   searchResults: [],
+  lastDoc: null, // Initialize lastDoc to null
 };
 
 const searchTeamSlice = createSlice({
   name: "searchteams",
   initialState: initialTeamState,
-  reducers: {},
+  reducers: {
+    setSearchResults: (state, action: PayloadAction<SearchedTeam[] | []>) => {
+      state.searchResults = action.payload;
+    },
+    setLastDoc: (state, action) => {
+      state.lastDoc = action.payload;
+    },
+  },
   extraReducers: (builder) => {
     builder.addCase(searchByTeamName.pending, (state) => {
       state.isLoading = true;
@@ -33,7 +43,11 @@ const searchTeamSlice = createSlice({
       state.isLoading = false;
       state.error = null;
       if (typeof action.payload === "object" && action.payload !== null) {
-        state.searchResults = action.payload.teams;
+        action.payload.teams.forEach((newTeam) => {
+          if (!state.searchResults.find((team) => team.id === newTeam.id)) {
+            state.searchResults.push(newTeam);
+          }
+        });
       }
     });
     builder.addCase(searchByTeamName.rejected, (state, action) => {
@@ -45,18 +59,26 @@ const searchTeamSlice = createSlice({
 
 export const searchByTeamName = createAsyncThunk(
   "search/searchByTeamName",
-  async (teamname: string) => {
+  async (teamname: string, thunkAPI) => {
     try {
       const teamsCol = collection(firestore, "teams");
-      // where teamname like teamname limit 10
+      const lastDoc = (thunkAPI.getState() as RootState).teamsearch.lastDoc;
 
-      const q = query(
+      let queryRef = query(
         teamsCol,
         where("teamName", ">=", teamname),
         where("teamName", "<=", teamname + "\uf8ff"),
-        limit(10)
+        limit(4)
       );
-      const querySnapshot = await getDocs(q);
+
+      if (lastDoc) {
+        queryRef = query(
+          queryRef,
+          startAfter(lastDoc)
+        );
+      }
+
+      const querySnapshot = await getDocs(queryRef);
       const teams: SearchedTeam[] = [];
       querySnapshot.forEach((doc) => {
         teams.push({
@@ -64,6 +86,7 @@ export const searchByTeamName = createAsyncThunk(
           id: doc.id,
         });
       });
+      thunkAPI.dispatch(setLastDoc(querySnapshot.docs[querySnapshot.docs.length - 1]));
       return { teams: teams };
     } catch (error) {
       throw new Error("Error fetching teams");
@@ -71,4 +94,5 @@ export const searchByTeamName = createAsyncThunk(
   }
 );
 
+export const { setSearchResults, setLastDoc } = searchTeamSlice.actions;
 export default searchTeamSlice.reducer;

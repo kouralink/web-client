@@ -24,7 +24,9 @@
 - [x] : @ilorez : leave tournament for refree !(in progress) (require firebase callback function)
 - [x] : @ilorez : cancel tournament (remove it)
 - [ ] : fix UI & repsponsive of tournament page
-      status : pending => in progress => finish || failed
+      status : pending => in progress => finish || failed 
+- [x] : infinity scroll for  [ Matches & Teams & Users & Tournaments ]
+      Matches status : pending => in progress => finish || failed
 
 ## Triggers (in pending status)
 

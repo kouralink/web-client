@@ -39,11 +39,15 @@ export const TeamPage = () => {
     members.find((member) => member.role === "coach")
   );
   const observerRef = useRef(null);
+  const firstRender = useRef(true);
+
 
   // Handle scroll event to fetch more matches
   useEffect(() => {
-    if (isLoading || matchesHistory.length === 0) return;
-    const observer = new IntersectionObserver(([entry]) => {
+    if (firstRender.current || isLoading || matchesHistory.length === 0) {
+      firstRender.current = false;
+      return;
+    } const observer = new IntersectionObserver(([entry]) => {
       if (entry.isIntersecting) {
         console.log("Scrollllllllll")
         fetchTeamMatchesHistory();
