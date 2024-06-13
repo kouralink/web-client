@@ -19,11 +19,16 @@
 - [x] : @Wahmane-Hamza : Create referee matches UI
 - [x] : @ilorez : get matches list and link it with UI
 - [x] : @Abdo-Nsila : filter matches by status
-- [ ] : infinity scroll for matches
 - [x] : @ilorez : leave tournament for team !(in progress) (require firebase callback function)
 - [x] : @ilorez : leave tournament for refree !(in progress) (require firebase callback function)
 - [x] : @ilorez : cancel tournament (remove it)
-- [ ] : fix UI & repsponsive of tournament page
+- [x] : @ilorez : fix UI & repsponsive of tournament page
+- [ ] : notifications should not send two times in 24h
+    - [ ] invte to team/tournament
+    - [ ] requst to join team /tournament
+    - [ ] invite referee
+    - [ ] match challenge
+- [ ] : infinity scroll for matches
       status : pending => in progress => finish || failed
 
 ## Triggers (in pending status)
@@ -55,7 +60,7 @@
 
 ## Front end rules should update
 
-- [ ] the only tournament manager can open update page
+- [x] the only tournament manager can open update  and create tournament pages
 - [x] teamName and username should not contain spaces
 
 ## Triggers should update
@@ -78,3 +83,8 @@
 - [ ] make sure that everything working just in pending status
 - [ ] the only thing can change in in progress status is the match info a details & cancel tournament that can be done by the tournament manager or referee after tournament asigning a match to him
 - [ ] after submitting the match details the referee is the only one can change the match status and result and finish it
+
+
+## FIX
+- [ ] the time of match should be same for both users even if they are in different time zones
+- [ ] the match start time +2h should be free for both teams and referee
