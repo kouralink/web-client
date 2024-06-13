@@ -40,20 +40,20 @@ const changeCoachSchema = z.object({
 export type changeCoachFormValues = z.infer<typeof changeCoachSchema>;
 
 export function ChangeCoach() {
-    const error = useSelector((state: RootState) => state.auth.error);
-    const isLoading = useSelector((state: RootState) => state.auth.loading);
-    const authUser = useSelector((state: RootState) => state.auth);
-    const membersList = useSelector((state: RootState) => state.team.members);
-    const dispatch = useDispatch<AppDispatch>();
+  const error = useSelector((state: RootState) => state.auth.error);
+  const isLoading = useSelector((state: RootState) => state.auth.loading);
+  const authUser = useSelector((state: RootState) => state.auth);
+  const membersList = useSelector((state: RootState) => state.team.members);
+  const dispatch = useDispatch<AppDispatch>();
 
   const form = useForm<changeCoachFormValues>({
     resolver: zodResolver(changeCoachSchema),
     mode: "onSubmit",
-    
+
   });
   const onSubmit = async (data: changeCoachFormValues) => {
     console.log(data);
-    await dispatch(changeCoach({uid:data.newCoachId, teamId:membersList[0].team_id}));
+    await dispatch(changeCoach({ uid: data.newCoachId, teamId: membersList[0].team_id }));
   };
 
   return (
@@ -90,15 +90,14 @@ export function ChangeCoach() {
                       </FormControl>
                       <SelectContent>
                         {
-                            membersList.map((member) => {
-
-                                if (member.uid !== authUser.uid && member.role === "member") {
-                                    return <SelectItem value={member.uid}>{member.userInfo?.username}</SelectItem>
-                                }
+                          membersList.map((member, index) => {
+                            if (member.uid !== authUser.uid && member.role === "member") {
+                              return <SelectItem key={index} value={member.uid}>{member.userInfo?.username}</SelectItem>
                             }
-                            )
+                          }
+                          )
                         }
-                        
+
                       </SelectContent>
                     </Select>
                     <FormDescription></FormDescription>
