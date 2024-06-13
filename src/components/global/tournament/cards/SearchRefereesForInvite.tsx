@@ -10,6 +10,8 @@ import { AppDispatch, RootState } from "@/state/store";
 import { Input } from "@/components/ui/input";
 import {
   searchByUserNameAndTypeAccount,
+  setLastDoc,
+  setSearchResults,
 } from "@/state/search/searchUsersSlice";
 import { useEffect, useRef, useState } from "react";
 import RefereeSearchCardForInvite from "./RefereeSearchCardForInvite";
@@ -54,6 +56,8 @@ export default function SearchRefereesForInvite() {
 
 
   useEffect(() => {
+    dispatch(setSearchResults([]));
+    dispatch(setLastDoc(null))
     dispatch(
       searchByUserNameAndTypeAccount({
         username: searchValue,
