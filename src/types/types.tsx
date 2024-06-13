@@ -13,7 +13,7 @@ export type FilterMatchStatus =
   | "finish"
   | "cancled"
   | "all"
-  | null;
+  | null
 
 export interface Member {
   uid: string;
@@ -40,6 +40,7 @@ export interface TeamState {
   MatchesHistory: Match[];
   status: "idle" | "loading" | "failed";
   error: string | null | undefined;
+  trackQuery: { lastDoc: any, status: FilterMatchStatus };
 }
 
 // -------------------------------------------------------------------------------------------

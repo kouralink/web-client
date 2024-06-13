@@ -4,7 +4,7 @@ import {
   getTeamMatchesHistory,
 } from "@/state/team/teamSlice";
 import { FilterMatchStatus, Match } from "@/types/types";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
 import MatchRecordCardIteam from "@/components/global/cards/MatchRecordCardIteam";
@@ -27,6 +27,9 @@ export const TeamPage = () => {
   const matchesHistory = useSelector(
     (state: RootState) => state.team.MatchesHistory
   );
+  const trackQuery = useSelector(
+    (state: RootState) => state.team.trackQuery
+  );
   const isLoading = useSelector(
     (state: RootState) => state.team.status === "loading"
   );
@@ -35,14 +38,35 @@ export const TeamPage = () => {
   const [coach, setCoach] = useState(
     members.find((member) => member.role === "coach")
   );
+  const observerRef = useRef(null);
+
+  // Handle scroll event to fetch more matches
+  useEffect(() => {
+    if (isLoading || matchesHistory.length === 0) return;
+    const observer = new IntersectionObserver(([entry]) => {
+      if (entry.isIntersecting) {
+        console.log("Scrollllllllll")
+        fetchTeamMatchesHistory();
+      }
+    });
+    if (observerRef.current) {
+      observer.observe(observerRef.current);
+    }
+    return () => observer.disconnect();
+  }, [isLoading, matchesHistory.length]);
 
   // updating team matches history
   useEffect(() => {
-    console.log("updating team matches history");
     if (status !== null) {
-      dispatch(getTeamMatchesHistory({ teamId: team.id, status: status }));
+      console.log("calling fetchTeamMatchesHistory()");
+      fetchTeamMatchesHistory()
     }
   }, [dispatch, team.id, status]);
+
+  const fetchTeamMatchesHistory = () => {
+    console.log({ teamId: team.id, status: status })
+    dispatch(getTeamMatchesHistory({ teamId: team.id, status: (status ? status : "all") }));
+  }
 
   // update black list
   // useEffect(() => {
@@ -75,6 +99,7 @@ export const TeamPage = () => {
 
   // get team by team name
   useEffect(() => {
+    console.log("calling getTeamByTeamName()");
     dispatch(getTeamByTeamName(paramteamname as string));
   }, [paramteamname, dispatch]);
 
@@ -133,30 +158,28 @@ export const TeamPage = () => {
                 )}
               </TabsList>
             </Tabs>
-            {
-              isLoading ?
-                <div className='h-full w-full flex justify-center items-center'>
-                  <img src="/logo.svg" className="h-8 me-3 my-5 animate-spin" alt="Koulaink Logo" />
+
+            <>
+              {
+                matchesHistory.length === 0 &&
+                <div className="text-muted-foreground ps-6">
+                  No Matches History Found
                 </div>
-                :
-                <>
-                  {
-                    matchesHistory.length === 0 ? (
-                      <div className="text-muted-foreground ps-6">
-                        No Matches History Found
-                      </div>
-                    ) : (
-                      <ScrollArea className="h-96 w-full">
-                        <div className="flex flex-col gap-4 pr-6 w-full">
-                          {matchesHistory.map((match: Match) => (
-                            <MatchRecordCardIteam key={match.id} {...match} />
-                          ))}
-                        </div>
-                      </ScrollArea>
-                    )
-                  }
-                </>
-            }
+              }
+              <ScrollArea className="h-96 w-full">
+                <div className="flex flex-col gap-4 pr-6 w-full">
+                  {matchesHistory.map((match: Match) => (
+                    <MatchRecordCardIteam key={match.id} {...match} />
+                  ))}
+                  {isLoading && (
+                    <div className='h-full w-full flex justify-center items-center'>
+                      <img src="/logo.svg" className="h-8 me-3 my-5 animate-spin" alt="Koulaink Logo" />
+                    </div>
+                  )}
+                  {trackQuery.lastDoc && <div ref={observerRef} style={{ height: '20px', visibility: 'visible' }} />}
+                </div>
+              </ScrollArea>
+            </>
           </Card>
         </div>
       </div>

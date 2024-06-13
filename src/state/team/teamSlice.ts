@@ -18,9 +18,10 @@ import {
   orderBy,
   limit,
   and,
+  startAfter,
 } from "firebase/firestore";
 
-import { Match, Member, Team, TeamState, User } from "../../types/types";
+import { FilterMatchStatus, Match, Member, Team, TeamState, User } from "../../types/types";
 import { CreateTeamFormValues } from "@/pages/team/CreateTeam";
 import { getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
 import { toast } from "@/components/ui/use-toast";
@@ -47,6 +48,7 @@ const initialState: TeamState = {
   MatchesHistory: [],
   status: "idle",
   error: null,
+  trackQuery: { lastDoc: null, status: "all" },
 };
 
 const teamSlice = createSlice({
@@ -56,8 +58,14 @@ const teamSlice = createSlice({
     setTeam: (state, action: PayloadAction<Team>) => {
       state.team = action.payload;
     },
+    setMatchesHistory: (state, action: PayloadAction<Match[] | []>) => {
+      state.MatchesHistory = action.payload;
+    },
     setError: (state, action: PayloadAction<string | null>) => {
       state.error = action.payload;
+    },
+    setTrackQuery: (state, action: PayloadAction<{ lastDoc: any, status: FilterMatchStatus }>) => {
+      state.trackQuery = action.payload;
     },
     setLoading: (
       state,
@@ -123,6 +131,7 @@ const teamSlice = createSlice({
         state.status = "idle";
         state.error = null;
         if (typeof action.payload === "object" && action.payload !== null) {
+          state.MatchesHistory = [];
           state.team = action.payload.team;
           state.members = action.payload.members;
         } else {
@@ -416,8 +425,12 @@ const teamSlice = createSlice({
           action.payload.matches
         ) {
           console.log("udpate 2:", action.payload.matches);
-          state.MatchesHistory = action.payload.matches;
-          // console.log("matches has updated");
+          // Only add a match to MatchesHistory if it's not already present
+          action.payload.matches.forEach((newMatch) => {
+            if (!state.MatchesHistory.some((existingMatch) => existingMatch.id === newMatch.id)) {
+              state.MatchesHistory.push(newMatch);
+            }
+          });
         } else {
           state.MatchesHistory = [];
         }
@@ -543,8 +556,10 @@ export const getTeamByTeamName = createAsyncThunk(
         members: updatedMembers,
         team: teamData,
       };
-
-      thunkAPI.dispatch(getTeamMatchesHistory({ teamId: teamData.id }))
+      // Reset Some state to default
+      thunkAPI.dispatch(setMatchesHistory([]))
+      thunkAPI.dispatch(setTrackQuery({ lastDoc: null, status: "all" }))
+      thunkAPI.dispatch(getTeamMatchesHistory({ teamId: teamData.id, status: "all" }))
       thunkAPI.dispatch(updateBlackListInfos())
       return data;
     } catch (error) {
@@ -1210,36 +1225,46 @@ export const getTeamDataByTeamId = async (teamId: string) => {
 // get team matchs history
 export const getTeamMatchesHistory = createAsyncThunk(
   "team/getTeamMatchesHistory",
-  async ({ teamId, status = 'all' }: { teamId: string, status?: string }) => {
+  async ({ teamId, status = 'all' }: { teamId: string, status?: FilterMatchStatus }, thunkAPI) => {
     try {
-
+      console.log("||---------------------------------------------------------||");
       const colRef = collection(firestore, "matches");
+      const trackQuery = store.getState().team.trackQuery;
+
       let queryRef = query(
         colRef,
         orderBy("createdAt", "desc"),
-        limit(20)
+        limit(5)
       );
+      console.log("status:", status);
+      if (trackQuery.status !== status) {
+        console.log("status changed");
+        thunkAPI.dispatch(setMatchesHistory([]));
+        thunkAPI.dispatch(setTrackQuery({ lastDoc: null, status: status }));
+      }
 
-      if (status !== 'all') {
-        console.log(status)
-        queryRef = query(queryRef,
-          and(
-            or(where("team1.id", "==", teamId), where("team2.id", "==", teamId)),
-            where("status", "==", status),
-          ),);
-      } else {
-        queryRef = query(queryRef, or(where("team1.id", "==", teamId), where("team2.id", "==", teamId)),);
+      const teamCondition = or(where("team1.id", "==", teamId), where("team2.id", "==", teamId));
+      queryRef = status !== 'all'
+        ? query(queryRef, and(teamCondition, where("status", "==", status)))
+        : query(queryRef, teamCondition);
+
+      if (trackQuery.lastDoc) {
+        console.log("lastDoc exists");
+        queryRef = query(queryRef, startAfter(trackQuery.lastDoc));
       }
 
       const snap = await getDocs(queryRef);
-      const matches: Match[] = [];
-      for (const doc of snap.docs) {
+      const matchPromises = snap.docs.map(async doc => {
         const thismatch = doc.data() as Match;
-        const team1_data = await getTeamDataByTeamId(thismatch.team1.id);
-        const team2_data = await getTeamDataByTeamId(thismatch.team2.id);
+        const [team1_data, team2_data] = await Promise.all([
+          getTeamDataByTeamId(thismatch.team1.id),
+          getTeamDataByTeamId(thismatch.team2.id)
+        ]);
+
         if (!team1_data || !team2_data) {
-          continue;
+          return null;
         }
+
         thismatch.team1 = {
           ...thismatch.team1,
           name: team1_data.teamName,
@@ -1250,8 +1275,12 @@ export const getTeamMatchesHistory = createAsyncThunk(
           name: team2_data.teamName,
           logo: team2_data.teamLogo,
         };
-        matches.push(thismatch);
-      }
+        console.log("----------------------------------------------------------");
+        return thismatch;
+      });
+
+      const matches: Match[] = (await Promise.all(matchPromises)).filter((match): match is Match => match !== null); console.log({ lastDoc: snap.docs[snap.docs.length - 1], status: status })
+      thunkAPI.dispatch(setTrackQuery({ lastDoc: snap.docs[snap.docs.length - 1], status: status }));
       return { matches };
     } catch (error) {
       return { matches: [] };
@@ -1312,5 +1341,5 @@ export const leaveTeamForCoach = createAsyncThunk(
   }
 );
 
-export const { setTeam, clearTeam, setError, setLoading } = teamSlice.actions;
+export const { setTeam, setMatchesHistory, setTrackQuery, clearTeam, setError, setLoading } = teamSlice.actions;
 export default teamSlice.reducer;
