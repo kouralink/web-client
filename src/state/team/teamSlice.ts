@@ -1279,8 +1279,7 @@ export const getTeamMatchesHistory = createAsyncThunk(
         return thismatch;
       });
 
-      const matches: Match[] = (await Promise.all(matchPromises)).filter(match => match !== null);
-      console.log({ lastDoc: snap.docs[snap.docs.length - 1], status: status })
+      const matches: Match[] = (await Promise.all(matchPromises)).filter((match): match is Match => match !== null); console.log({ lastDoc: snap.docs[snap.docs.length - 1], status: status })
       thunkAPI.dispatch(setTrackQuery({ lastDoc: snap.docs[snap.docs.length - 1], status: status }));
       return { matches };
     } catch (error) {
