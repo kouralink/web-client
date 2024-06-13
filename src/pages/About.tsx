@@ -7,7 +7,8 @@ const About = () => {
       name: "Hamza Wahmane",
       image:
         "https://firebasestorage.googleapis.com/v0/b/koura-link.appspot.com/o/PROJECT_TEAM%2Fwahmane.jpg?alt=media&token=1b47fd1b-8b2b-48ce-b8f9-1ecffbee4db2",
-      role: "Backend Developer",
+      // role: "Backend Developer",
+      role: "Kay bi3 l7chich",
       links: {
         github: "https://github.com/Wahmane-Hamza",
         linkedin: "d",
@@ -19,7 +20,8 @@ const About = () => {
       name: "Meriem Maatouqui",
       image:
         "https://firebasestorage.googleapis.com/v0/b/koura-link.appspot.com/o/PROJECT_TEAM%2Fmeriem.jpg?alt=media&token=b36983e4-a6bb-442f-8da0-d54bd15b09ac",
-      role: "Frontend Developer",
+      // role: "Frontend Developer",
+      role: "Bnt bab allah",
       links: {
         github: "https://github.com/meriemmaat4",
         linkedin: "d",
@@ -82,11 +84,11 @@ const About = () => {
             <AboutCard key={index} teamInfo={member} />
           ))
         }
-        
+
       </div>
 
     </div>
-  ); 
+  );
 };
 
 
