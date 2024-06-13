@@ -26,7 +26,7 @@
 - [ ] : fix UI & repsponsive of tournament page
       status : pending => in progress => finish || failed 
 - [x] : infinity scroll for  [ Matches & Teams & Users & Tournaments ]
-      status : pending => in progress => finish || failed
+      Matches status : pending => in progress => finish || failed
 
 ## Triggers (in pending status)
 
