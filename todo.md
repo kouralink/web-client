@@ -27,8 +27,8 @@
     - [x] Change coach to member
     - [x] match Challenge
     - [x] invite refree to match
-    - [ ] request to join tournament
-    - [ ] invite to tournament
+    - [x] request to join tournament
+    - [x] invite to tournament
     
 - [x] Create Notifiaction UI
 - [x] Add Notifications to notification aside
@@ -94,23 +94,23 @@
     - [x] action redux
     - [x] possible edit (score) and action End match for refree
 - [x] create zod form validation for register and login
-- [ ] create cloud funciton for create users and teams
-- [ ] create cloud function for update users and teams
-- [ ] for change account type
-- [ ] link this functions with redux actions
-- [ ] leave team for team in match
-- [ ] update rules for users and teams
+- [x] create cloud funciton for create users and teams
+- [x] create cloud function for update users and teams
+- [x] for change account type
+- [x] link this functions with redux actions
+- [x] leave team for team in match
+- [x] update rules for users and teams
 
 
 
-- [ ] Show pending matchs in profile of refree
-- [ ] show team page card in members and coach profile
+- [x] Show pending matchs in profile of refree
+- [x] show team page card in members and coach profile
 
-- [ ] check username is unique in the lower case state
-- [ ] if not members in team coach can delete the team but:
-    - [ ] team not really deleted is just called that because the team will be have no coach and team name will change to del
+- [x] check username is unique in the lower case state
+- [x] if not members in team coach can delete the team but:
+    - [x] team not really deleted is just called that because the team will be have no coach and team name will change to del
 - [ ] check if there any null notification of type match challenge or request to join team or invite to team that already sended in last 24h
-- [ ] bag notification is not for u when i;m trying to "view" to info notification of team accept my challenge request
+- [x] bag notification is not for u when i;m trying to "view" to info notification of team accept my challenge request
 - [ ] add you can't invite yourself to team in trigger check
 
 ## Match rules (redux and triggers) take care about it
@@ -128,26 +128,24 @@
 -      and send invite request to selected refree
 - [x] the match edit_result or end can't be done if the match is not in progress
 - [x] refree can update status match to in progress
-- [ ] if you canceled the match before start it's will be deleted, 
-- [ ] you can't leave it if it in progress 
-- [ ] if you leave match before match start it's will be called as draw
-- [ ] refree can't change account if it has a pending match
-- [ ] match started at + 2h duree should not have any another start in  match 
+- [x] if you canceled the match before start it's will be deleted, 
+- [x] you can't leave it if it in progress 
+- [x] refree can't change account if it has a pending match
 
 ## triggers
-- [ ] Notification accepted
+- [x] Notification accepted
     - [x] Request to join team
     - [x] Invite to team
     - [x] match challenge
     - [x] invite refree to match + decline
-    - [ ] request to join tournament
-    - [ ] invite to tournament
+    - [x] request to join tournament
+    - [x] invite to tournament
 - [x] on Member joined or leaved a team
 - [x] on role if member change to coach update the user account type to coach too
 - [x] on role if coach change to member update the user account type to member too
 - [x] Notification Triggers (match challenge)
 - [x] change account type when  change coach for new coach and the old one
-- [ ] is not possible to ajout or leave team for coach it's need to change coach first and set one of members or delete team
+- [x] is not possible to ajout or leave team for coach it's need to change coach first and set one of members or delete team
 - [x] match update
     - [x] on match start
         - [x] send notification to all members 
@@ -156,11 +154,9 @@
 - [x] notification of coach change should be sent to all members
 - [x] team logos should upload to team logos folder
 - [ ] if coach left the team (some how) the oldest member will be the coach if no members found the team will be deleted
-- [ ] trriger notification on invite refree to match can be aceepted if the refree have a match in same time
 
 ## Triggers Next update add:
     - [ ] check if there is a already pending request match challenge from same teams
-
 
 ## firebase rules should add:
 - teams:
@@ -173,17 +169,6 @@
     - check if uid === uid of user that want to edit his data
     - username should be unique chack(lower upper case)
 
-
-    
-## Fast & Flexibility
-- [ ] update isAlreadyInTeam function in authSlice to use __name__ way like in teamSlice
-
-## After done with projet
-- [ ] add favorite to teams and users
-- [ ] fix ui
-- [ ] link Home page section with real content
-- [ ] add posts page
-
 ## was working on:
 
 @@ilorez => Notification start from zero in aside when the user open the notification sheet
@@ -193,27 +178,30 @@
 
 ## @@Wahmane-Hamza tasks:
 - [x] Intro
-- [ ] create project text for video
-- [ ] create project video
+- [x] create project text for video
+- [x] create project video
 
 ## @@Merieme tasks:
 - [x] Raport 50%
 - [x] Raport 100%
 
-
-
 ## logic later tasks
-- [ ] username should base unique in lower case
-- [ ] team name should be unique in lower case
+- [x] username should base unique in lower case
+- [x] team name should be unique in lower case
 - [x] update the message of notification to contain info username or team name not userid
-- [ ]search in match where team1.id or team2.id === match.team1.id or match.team2.id check in not finsish or cancled matches (this matchs should have difreent duree time from now 2 hours at least)
 
+## securty tasks
+- [x] update change coach function on firebase to use the auth user as the coachid not as paramater
+- [x] check if there is any auth problme in firebase funcitons
 
-
+## Fast & Flexibility
+- [ ] update isAlreadyInTeam function in authSlice to use __name__ way like in teamSlice
+    
 ## futures
 - [ ] relive a team (only for deleted team and can be done by only the createdBy user)
 
- 
-## securty tasks
-- [ ] update change coach function on firebase to use the auth user as the coachid not as paramater
-- [ ] check if there is any auth problme in firebase funcitons
+## After done with projet
+- [ ] add favorite to teams and users
+- [ ] fix ui
+- [ ] link Home page section with real content
+- [ ] add posts page
