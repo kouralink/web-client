@@ -27,16 +27,19 @@ import DefaultNavFooterLayout from "./layouts/DefaultNavFooterLayout.tsx";
 // Pages
 // Root
 import App from "./App.tsx";
+
 // Auth
 import Login from "./pages/auth/Login.tsx";
 import Register from "./pages/auth/Register.tsx";
 import Reset from "./pages/auth/Reset.tsx";
+
 // Settings
 import SettingsLayout from "./pages/settings/layout.tsx";
 import SettingsProfilePage from "./pages/settings/page.tsx";
 import SettingsAccountPage from "./pages/settings/account/page.tsx";
 import SettingsAppearancePage from "./pages/settings/appearance/page.tsx";
 import SettingsNotificationsPage from "./pages/settings/notifications/page.tsx";
+
 // Teams
 import { TeamPage } from "./pages/team/TeamPage.tsx";
 import TeamLayout from "./layouts/TeamLayout.tsx";
@@ -45,10 +48,17 @@ import CreateTeam from "./pages/team/CreateTeam.tsx";
 import UpdateTeam from "./pages/team/UpdateTeam.tsx";
 
 // Tounaments
+import CreateTournament from "./pages/tournament/Create.tsx";
+import { TournamentPage } from "./pages/tournament/Page.tsx";
+import TournamentSearchPage from "./pages/tournament/Search.tsx";
+import UpdateTournament from "./pages/tournament/Update.tsx";
+import { SingleElimination } from "./pages/tournament/testBrackets.tsx";
 
 // users
 import UserProfile from "./pages/profile/UserProfile.tsx";
 import UserSearchPage from "./pages/profile/UserSearchPage.tsx";
+import MatchesReferee from "./pages/referee/MatchesReferee.tsx";
+
 // Match
 import MatchPage from "./pages/match/MatchPage.tsx";
 
@@ -58,12 +68,6 @@ import Contact from "./pages/Contact.tsx";
 
 // 404
 import ErrorPage from "./pages/ErrorPage.tsx";
-import CreateTournament from "./pages/tournament/Create.tsx";
-import { TournamentPage } from "./pages/tournament/Page.tsx";
-import TournamentSearchPage from "./pages/tournament/Search.tsx";
-import MatchesReferee from "./pages/referee/MatchesReferee.tsx";
-import UpdateTournament from "./pages/tournament/Update.tsx";
-import { SingleElimination } from "./pages/tournament/testBrackets.tsx";
 
 // private route
 export const PrivateRoute = ({ children }: { children: React.ReactNode }) => {
