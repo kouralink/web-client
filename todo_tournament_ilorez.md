@@ -28,8 +28,8 @@
     - [ ] requst to join team /tournament
     - [ ] invite referee
     - [ ] match challenge
-- [x] : infinity scroll for matches
-      status : pending => in progress => finish || failed
+- [x] : infinity scroll for [ Matches & Teams & Users & Tournaments ]
+      Matches status : pending => in progress => finish || failed 
 
 ## Triggers (in pending status)
 
