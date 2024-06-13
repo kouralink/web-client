@@ -126,7 +126,7 @@ export const searchByUserNameAndTypeAccount = createAsyncThunk(
         where("username", ">=", searchData.username),
         where("username", "<=", searchData.username + "\uf8ff"),
         where("accountType", "==", searchData.typeAccount),
-        limit(10)
+        limit(4)
       );
 
       if (lastDoc) {
@@ -148,6 +148,7 @@ export const searchByUserNameAndTypeAccount = createAsyncThunk(
       });
 
       thunkAPI.dispatch(setLastDoc(querySnapshot.docs[querySnapshot.docs.length - 1]));
+      console.log(users)
       return { users: users };
     } catch (error) {
       throw new Error("Error fetching users");
