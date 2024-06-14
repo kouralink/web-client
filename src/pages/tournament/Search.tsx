@@ -1,4 +1,4 @@
-import { searchByTournamentName, setLastDoc, setSearchResults } from "@/state/search/searchTournamentSlice";
+import { searchByTournamentName, setSearchResults, setTrackQuery } from "@/state/search/searchTournamentSlice";
 import { AppDispatch, RootState } from "@/state/store";
 import { useDispatch, useSelector } from "react-redux";
 import { Input } from "@/components/ui/input";
@@ -15,8 +15,8 @@ const TournamentSearchPage: React.FC = () => {
     const isLoading = useSelector(
         (state: RootState) => state.tournamentsearch.isLoading
     );
-    const lastDoc = useSelector(
-        (state: RootState) => state.tournamentsearch.lastDoc
+    const trackQuery = useSelector(
+        (state: RootState) => state.tournamentsearch.trackQuery
     );
     const [searchValue, setSearchValue] = useState<string>("");
     const observerRef = useRef(null);
@@ -28,7 +28,7 @@ const TournamentSearchPage: React.FC = () => {
             return;
         }
         const observer = new IntersectionObserver(([entry]) => {
-            if (entry.isIntersecting && lastDoc) {
+            if (entry.isIntersecting && trackQuery.lastDoc) {
                 dispatch(searchByTournamentName(searchValue));
             }
         });
@@ -36,11 +36,11 @@ const TournamentSearchPage: React.FC = () => {
             observer.observe(observerRef.current);
         }
         return () => observer.disconnect();
-    }, [isLoading, searchResults.length, dispatch, lastDoc]);
+    }, [isLoading, searchResults.length, dispatch, trackQuery.lastDoc]);
 
     useEffect(() => {
         dispatch(setSearchResults([]));
-        dispatch(setLastDoc(null));
+        dispatch(setTrackQuery({ lastDoc: null, status: "all" }));
         dispatch(searchByTournamentName(searchValue));
     }, [dispatch, searchValue]);
 
@@ -89,7 +89,7 @@ const TournamentSearchPage: React.FC = () => {
                                     <img src="/logo.svg" className="h-8 me-3 mt-20 animate-spin" alt="Koulaink Logo" />
                                 </div>
                             }
-                            {lastDoc && <div ref={observerRef} style={{ height: '20px', visibility: 'visible' }} />}
+                            {trackQuery.lastDoc && <div ref={observerRef} style={{ height: '20px', visibility: 'visible' }} />}
                         </div>
                     </div>
                 </div>

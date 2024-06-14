@@ -5,7 +5,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "@/state/store";
 import { Card } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { FilterMatchStatus, Match } from "@/types/types";
+import { FilterProgressStatus, Match } from "@/types/types";
 // import { TeamMatch } from "@/types/types";
 // import { Timestamp } from "firebase/firestore";
 import { useParams } from "react-router-dom";
@@ -19,7 +19,7 @@ import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 const MatchesReferee = () => {
     // const userState = useSelector((state: RootState) => state.auth.user);
     const { refereeid } = useParams<{ refereeid: string }>();
-    const [status, setStatus] = useState<FilterMatchStatus>("all");
+    const [status, setStatus] = useState<FilterProgressStatus>("all");
     const user = useSelector((state: RootState) => state.user.user);
     const matches = useSelector((state: RootState) => state.user.refereeMatches);
     const error = useSelector((state: RootState) => state.user.error);
@@ -56,7 +56,7 @@ const MatchesReferee = () => {
                                     (status) => (
                                         <TabsTrigger
                                             key={status}
-                                            onClick={() => setStatus(status as FilterMatchStatus)}
+                                            onClick={() => setStatus(status as FilterProgressStatus)}
                                             value={status}
                                         >
                                             {status.charAt(0).toUpperCase() + status.slice(1)}
