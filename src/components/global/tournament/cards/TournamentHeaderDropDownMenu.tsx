@@ -144,7 +144,7 @@ export default function TournamentDropDownMenu({
                 >
                   <LogOut className="mr-2 h-4 w-4" />
 
-                  <span>Calncel Tournament</span>
+                  <span>Cancel Tournament</span>
                   <DropdownMenuShortcut></DropdownMenuShortcut>
                 </DropdownMenuItem>
               </AlertDialogTrigger>

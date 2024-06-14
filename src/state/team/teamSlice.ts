@@ -29,7 +29,7 @@ import { isItAlreadyInATeam } from "../auth/authSlice";
 import { UpdateTeamDataType } from "@/pages/team/UpdateTeam";
 import { httpsCallable } from "firebase/functions";
 import { functions } from "@/services/firebase";
-import { store } from "../store";
+import { RootState, store } from "../store";
 import { FirebaseError } from "firebase/app";
 
 const initialState: TeamState = {
@@ -1229,7 +1229,8 @@ export const getTeamMatchesHistory = createAsyncThunk(
     try {
       console.log("||---------------------------------------------------------||");
       const colRef = collection(firestore, "matches");
-      const trackQuery = store.getState().team.trackQuery;
+      const trackQuery = (thunkAPI.getState() as RootState).team.trackQuery;
+      let lastDocState = trackQuery.lastDoc;
 
       let queryRef = query(
         colRef,
@@ -1237,10 +1238,12 @@ export const getTeamMatchesHistory = createAsyncThunk(
         limit(5)
       );
       console.log("status:", status);
+
       if (trackQuery.status !== status) {
         console.log("status changed");
         thunkAPI.dispatch(setMatchesHistory([]));
         thunkAPI.dispatch(setTrackQuery({ lastDoc: null, status: status }));
+        lastDocState = null;
       }
 
       const teamCondition = or(where("team1.id", "==", teamId), where("team2.id", "==", teamId));
@@ -1248,7 +1251,7 @@ export const getTeamMatchesHistory = createAsyncThunk(
         ? query(queryRef, and(teamCondition, where("status", "==", status)))
         : query(queryRef, teamCondition);
 
-      if (trackQuery.lastDoc) {
+      if (lastDocState) {
         console.log("lastDoc exists");
         queryRef = query(queryRef, startAfter(trackQuery.lastDoc));
       }
@@ -1279,7 +1282,8 @@ export const getTeamMatchesHistory = createAsyncThunk(
         return thismatch;
       });
 
-      const matches: Match[] = (await Promise.all(matchPromises)).filter((match): match is Match => match !== null); console.log({ lastDoc: snap.docs[snap.docs.length - 1], status: status })
+      const matches: Match[] = (await Promise.all(matchPromises)).filter((match): match is Match => match !== null);
+      console.log({ lastDoc: snap.docs[snap.docs.length - 1], status: status })
       thunkAPI.dispatch(setTrackQuery({ lastDoc: snap.docs[snap.docs.length - 1], status: status }));
       return { matches };
     } catch (error) {
