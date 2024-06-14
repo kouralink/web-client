@@ -21,7 +21,7 @@ import {
   startAfter,
 } from "firebase/firestore";
 
-import { FilterMatchStatus, Match, Member, Team, TeamState, User } from "../../types/types";
+import { FilterProgressStatus, Match, Member, Team, TeamState, User } from "../../types/types";
 import { CreateTeamFormValues } from "@/pages/team/CreateTeam";
 import { getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
 import { toast } from "@/components/ui/use-toast";
@@ -64,7 +64,7 @@ const teamSlice = createSlice({
     setError: (state, action: PayloadAction<string | null>) => {
       state.error = action.payload;
     },
-    setTrackQuery: (state, action: PayloadAction<{ lastDoc: any, status: FilterMatchStatus }>) => {
+    setTrackQuery: (state, action: PayloadAction<{ lastDoc: any, status: FilterProgressStatus }>) => {
       state.trackQuery = action.payload;
     },
     setLoading: (
@@ -567,6 +567,9 @@ export const getTeamByTeamName = createAsyncThunk(
     }
   }
 );
+
+
+
 
 export const refreshTeamMembers = createAsyncThunk(
   "team/refreshTeamMembers",
@@ -1225,9 +1228,8 @@ export const getTeamDataByTeamId = async (teamId: string) => {
 // get team matchs history
 export const getTeamMatchesHistory = createAsyncThunk(
   "team/getTeamMatchesHistory",
-  async ({ teamId, status = 'all' }: { teamId: string, status?: FilterMatchStatus }, thunkAPI) => {
+  async ({ teamId, status = 'all' }: { teamId: string, status?: FilterProgressStatus }, thunkAPI) => {
     try {
-      console.log("||---------------------------------------------------------||");
       const colRef = collection(firestore, "matches");
       const trackQuery = (thunkAPI.getState() as RootState).team.trackQuery;
       let lastDocState = trackQuery.lastDoc;
@@ -1237,10 +1239,8 @@ export const getTeamMatchesHistory = createAsyncThunk(
         orderBy("createdAt", "desc"),
         limit(5)
       );
-      console.log("status:", status);
 
       if (trackQuery.status !== status) {
-        console.log("status changed");
         thunkAPI.dispatch(setMatchesHistory([]));
         thunkAPI.dispatch(setTrackQuery({ lastDoc: null, status: status }));
         lastDocState = null;
@@ -1252,7 +1252,6 @@ export const getTeamMatchesHistory = createAsyncThunk(
         : query(queryRef, teamCondition);
 
       if (lastDocState) {
-        console.log("lastDoc exists");
         queryRef = query(queryRef, startAfter(trackQuery.lastDoc));
       }
 
@@ -1278,12 +1277,10 @@ export const getTeamMatchesHistory = createAsyncThunk(
           name: team2_data.teamName,
           logo: team2_data.teamLogo,
         };
-        console.log("----------------------------------------------------------");
         return thismatch;
       });
 
       const matches: Match[] = (await Promise.all(matchPromises)).filter((match): match is Match => match !== null);
-      console.log({ lastDoc: snap.docs[snap.docs.length - 1], status: status })
       thunkAPI.dispatch(setTrackQuery({ lastDoc: snap.docs[snap.docs.length - 1], status: status }));
       return { matches };
     } catch (error) {
