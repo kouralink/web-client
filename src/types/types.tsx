@@ -7,7 +7,7 @@ export type sidebarNavItemType = {
   icon: keyof typeof dynamicIconImports;
 };
 
-export type FilterMatchStatus =
+export type FilterProgressStatus =
   | "pending"
   | "in_progress"
   | "finish"
@@ -40,7 +40,7 @@ export interface TeamState {
   MatchesHistory: Match[];
   status: "idle" | "loading" | "failed";
   error: string | null | undefined;
-  trackQuery: { lastDoc: any, status: FilterMatchStatus };
+  trackQuery: { lastDoc: any, status: FilterProgressStatus };
 }
 
 // -------------------------------------------------------------------------------------------
@@ -190,6 +190,13 @@ export interface Match {
 export interface TournamentStage {
   stage_number: string;
   matches: Match[];
+}
+
+
+// -------------------------------
+export interface SearchedTournament {
+  id: string;
+  tournament_info: Tournament;
 }
 
 // ------------- Tournament State -------------
