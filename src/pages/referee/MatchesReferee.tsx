@@ -1,36 +1,27 @@
 import RefreeHeader from "@/components/global/RefreeHeader";
-import MatchRefreeCard from "@/components/global/cards/MatchRefreeCard";
-// import MatchRefreeCard from "@/components/global/cards/MatchRefreeCard";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "@/state/store";
-import { Card } from "@/components/ui/card";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { FilterProgressStatus, Match } from "@/types/types";
-// import { TeamMatch } from "@/types/types";
-// import { Timestamp } from "firebase/firestore";
 import { useParams } from "react-router-dom";
 import { getRefereeMatchesAndInfo } from "@/state/user/userSlice";
-import { useEffect, useState } from "react";
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
-// import { Match } from "@/types/types";
+import { useEffect } from "react";
+import RefreeMatchHistory from "@/components/global/RefreeMatchHistory";
+import RefreeTournamentsHistory from "@/components/global/RefreeTournamentHistory";
 
 
 
 const MatchesReferee = () => {
     // const userState = useSelector((state: RootState) => state.auth.user);
     const { refereeid } = useParams<{ refereeid: string }>();
-    const [status, setStatus] = useState<FilterProgressStatus>("all");
     const user = useSelector((state: RootState) => state.user.user);
-    const matches = useSelector((state: RootState) => state.user.refereeMatches);
     const error = useSelector((state: RootState) => state.user.error);
-    const isLoading = useSelector((state: RootState) => state.user.status === "loading");
+
     const dispatch = useDispatch<AppDispatch>();
 
     useEffect(() => {
-        if (refereeid && status !== null) {
-            dispatch(getRefereeMatchesAndInfo({ uid: refereeid, status: status }));
+        if (refereeid) {
+            dispatch(getRefereeMatchesAndInfo({ uid: refereeid, status: "all" }));
         }
-    }, [dispatch, refereeid, status])
+    }, [dispatch, refereeid])
 
 
     // [ ] : update user info and matches list by call dispatch getmatches and infos of user
@@ -41,47 +32,11 @@ const MatchesReferee = () => {
     //   );
 
     return (
-        <div className="flex flex-col gap-8">
+        <div className="flex flex-col gap-8 py-10">
             <RefreeHeader avatar={user?.avatar ?? null} firstName={user?.firstName ?? null} lastName={user?.lastName ?? null} />
             <p>{error}</p>
-
-
-            <div className="gap-4 w-full">
-                <ScrollArea>
-                    <Card className="flex flex-col gap-2 p-4 w-full lgkk:w-fit">
-                        <h2>Match History</h2>
-                        <Tabs defaultValue="all" className="space-y-4">
-                            <TabsList>
-                                {["all", "pending", "in_progress", "finish", "cancled"].map(
-                                    (status) => (
-                                        <TabsTrigger
-                                            key={status}
-                                            onClick={() => setStatus(status as FilterProgressStatus)}
-                                            value={status}
-                                        >
-                                            {status.charAt(0).toUpperCase() + status.slice(1)}
-                                        </TabsTrigger>
-                                    )
-                                )}
-                            </TabsList>
-                        </Tabs>
-                        {
-                            isLoading ?
-                                <div className='h-full w-full flex justify-center items-center'>
-                                    <img src="/logo.svg" className="h-8 me-3 my-5 animate-spin" alt="Koulaink Logo" />
-                                </div>
-                                :
-                                <>
-                                    {
-                                        matches.map((match: Match) => (
-                                            <MatchRefreeCard key={match.id} {...match} />
-                                        ))
-                                    }
-                                </>
-                        }
-                    </Card>
-                </ScrollArea>
-            </div>
+            <RefreeMatchHistory refreeId={refereeid as string} />
+            <RefreeTournamentsHistory refreeId={refereeid as string} />
         </div>
     );
 }
