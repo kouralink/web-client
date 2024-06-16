@@ -11,13 +11,14 @@ import {
   limit,
   orderBy,
   Query,
+  startAfter,
 } from "firebase/firestore";
 import { firestore } from "@/services/firebase";
 
 // types
 import { User, UserState, Match } from "../../types/types";
 import { getMemberTeam, getTeamDataByTeamId } from "../team/teamSlice";
-import { store } from "../store";
+import { RootState, store } from "../store";
 
 const initialState: UserState = {
   user: {
@@ -37,6 +38,7 @@ const initialState: UserState = {
   error: null,
   refereeMatches: [],
   team: null,
+  trackQuery: { lastDoc: null, status: "all" },
 };
 
 const userSlice = createSlice({
@@ -46,6 +48,12 @@ const userSlice = createSlice({
     setUser: (state, action: PayloadAction<{ uid: string; user: User }>) => {
       state.user = action.payload.user;
       state.uid = action.payload.uid;
+    },
+    setRefereeMatches: (state, action: PayloadAction<Match[] | []>) => {
+      state.refereeMatches = action.payload;
+    },
+    setTrackQuery: (state, action) => {
+      state.trackQuery = action.payload;
     },
     setError: (state, action: PayloadAction<string | null>) => {
       state.error = action.payload;
@@ -106,7 +114,11 @@ const userSlice = createSlice({
         state.error = null;
       })
       .addCase(getRefereeMatchesAndInfo.fulfilled, (state, action) => {
-        state.refereeMatches = action.payload.matches;
+        action.payload.matches.forEach((newMatch) => {
+          if (!state.refereeMatches.some((existingMatch) => existingMatch.id === newMatch.id)) {
+            state.refereeMatches.push(newMatch);
+          }
+        });
         state.user = action.payload.user;
         state.status = "idle";
       })
@@ -175,7 +187,7 @@ export const getUserByUsername = createAsyncThunk(
 
 export const getRefereeMatchesAndInfo = createAsyncThunk(
   "user/getRefereeMatches",
-  async ({ uid, status }: { uid: string; status: string }) => {
+  async ({ uid, status = "all" }: { uid: string; status: string }, thunkAPI) => {
     try {
       // get userinfo
       const docRef = doc(firestore, "users", uid);
@@ -185,17 +197,31 @@ export const getRefereeMatchesAndInfo = createAsyncThunk(
       }
       const user = docSnap.data() as User;
 
+      const trackQuery = (thunkAPI.getState() as RootState).user.trackQuery;
+      let lastDocState = trackQuery.lastDoc;
+
+
+      if (trackQuery.status !== status) {
+        thunkAPI.dispatch(setRefereeMatches([]));
+        thunkAPI.dispatch(setTrackQuery({ lastDoc: null, status: status }));
+        lastDocState = null;
+      }
+
       // get matches order by status pending and in_progress first after that others limit 20
       let queryRef: Query = query(
         collection(firestore, "matches"),
         where("refree.id", "==", uid),
         where("refree.isAgreed", "==", true),
         orderBy("status", "desc"),
-        limit(20)
+        limit(5)
       );
 
       if (status !== "all") {
         queryRef = query(queryRef, where("status", "==", status));
+      }
+
+      if (lastDocState) {
+        queryRef = query(queryRef, startAfter(lastDocState));
       }
 
       const snap = await getDocs(queryRef);
@@ -224,6 +250,7 @@ export const getRefereeMatchesAndInfo = createAsyncThunk(
       if (matches.length === 0) {
         console.log("no matches found");
       }
+      thunkAPI.dispatch(setTrackQuery({ lastDoc: snap.docs[snap.docs.length - 1], status: status }));
       return { matches, user };
     } catch (error) {
       console.log("get matches error : ", error);
@@ -231,6 +258,8 @@ export const getRefereeMatchesAndInfo = createAsyncThunk(
     }
   }
 );
+
+
 
 export const GetUserTeam = createAsyncThunk(
   "user/getUserTeam",
@@ -250,5 +279,5 @@ export const GetUserTeam = createAsyncThunk(
   }
 );
 
-export const { setUser, clearUser, setError, setLoading } = userSlice.actions;
+export const { setUser, setRefereeMatches, setTrackQuery, clearUser, setError, setLoading } = userSlice.actions;
 export default userSlice.reducer;
