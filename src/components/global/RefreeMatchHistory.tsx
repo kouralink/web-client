@@ -2,15 +2,16 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { FilterProgressStatus, Match } from "@/types/types";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import MatchRecordCardIteam from "@/components/global/cards/MatchRecordCardIteam";
+import MatchRefreeCard from "@/components/global/cards/MatchRefreeCard";
+// import MatchRefreeCard from "@/components/global/cards/MatchRefreeCard";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card } from '@/components/ui/card';
 import { AppDispatch, RootState } from '@/state/store';
 import { useDispatch, useSelector } from 'react-redux';
-import { getTeamMatchesHistory } from '@/state/team/teamSlice';
+import { getRefereeMatchesAndInfo } from '@/state/user/userSlice';
 
 interface MatchHistoryProps {
-    teamId: string;
+    refreeId: string;
     // matchesHistory: Match[];
     // isLoading: boolean;
     // trackQuery: any;
@@ -18,24 +19,18 @@ interface MatchHistoryProps {
     // setObserverRef: React.Dispatch<React.SetStateAction<HTMLDivElement | null>>;
 }
 
-const MatchHistory: React.FC<MatchHistoryProps> = ({ teamId }) => {
-    const matchesHistory = useSelector(
-        (state: RootState) => state.team.MatchesHistory
-    );
-    const trackQuery = useSelector(
-        (state: RootState) => state.team.trackQuery
-    );
-    const isLoading = useSelector(
-        (state: RootState) => state.team.status === "loading"
-    );
-    const [status, setStatus] = useState<FilterProgressStatus>(null);
+const RefreeMatchHistory: React.FC<MatchHistoryProps> = ({ refreeId }) => {
+
+    const [status, setStatus] = useState<FilterProgressStatus>("all");
+    const matchesHistory = useSelector((state: RootState) => state.user.refereeMatches);
+    const isLoading = useSelector((state: RootState) => state.user.status === "loading");
+    const trackQuery = useSelector((state: RootState) => state.user.trackQuery);
     const observerRef = useRef<HTMLDivElement>(null);
     const firstRender = useRef(true);
     const dispatch = useDispatch<AppDispatch>();
 
 
-
-    //! Team Handle scroll event to fetch more matches
+    //! Refree Handle scroll event to fetch more matches
     useEffect(() => {
         if (firstRender.current || isLoading || matchesHistory.length === 0) {
             firstRender.current = false;
@@ -43,7 +38,7 @@ const MatchHistory: React.FC<MatchHistoryProps> = ({ teamId }) => {
         }
         const observer = new IntersectionObserver(([entry]) => {
             if (entry.isIntersecting) {
-                fetchTeamMatchesHistory();
+                fetchRefreeMatchesHistory();
             }
         });
         if (observerRef.current) {
@@ -56,13 +51,13 @@ const MatchHistory: React.FC<MatchHistoryProps> = ({ teamId }) => {
     // updating team matches history
     useEffect(() => {
         if (status !== null) {
-            fetchTeamMatchesHistory()
+            fetchRefreeMatchesHistory()
         }
-    }, [dispatch, teamId, status]);
+    }, [dispatch, refreeId, status]);
 
-    const fetchTeamMatchesHistory = () => {
-        console.log({ teamId: teamId, status: status })
-        dispatch(getTeamMatchesHistory({ teamId: teamId, status: (status ? status : "all") }));
+    const fetchRefreeMatchesHistory = () => {
+        console.log({ refreeId: refreeId, status: status })
+        dispatch(getRefereeMatchesAndInfo({ uid: refreeId, status: (status ? status : "all") }));
     }
 
     return (
@@ -93,9 +88,11 @@ const MatchHistory: React.FC<MatchHistoryProps> = ({ teamId }) => {
                 }
                 <ScrollArea className="h-96 w-full">
                     <div className="flex flex-col gap-4 pr-6 w-full">
-                        {matchesHistory.map((match: Match) => (
-                            <MatchRecordCardIteam key={match.id} {...match} />
-                        ))}
+                        {
+                            matchesHistory.map((match: Match) => (
+                                <MatchRefreeCard key={match.id} {...match} />
+                            ))
+                        }
                         {isLoading && (
                             <div className='h-full w-full flex justify-center items-center'>
                                 <img src="/logo.svg" className="h-8 me-3 my-5 animate-spin" alt="Koulaink Logo" />
@@ -109,4 +106,4 @@ const MatchHistory: React.FC<MatchHistoryProps> = ({ teamId }) => {
     );
 };
 
-export default MatchHistory;
+export default RefreeMatchHistory;

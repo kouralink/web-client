@@ -105,6 +105,7 @@ export interface UserState {
   error: string | null | undefined;
   refereeMatches: Match[];
   team: Team | null;
+  trackQuery: { lastDoc: any, status: FilterProgressStatus };
 }
 
 export type Action = "accept" | "decline" | "view";

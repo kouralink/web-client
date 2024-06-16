@@ -8,8 +8,8 @@ import { useNavigate, useParams } from "react-router-dom";
 import MemberCard from "@/components/global/cards/MemberCard";
 import TeamHeader from "@/components/global/TeamHeader";
 import { Card } from "@/components/ui/card";
-import MatchHistory from "@/components/global/MatchHistory";
-import TournamentsHistory from "@/components/global/TournamentHistory";
+import MatchHistory from "@/components/global/TeamMatchHistory";
+import TournamentsHistory from "@/components/global/TeamTournamentHistory";
 
 
 export const TeamPage = () => {
