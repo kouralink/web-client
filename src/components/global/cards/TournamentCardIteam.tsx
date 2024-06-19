@@ -28,7 +28,7 @@ const TournamentCardIteam: React.FC<Tournament> = (props) => {
           // , (props.team1.score !== null && props.team2.score !== null) && props.team1.score >= props.team2.score ? props.team1.score == props.team2.score ? "bg-yellow-100 dark:bg-yellow-800":"bg-green-100 dark:bg-green-800" : "bg-red-100 dark:bg-red-800"
         ].join(" ")}
       >
-        <CardHeader className="flex flex-row w-full items-center justify-between gap-4 m-0 p-0 ">
+        <CardHeader className="flex flex-row !w-full items-center justify-between gap-4 m-0 p-0 ">
           <div className="flex flex-col items-start gap-2">
             <Avatar className="w-14 h-14">
               <AvatarImage
