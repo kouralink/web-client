@@ -98,6 +98,11 @@ export interface UserUpdate {
   avatar?: string;
 }
 
+export type TrackQuery = {
+  lastDoc: any;
+  status: FilterProgressStatus;
+};
+
 export interface UserState {
   user: User;
   uid: string;
@@ -105,7 +110,7 @@ export interface UserState {
   error: string | null | undefined;
   refereeMatches: Match[];
   team: Team | null;
-  trackQuery: { lastDoc: any, status: FilterProgressStatus };
+  trackQuery: TrackQuery;
 }
 
 export type Action = "accept" | "decline" | "view";
