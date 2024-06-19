@@ -1,4 +1,4 @@
-import { FilterProgressStatus, SearchedTournament, Tournament } from "@/types/types";
+import { FilterProgressStatus, SearchedTournament, Tournament, TrackQuery } from "@/types/types";
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { getDocs, collection, where, query, limit, startAfter } from "firebase/firestore";
 import { firestore } from "@/services/firebase";
@@ -9,7 +9,7 @@ interface SearchTournamentState {
   isLoading: boolean;
   error: string | null | undefined;
   searchResults: SearchedTournament[];
-  trackQuery: { lastDoc: any, status: FilterProgressStatus };
+  trackQuery: TrackQuery;
 }
 
 const initialTournamentState: SearchTournamentState = {

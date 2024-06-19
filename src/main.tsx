@@ -57,7 +57,7 @@ import { SingleElimination } from "./pages/tournament/testBrackets.tsx";
 // users
 import UserProfile from "./pages/profile/UserProfile.tsx";
 import UserSearchPage from "./pages/profile/UserSearchPage.tsx";
-import MatchesReferee from "./pages/referee/MatchesReferee.tsx";
+import RefereePage from "./pages/referee/RefereePage.tsx";
 
 // Match
 import MatchPage from "./pages/match/MatchPage.tsx";
@@ -239,7 +239,7 @@ const router = createBrowserRouter(
         </Route>
 
         <Route path="referee" element={<DefaultNavLayout />}>
-          <Route path="matches/:refereeid" element={<MatchesReferee />} />
+          <Route path="matches/:refereeid" element={<RefereePage />} />
         </Route>
 
         <Route path="/" element={<DefaultNavFooterLayout />}>

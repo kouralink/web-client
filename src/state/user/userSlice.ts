@@ -16,7 +16,7 @@ import {
 import { firestore } from "@/services/firebase";
 
 // types
-import { User, UserState, Match } from "../../types/types";
+import { User, UserState, Match, FilterProgressStatus } from "../../types/types";
 import { getMemberTeam, getTeamDataByTeamId } from "../team/teamSlice";
 import { RootState, store } from "../store";
 
@@ -187,7 +187,7 @@ export const getUserByUsername = createAsyncThunk(
 
 export const getRefereeMatchesAndInfo = createAsyncThunk(
   "user/getRefereeMatches",
-  async ({ uid, status = "all" }: { uid: string; status: string }, thunkAPI) => {
+  async ({ uid, status = "all" }: { uid: string; status: FilterProgressStatus }, thunkAPI) => {
     try {
       // get userinfo
       const docRef = doc(firestore, "users", uid);

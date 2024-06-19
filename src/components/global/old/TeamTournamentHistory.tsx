@@ -7,7 +7,7 @@ import { Card } from '@/components/ui/card';
 import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch, RootState } from '@/state/store';
 import { getTeamTournamentsHistory, setSearchResults, setTrackQuery } from '@/state/search/searchTournamentSlice';
-import TournamentCardIteam from './cards/TournamentCardIteam';
+import TournamentCardIteam from '../cards/TournamentCardIteam';
 
 interface TournamentHistoryProps {
     teamId: string;

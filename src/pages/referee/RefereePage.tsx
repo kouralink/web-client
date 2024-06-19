@@ -1,11 +1,15 @@
 import RefreeHeader from "@/components/global/RefreeHeader";
+import MatchRefreeCard from "@/components/global/cards/MatchRefreeCard";
+// import MatchRefreeCard from "@/components/global/cards/MatchRefreeCard";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "@/state/store";
 import { useParams } from "react-router-dom";
 import { getRefereeMatchesAndInfo } from "@/state/user/userSlice";
 import { useEffect } from "react";
-import RefreeMatchHistory from "@/components/global/RefreeMatchHistory";
-import RefreeTournamentsHistory from "@/components/global/RefreeTournamentHistory";
+import { Match, SearchedTournament } from "@/types/types";
+import RefereeHistory from "@/components/global/RefereeHistory";
+import TournamentCardIteam from "@/components/global/cards/TournamentCardIteam";
+import { getRefreeTournamentsHistory } from "@/state/search/searchTournamentSlice";
 
 
 
@@ -15,11 +19,20 @@ const MatchesReferee = () => {
     const user = useSelector((state: RootState) => state.user.user);
     const error = useSelector((state: RootState) => state.user.error);
 
+    const matchesHistory = useSelector((state: RootState) => state.user.refereeMatches);
+    const matcheIsLoading = useSelector((state: RootState) => state.user.status === "loading");
+    const matcheTrackQuery = useSelector((state: RootState) => state.user.trackQuery);
+
+    const tournamentsHistory = useSelector((state: RootState) => state.tournamentsearch.searchResults);
+    const tournamentIsLoading = useSelector((state: RootState) => state.tournamentsearch.isLoading);
+    const tournamentTrackQuery = useSelector((state: RootState) => state.tournamentsearch.trackQuery);
+
     const dispatch = useDispatch<AppDispatch>();
 
     useEffect(() => {
         if (refereeid) {
             dispatch(getRefereeMatchesAndInfo({ uid: refereeid, status: "all" }));
+            dispatch(getRefreeTournamentsHistory({ uid: refereeid, status: "all" }));
         }
     }, [dispatch, refereeid])
 
@@ -35,8 +48,31 @@ const MatchesReferee = () => {
         <div className="flex flex-col gap-8 py-10">
             <RefreeHeader avatar={user?.avatar ?? null} firstName={user?.firstName ?? null} lastName={user?.lastName ?? null} />
             <p>{error}</p>
-            <RefreeMatchHistory refreeId={refereeid as string} />
-            <RefreeTournamentsHistory refreeId={refereeid as string} />
+
+            {/*//! Matches History */}
+            <RefereeHistory<Match>
+                refreeId={refereeid as string}
+                title="Match"
+                dataHistory={matchesHistory}
+                isLoading={matcheIsLoading}
+                trackQuery={matcheTrackQuery}
+                fetchHistory={(payload) => dispatch(getRefereeMatchesAndInfo(payload))}
+            >
+                {(match) => <MatchRefreeCard key={match.id} {...match} />}
+            </RefereeHistory>
+
+            {/*//! Tournaments History */}
+            <RefereeHistory<SearchedTournament>
+                refreeId={refereeid as string}
+                title="Tournament"
+                dataHistory={tournamentsHistory}
+                isLoading={tournamentIsLoading}
+                trackQuery={tournamentTrackQuery}
+                fetchHistory={(payload) => dispatch(getRefreeTournamentsHistory(payload))}
+            >
+                {(tournament) => <TournamentCardIteam key={tournament.id} {...tournament.tournament_info} />}
+            </RefereeHistory>
+
         </div>
     );
 }

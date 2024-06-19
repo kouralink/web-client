@@ -1,6 +1,7 @@
 import { AppDispatch, RootState } from "@/state/store";
 import {
   getTeamByTeamName,
+  getTeamMatchesHistory,
 } from "@/state/team/teamSlice";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -8,8 +9,12 @@ import { useNavigate, useParams } from "react-router-dom";
 import MemberCard from "@/components/global/cards/MemberCard";
 import TeamHeader from "@/components/global/TeamHeader";
 import { Card } from "@/components/ui/card";
-import MatchHistory from "@/components/global/TeamMatchHistory";
-import TournamentsHistory from "@/components/global/TeamTournamentHistory";
+import TeamHistory from "@/components/global/TeamHistory";
+import { Match, SearchedTournament } from "@/types/types";
+import { getTeamTournamentsHistory } from "@/state/search/searchTournamentSlice";
+import TournamentCardIteam from "@/components/global/cards/TournamentCardIteam";
+import MatchRefreeCard from "@/components/global/cards/MatchRefreeCard";
+// import MatchRefreeCard from "@/components/global/cards/MatchRefreeCard";
 
 
 export const TeamPage = () => {
@@ -26,6 +31,14 @@ export const TeamPage = () => {
   const [coach, setCoach] = useState(
     members.find((member) => member.role === "coach")
   );
+
+  const matchesHistory = useSelector((state: RootState) => state.team.MatchesHistory);
+  const matcheTrackQuery = useSelector((state: RootState) => state.team.trackQuery);
+  const matcheIsLoading = useSelector((state: RootState) => state.team.status === "loading");
+
+  const tournamentsHistory = useSelector((state: RootState) => state.tournamentsearch.searchResults);
+  const tournamentTrackQuery = useSelector((state: RootState) => state.tournamentsearch.trackQuery);
+  const tournamentIsLoading = useSelector((state: RootState) => state.tournamentsearch.isLoading);
 
   // update black list
   // useEffect(() => {
@@ -101,14 +114,30 @@ export const TeamPage = () => {
           </div>
         </Card>
         <div className="gap-4 w-full flex justify-end ">
-          <MatchHistory
-            teamId={team.id}
-          />
+          {/*//! Matches History */}
+          <TeamHistory<Match>
+            teamId={team.id as string}
+            title="Match"
+            dataHistory={matchesHistory}
+            isLoading={matcheIsLoading}
+            trackQuery={matcheTrackQuery}
+            fetchHistory={(payload) => dispatch(getTeamMatchesHistory(payload))}
+          >
+            {(match) => <MatchRefreeCard key={match.id} {...match} />}
+          </TeamHistory>
         </div>
       </div>
-      <TournamentsHistory
-        teamId={team.id}
-      />
+      {/*//! Tournaments History */}
+      <TeamHistory<SearchedTournament>
+        teamId={team.id as string}
+        title="Tournament"
+        dataHistory={tournamentsHistory}
+        isLoading={tournamentIsLoading}
+        trackQuery={tournamentTrackQuery}
+        fetchHistory={(payload) => dispatch(getTeamTournamentsHistory(payload))}
+      >
+        {(tournament) => <TournamentCardIteam key={tournament.id} {...tournament.tournament_info} />}
+      </TeamHistory>
     </div >
   );
 };
