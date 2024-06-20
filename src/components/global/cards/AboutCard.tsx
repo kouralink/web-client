@@ -27,6 +27,7 @@ const AboutCard: React.FC<TeamCardProps> = ({ teamInfo }) => {
             <div className="h-1/2 ">
                 <Avatar className="bg-black h-full">
                     <AvatarImage
+                        loading="lazy"
                         className="h-full w-full object-top object-cover"
                         src={teamInfo.image} alt="@shadcn">
                     </AvatarImage>
@@ -38,7 +39,7 @@ const AboutCard: React.FC<TeamCardProps> = ({ teamInfo }) => {
                 <h2 className="text-gray-400">{teamInfo.role}</h2>
             </div>
 
-            <CardFooter className="flex justify-between py-5"> 
+            <CardFooter className="flex justify-between py-5">
                 {teamInfo.links.facebook && <Link to={teamInfo.links.facebook} className="hover:text-green-600 rounded-lg"><Facebook /></Link>}
                 {teamInfo.links.github && <Link to={teamInfo.links.github} className="hover:text-green-600 rounded-lg"><Github /></Link>}
                 {teamInfo.links.linkedin && <Link to={teamInfo.links.linkedin} className="hover:text-green-600 rounded-lg"><Linkedin /></Link>}

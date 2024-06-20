@@ -7,8 +7,7 @@ const About = () => {
       name: "Hamza Wahmane",
       image:
         "https://firebasestorage.googleapis.com/v0/b/koura-link.appspot.com/o/PROJECT_TEAM%2Fwahmane.jpg?alt=media&token=1b47fd1b-8b2b-48ce-b8f9-1ecffbee4db2",
-      // role: "Backend Developer",
-      role: "Kay bi3 l7chich",
+      role: "Backend Developer",
       links: {
         github: "https://github.com/Wahmane-Hamza",
         linkedin: "d",
@@ -20,8 +19,7 @@ const About = () => {
       name: "Meriem Maatouqui",
       image:
         "https://firebasestorage.googleapis.com/v0/b/koura-link.appspot.com/o/PROJECT_TEAM%2Fmeriem.jpg?alt=media&token=b36983e4-a6bb-442f-8da0-d54bd15b09ac",
-      // role: "Frontend Developer",
-      role: "Bnt bab allah",
+      role: "Frontend Developer",
       links: {
         github: "https://github.com/meriemmaat4",
         linkedin: "d",
@@ -33,8 +31,8 @@ const About = () => {
       name: "Zoubair Najdaoui",
       image:
         "https://firebasestorage.googleapis.com/v0/b/koura-link.appspot.com/o/PROJECT_TEAM%2Filorez.jpg?alt=media&token=cef663c7-be03-4817-8af1-14591d43cce1",
-      // role: "UI/UX Designer",
-      role: "The Goat 🐐",
+      role: "UI/UX Designer",
+      // role: "The Goat 🐐",
       links: {
         github: "https://github.com/ilorez",
         linkedin: "dd",

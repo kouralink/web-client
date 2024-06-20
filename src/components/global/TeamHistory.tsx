@@ -57,7 +57,7 @@ const TeamHistory = <T,>({ teamId, title, dataHistory, isLoading, trackQuery, ch
     }
 
     return (
-        <Card className="flex flex-col gap-2 p-4 w-full lg:w-fit">
+        <Card className="flex flex-col gap-2 p-4 w-full">
             <h2>{title} History</h2>
             <Tabs defaultValue="all" className="space-y-4">
                 <TabsList>
