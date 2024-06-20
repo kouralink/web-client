@@ -82,7 +82,7 @@ export const TeamPage = () => {
   }, [members]);
 
   return (
-    <div className="flex flex-col gap-8 mt-5 ">
+    <div className="flex flex-col gap-8 mt-5">
       <TeamHeader {...team} role={role} />
       <div className="flex w-full gap-8 flex-col lg:flex-row  ">
         <Card className="min-h-[500px] flex flex-col py-4 px-2 gap-4 h-fit">
@@ -113,7 +113,7 @@ export const TeamPage = () => {
             </div>
           </div>
         </Card>
-        <div className="gap-4 w-full flex justify-end ">
+        <div className="gap-4 w-full flex justify-end">
           {/*//! Matches History */}
           <TeamHistory<Match>
             teamId={team.id as string}
@@ -127,17 +127,17 @@ export const TeamPage = () => {
           </TeamHistory>
         </div>
       </div>
-      {/*//! Tournaments History */}
-      <TeamHistory<SearchedTournament>
-        teamId={team.id as string}
-        title="Tournament"
-        dataHistory={tournamentsHistory}
-        isLoading={tournamentIsLoading}
-        trackQuery={tournamentTrackQuery}
-        fetchHistory={(payload) => dispatch(getTeamTournamentsHistory(payload))}
-      >
-        {(tournament) => <TournamentCardIteam key={tournament.id} {...tournament.tournament_info} />}
-      </TeamHistory>
+        {/*//! Tournaments History */}
+        <TeamHistory<SearchedTournament>
+          teamId={team.id as string}
+          title="Tournament"
+          dataHistory={tournamentsHistory}
+          isLoading={tournamentIsLoading}
+          trackQuery={tournamentTrackQuery}
+          fetchHistory={(payload) => dispatch(getTeamTournamentsHistory(payload))}
+        >
+          {(tournament) => <TournamentCardIteam key={tournament.id} {...tournament.tournament_info} />}
+        </TeamHistory>
     </div >
   );
 };
