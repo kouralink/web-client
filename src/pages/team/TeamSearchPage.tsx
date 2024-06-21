@@ -2,10 +2,10 @@ import { searchByTeamName, setLastDoc, setSearchResults } from "@/state/search/s
 import { AppDispatch, RootState } from "@/state/store";
 import { useDispatch, useSelector } from "react-redux";
 import { Input } from "@/components/ui/input";
-import TeamSearchCard from "@/components/global/cards/TeamSearchCard";
 import TeamImg from "/teams.jpg";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useEffect, useRef, useState } from "react";
+import SearchCard from "@/components/global/cards/SearchCard";
 
 const TeamSearchPage: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -77,7 +77,7 @@ const TeamSearchPage: React.FC = () => {
                 {searchResults.map((result, index) => {
                   return (
                     <div key={index}>
-                      <TeamSearchCard result={result.team_info} />
+                      <SearchCard path={`/team/page/${result.team_info.teamName}`} title="Open Team Page" name={result.team_info.teamName} avatar={result.team_info.teamLogo} />
                     </div>
                   );
                 })}
