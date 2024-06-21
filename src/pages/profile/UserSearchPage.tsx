@@ -3,9 +3,9 @@ import { AppDispatch, RootState } from "@/state/store";
 import { useDispatch, useSelector } from "react-redux";
 import { Input } from "@/components/ui/input";
 import UsersImg from "/feautreContent/im5.png";
-import UserSearchCard from "@/components/global/cards/UserSearchCard";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useEffect, useRef, useState } from "react";
+import SearchCard from "@/components/global/cards/SearchCard";
 
 const UserSearchPage: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -76,7 +76,7 @@ const UserSearchPage: React.FC = () => {
                   searchResults.map((result, index) => {
                     return (
                       <div key={index}>
-                        <UserSearchCard result={result.user_info} />
+                        <SearchCard path={`/users/profile/${result.user_info.username}`} title="View Profile" name={result.user_info.username} avatar={result.user_info.avatar as string} />
                       </div>
                     );
                   })

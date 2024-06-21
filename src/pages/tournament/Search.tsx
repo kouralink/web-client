@@ -2,10 +2,10 @@ import { searchByTournamentName, setSearchResults, setTrackQuery } from "@/state
 import { AppDispatch, RootState } from "@/state/store";
 import { useDispatch, useSelector } from "react-redux";
 import { Input } from "@/components/ui/input";
-import TournamentSearchCard from "@/components/global/tournament/TournamentSearchCard";
 import TournamentImg from "/tournament.jpg";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useEffect, useRef, useState } from "react";
+import SearchCard from "@/components/global/cards/SearchCard";
 
 const TournamentSearchPage: React.FC = () => {
     const dispatch = useDispatch<AppDispatch>();
@@ -78,7 +78,7 @@ const TournamentSearchPage: React.FC = () => {
                                 {searchResults.map((result, index) => {
                                     return (
                                         <div key={index}>
-                                            <TournamentSearchCard result={result.tournament_info} />
+                                            <SearchCard path={`/tournament/page/${result.id}`} title="Open Tournament Page" name={result.tournament_info.name} avatar={result.tournament_info.logo} />
                                         </div>
                                     );
                                 })}
