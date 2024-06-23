@@ -72,7 +72,6 @@ const TeamSearchPage: React.FC = () => {
                 onChange={(e) => setSearchValue(e.target.value)}
                 placeholder="Search teams..."
               />
-
               <ul>
                 {searchResults.map((result, index) => {
                   return (
