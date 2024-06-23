@@ -18,13 +18,13 @@
 - [x] : @ilorez : change account type logic for tournament_manager
 - [x] : @Wahmane-Hamza : Create referee matches UI
 - [x] : @ilorez : get matches list and link it with UI
-- [ ] : @Abdo-Nsila : filter matches by status
+- [x] : @Abdo-Nsila : filter matches by status
 - [ ] : infinity scroll for matches
 - [x] : @ilorez : leave tournament for team !(in progress) (require firebase callback function)
 - [x] : @ilorez : leave tournament for refree !(in progress) (require firebase callback function)
 - [x] : @ilorez : cancel tournament (remove it)
 - [ ] : fix UI & repsponsive of tournament page
-      status : pending => in progress => finish || failed 
+- [x]   status : pending => in progress => finish || failed 
 - [x] : infinity scroll for  [ Matches & Teams & Users & Tournaments ]
       Matches status : pending => in progress => finish || failed
 

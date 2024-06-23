@@ -49,7 +49,7 @@ const UserSearchPage: React.FC = () => {
       <div className="relative hidden h-full flex-col bg-muted p-10 text-white lg:flex dark:border-r ">
         {/* bg iamge url */}
         <div
-          className="absolute inset-0 bg-primary-950 bg-cover bg-no-repeat bg-center  "
+          className="absolute inset-0 bg-primary-950 bg-cover bg-no-repeat bg-center"
           style={{
             backgroundImage: `url(${UsersImg})`,
           }}

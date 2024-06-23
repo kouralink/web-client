@@ -60,7 +60,7 @@ const TournamentSearchPage: React.FC = () => {
             </div>
             <ScrollArea className="h-full w-fit rounded-md border">
                 <div className="lg:p-8">
-                    <div className="mx-auto flex w-full flex-col  space-y-6 ">
+                    <div className="mx-auto flex w-full flex-col space-y-6 ">
                         <h1 className="font-bold text-7xl lg:py-10 px-16">
                             <span className="text-green-700">T</span>ournaments
                         </h1>

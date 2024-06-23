@@ -13,7 +13,7 @@ const TournamentSearchCard: React.FC<TournamentSearchCardProps> = ({ result }) =
   return (
     <div>
       <Link to={`/tournament/page/${result.id}`}>
-        <div className="flex justify-between items-center ">
+        <div className="flex justify-between items-center">
           <div className="flex items-center p-5">
 
             <Avatar className="w-24 h-24 rounded-full object-cover">
