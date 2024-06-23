@@ -104,19 +104,20 @@ export default function ContactFormCard() {
               <Label className="lg:px-16">Select Subject?</Label>
               <RadioGroup
                 defaultValue="comfortable"
+                name="subject"
                 className="flex flex-col lg:flex-row  justify-around py-3"
               >
                 <div className="flex items-center space-x-2">
-                  <RadioGroupItem value="General1" id="r1" />
-                  <Label htmlFor="r1">General Inquiry</Label>
+                  <RadioGroupItem value="Team" id="r1" />
+                  <Label htmlFor="r1">Teams</Label>
                 </div>
                 <div className="flex items-center space-x-2">
-                  <RadioGroupItem value="General2" id="r2" />
-                  <Label htmlFor="r2">General Inquiry</Label>
+                  <RadioGroupItem value="Profile" id="r2" />
+                  <Label htmlFor="r2">Profile</Label>
                 </div>
                 <div className="flex items-center space-x-2">
-                  <RadioGroupItem value="General3" id="r3" />
-                  <Label htmlFor="r3">General Inquiry</Label>
+                  <RadioGroupItem value="Tournament" id="r3" />
+                  <Label htmlFor="r3">Tournament</Label>
                 </div>
               </RadioGroup>
             </div>
