@@ -31,8 +31,8 @@ const About = () => {
       name: "Zoubair Najdaoui",
       image:
         "https://firebasestorage.googleapis.com/v0/b/koura-link.appspot.com/o/PROJECT_TEAM%2Filorez.jpg?alt=media&token=cef663c7-be03-4817-8af1-14591d43cce1",
-      role: "UI/UX Designer",
-      // role: "The Goat 🐐",
+      // role: "UI/UX Designer",
+      role: "The Goat 🐐",
       links: {
         github: "https://github.com/ilorez",
         linkedin: "dd",
