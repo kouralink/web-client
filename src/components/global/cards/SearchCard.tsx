@@ -15,7 +15,7 @@ const SearchCard: React.FC<SearchCardProps> = ({ path, title, name, avatar }) =>
   return (
     <div>
       <Link to={`${path}`}>
-        <div className="flex justify-between items-center ">
+        <div className="flex justify-between items-center">
           <div className="flex items-center p-5">
 
             <Avatar className="w-24 h-24 rounded-full object-cover">
